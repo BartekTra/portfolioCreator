@@ -15,12 +15,12 @@ module PortfolioCreator
       # GraphQL-Ruby query log tags:
       current_graphql_operation: -> { GraphQL::Current.operation_name },
       current_graphql_field: -> { GraphQL::Current.field&.path },
-      current_dataloader_source: -> { GraphQL::Current.dataloader_source_class },
+      current_dataloader_source: -> { GraphQL::Current.dataloader_source_class }
     ]
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
 
-    config.session_store :cookie_store, key: '_interslice_session'
+    config.session_store :cookie_store, key: "_interslice_session"
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use config.session_store, config.session_options
 

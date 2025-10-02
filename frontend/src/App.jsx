@@ -5,13 +5,14 @@ import "./App.css";
 import LoginPage from "./components/LoginPage";
 import MainPage from "./components/MainPage";
 import AuthViewHelper from "./components/AuthViewHelper";
-function App() {
-  const [count, setCount] = useState(0);
+import AppRoutes from "./components/AppRoutes";
+import { BrowserRouter as Router } from "react-router-dom";
 
+function App() {
   return (
-    <ApolloProvider client={client}>
-      <AuthViewHelper />
-    </ApolloProvider>
+    <Router>
+      <AppRoutes />
+    </Router>
   );
 }
 

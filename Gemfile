@@ -28,7 +28,7 @@ gem "bootsnap", require: false
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
-gem 'devise_token_auth'
+gem "devise_token_auth"
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ], require: "debug/prelude"
@@ -41,3 +41,6 @@ group :development, :test do
 end
 
 gem "graphql"
+
+gem "apollo_upload_server", "2.1"
+gem "image_processing", ">= 1.2"
