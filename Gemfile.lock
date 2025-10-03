@@ -72,8 +72,8 @@ GEM
       minitest (>= 5.1)
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
-    apollo_upload_server (2.1.0)
-      actionpack (>= 4.2)
+    apollo_upload_server (2.1.6)
+      actionpack (>= 6.1.6)
       graphql (>= 1.8)
     ast (2.4.3)
     base64 (0.3.0)
@@ -160,6 +160,8 @@ GEM
     nokogiri (1.18.10-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.10-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.18.10-x86_64-linux-gnu)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     parallel (1.27.0)
@@ -288,7 +290,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  apollo_upload_server (= 2.1)
+  apollo_upload_server (= 2.1.6)
   bootsnap
   brakeman
   debug
