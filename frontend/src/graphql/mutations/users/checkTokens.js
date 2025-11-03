@@ -7,8 +7,8 @@ export const CHECK_TOKENS = gql`
       createdAt
       email
       id
-      image
-      name
+      firstName
+      surname
       nickname
       provider
       uid

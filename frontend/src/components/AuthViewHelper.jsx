@@ -6,7 +6,7 @@ import MainPage from "./MainPage";
 import { useUser } from "../context/UserContext";
 import RegisterSecondStage from "./RegisterSecondStage";
 const AuthViewHelper = ({ onAuthSuccess }) => {
-  const [currentView, setCurrentView] = useState("login");
+  const [currentView, setCurrentView] = useState("register");
   const [emailForMutation, setEmailForMutation] = useState("");
   const [passwordForMutation, setPasswordForMutation] = useState("");
 

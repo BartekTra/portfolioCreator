@@ -4,17 +4,18 @@ import { useRef } from "react";
 import { REGISTER_USER } from "../graphql/mutations/users/registerUser";
 import { useMutation } from "@apollo/client/react";
 const RegisterSecondStage = (chosenEmail, chosenPassword) => {
-  console.log(chosenEmail, chosenPassword);
+  console.log(chosenEmail.chosenEmail);
   const [formData, setFormData] = useState({
-    email: chosenEmail,
-    password: chosenPassword,
+    email: chosenEmail.chosenEmail,
+    password: chosenEmail.chosenPassword,
     nickname: "",
     firstName: "",
     surname: "",
   });
+  const [registerUser, {loading, error, data}] = useMutation(REGISTER_USER);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const [registerUser, {loading, error, data}] = useMutation(REGISTER_USER);
+
 
   const fileInputRef = useRef(null);
 
@@ -38,10 +39,24 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-  }
+    try {
+      const { data } = await registerUser({
+        variables: {
+          email: formData.email,
+          password: formData.password,
+          nickname: formData.nickname,
+          firstName: formData.firstName,
+          surname: formData.surname,
+        },
+      });
+      console.log("User registered:", data);
+    } catch (err) {
+      console.error("Registration error:", err);
+    }
+  };
+
 
 
   return (
@@ -173,9 +188,10 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
               />
             </div>
 
-            {/* <button
+            <button
               type="submit"
-              //disabled={loading}
+              disabled={loading}
+              onClick={handleSubmit}
               className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white transition-all duration-200 ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
@@ -209,7 +225,7 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
               ) : (
                 "Zarejestruj się"
               )}
-            </button> */}
+            </button>
           </form>
 
 
