@@ -1,39 +1,59 @@
 // src/components/Login.tsx
 import React, { useState } from "react";
-import { useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client/react";
-import { LOGIN_USER } from "../graphql/mutations/users/loginUser";
-import { useNavigate } from "react-router-dom";
-import { useUser } from "../context/UserContext.jsx"
+import { useUser } from "../context/UserContext.jsx";
+import api from "../axios.js";
 
-const LoginPage = ({ onSuccess, onSwitchToRegister, onSwitchToMainPage }) => {
-  const [loginUser, { loading, error, data }] = useMutation(LOGIN_USER);
-  const { user, refetchUser, loadingUser } = useUser();
+const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
+  const { refetchUser } = useUser();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: "testing2@wp.pl",
+    password: "12qwaszx",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await loginUser({
-      variables: { email: formData.email, password: formData.password },
-    });
-    const token = JSON.parse(result.data.loginUser.token);
-    if (token) {
-      localStorage.setItem("accessToken", token.accessToken);
-      localStorage.setItem("authorization", token.authorization);
-      localStorage.setItem("client", token.client);
-      refetchUser();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await api.post("/auth/sign_in", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      const data = await response.data;
+      console.log(data);
+
+      // zapis tokenów w localStorage
+      const tokens = await data.tokens;
+      console.log(tokens);
+      if (tokens) {
+        localStorage.setItem("access-token", data.tokens["access-token"]);
+        localStorage.setItem("client", data.tokens.client);
+        localStorage.setItem(
+          "authorization",
+          data.tokens.authorization.replace("Bearer ", "")
+        );
+        console.log("DONE");
+      }
+
+      // odświeżenie usera w kontekście
+      await refetchUser();
+
+      // przejście na stronę główną
       onSwitchToMainPage();
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 

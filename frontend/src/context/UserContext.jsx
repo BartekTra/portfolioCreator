@@ -1,36 +1,36 @@
 // context/UserContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
-import { useLazyQuery } from "@apollo/client/react";
-import { CHECK_TOKENS } from "../graphql/mutations/users/checkTokens";
+import api from "../axios";
 
 const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [checkTokens, { loading }] = useLazyQuery(CHECK_TOKENS, {
-    fetchPolicy: "network-only",
-  });
+  const fetchCurrentUser = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get("/user/current_user")
 
-  const refetchUser = async () => {
-    const result = await checkTokens();
-    if (result?.data?.currentUser) {
-      setUser(result.data.currentUser);
+      console.log(response)
+
+      const data = await response.data;
+      setUser(data);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const result = await checkTokens();
-      if (result?.data?.currentUser) {
-        setUser(result.data.currentUser);
-      }
-    };
-    fetchUser();
-  }, [checkTokens]);
+    fetchCurrentUser();
+  }, []);
 
   return (
-    <UserContext.Provider value={{ user, loading, refetchUser, setUser }}>
+    <UserContext.Provider value={{ user, loading, refetchUser: fetchCurrentUser, setUser }}>
       {children}
     </UserContext.Provider>
   );

@@ -1,0 +1,43 @@
+module Api
+  module V1
+    module Auth
+      class RegistrationsController < DeviseTokenAuth::RegistrationsController
+        # POST /api/v1/auth
+        def create
+          user = ::User.new(sign_up_params)
+          user.uid = user.email
+          user.provider = "email"
+
+          if user.save
+            # Jeśli przesłano plik, przypnij go do użytkownika
+            if params[:avatar].present?
+              user.avatar.attach(params[:avatar])
+            end
+
+            token = user.create_new_auth_token
+
+            render json: {
+              tokens: token,
+              status: "success",
+              data: user.as_json(
+                only: [:id, :email, :first_name, :surname, :nickname, :created_at]
+              ).merge(
+                avatar_url: user.avatar.attached? ? url_for(user.avatar) : nil
+              )
+            }, status: :created
+          else
+            render json: { status: "error", errors: user.errors.full_messages },
+                   status: :unprocessable_entity
+          end
+        end
+
+        private
+
+        def sign_up_params
+          params.permit(:email, :password, :password_confirmation,
+                                       :first_name, :surname, :nickname, :avatar)
+        end
+      end
+    end
+  end
+end

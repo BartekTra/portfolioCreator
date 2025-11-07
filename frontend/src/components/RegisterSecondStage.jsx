@@ -1,8 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useRef } from "react";
-import { REGISTER_USER } from "../graphql/mutations/users/registerUser";
-import { useMutation } from "@apollo/client/react";
+import api from "../axios";
 const RegisterSecondStage = (chosenEmail, chosenPassword) => {
   console.log(chosenEmail.chosenEmail);
   const [formData, setFormData] = useState({
@@ -12,10 +11,7 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
     firstName: "",
     surname: "",
   });
-  const [registerUser, {loading, error, data}] = useMutation(REGISTER_USER);
   const [selectedImage, setSelectedImage] = useState(null);
-
-
 
   const fileInputRef = useRef(null);
 
@@ -39,25 +35,47 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const { data } = await registerUser({
-        variables: {
-          email: formData.email,
-          password: formData.password,
-          nickname: formData.nickname,
-          firstName: formData.firstName,
-          surname: formData.surname,
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const formDataToSend = new FormData();
+  formDataToSend.append("email", formData.email);
+  formDataToSend.append("password", formData.password);
+  formDataToSend.append("password_confirmation", formData.password);
+  formDataToSend.append("first_name", formData.firstName);
+  formDataToSend.append("surname", formData.surname);
+  formDataToSend.append("nickname", formData.nickname);
+
+  if (selectedImage) {
+    formDataToSend.append("avatar", selectedImage);
+  }
+
+  try {
+    const response = await api.post(
+      "http://localhost:3000/api/v1/auth",
+      formDataToSend,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-      });
-      console.log("User registered:", data);
-    } catch (err) {
-      console.error("Registration error:", err);
+      }
+    );
+
+    const data = response.data;
+
+    if (data.status === "success") {
+      localStorage.setItem("access-token", data.tokens["access-token"]);
+      localStorage.setItem("client", data.tokens.client);
+      localStorage.setItem(
+        "authorization",
+        data.tokens.authorization.replace("Bearer ", "")
+      );
+      window.location.reload();
     }
-  };
-
-
+  } catch (err) {
+    console.error("Błąd przy wysyłaniu danych:", err.response?.data || err);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -121,9 +139,7 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
             </div>
 
             <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Nazwisko
               </label>
               <input
@@ -190,45 +206,13 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
 
             <button
               type="submit"
-              disabled={loading}
               onClick={handleSubmit}
-              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white transition-all duration-200 ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 hover:shadow-lg transform hover:-translate-y-0.5"
+              className={`w-full flex justify-center py-3 px-4 border rounded-lg text-sm font-medium text-white transition-all duration-200 bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 hover:shadow-lg transform hover:-translate-y-0.5"
               }`}
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Rejestrowanie...
-                </div>
-              ) : (
-                "Zarejestruj się"
-              )}
+              "Zarejestruj się"
             </button>
           </form>
-
-
         </div>
       </div>
     </div>

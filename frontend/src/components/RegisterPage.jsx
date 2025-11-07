@@ -1,10 +1,7 @@
-// src/components/Register.tsx
-import React, { useEffect, useState } from "react";
-import { useLazyQuery } from "@apollo/client/react";
-import { CHECK_EMAIL_AVAILABILITY } from "../graphql/mutations/users/checkEmailAvailability";
+// src/components/Register.jsx
+import React, { useState } from "react";
 
 const Register = ({
-  onSuccess,
   onSwitchToLogin,
   onSwitchToRegisterSecondStage,
   setEmail,
@@ -14,35 +11,37 @@ const Register = ({
     email: "",
     password: "",
     passwordConfirmation: "",
+    firstName: "",
+    surname: "",
+    nickname: "",
   });
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [checkEmailAvailability, { loadingEmail, errorEmail, dataEmail }] =
-    useLazyQuery(CHECK_EMAIL_AVAILABILITY);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
-
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
 
     const emailTakenError = "Email is already taken!";
     const passwordMatchError = "Passwords must be the same!";
 
-    const result = await checkEmailAvailability({
-      variables: { email: formData.email },
+    const result = await fetch("http://localhost:3000/api/v1/user/check_email_availability", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: formData.email
+      })
     });
+    const data = await result.json()
+    console.log(data)
 
-    if (!result.data.checkEmailAvailability) {
+    if (data.available == false) {
       setErrors((prevErrors) => {
         if (!prevErrors.includes(emailTakenError)) {
           return [...prevErrors, emailTakenError];
@@ -68,7 +67,7 @@ const Register = ({
       );
     }
 
-    if(result.data.checkEmailAvailability && formData.password === formData.passwordConfirmation){
+    if(data.available == true && formData.password === formData.passwordConfirmation){
       setEmail(formData.email);
       setPassword(formData.password);
       onSwitchToRegisterSecondStage();

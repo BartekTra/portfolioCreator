@@ -3,21 +3,82 @@ import { useUser } from "../context/UserContext";
 
 function MainPage() {
   const { user, loading: loadingUser } = useUser();
-  
+
   if (loadingUser) return <p>loading</p>;
   console.log(user);
-  if (!user) return <p>Loadingxd</p>
+  if (!user) return <p>Loadingxd</p>;
   return (
-    <div>
-      {Object.keys(user).map(
-        (key, index) =>
-          index !== 0 && (
-            <p key={key} className="ml-10">
-              - {user[key]}{" "}
-            </p>
-          )
-      )}
+    
+<nav class="navbar bg-base-100 rounded-box gap-4 shadow-base-300/20 shadow-sm">
+  <div class="navbar-start items-center">
+    <a class="link text-base-content link-neutral text-xl font-bold no-underline" href="#">
+      FlyonUI
+    </a>
+  </div>
+  <div class="navbar-end flex items-center gap-4">
+    <button class="btn btn-sm btn-text btn-circle size-8.5 md:hidden">
+      <span class="icon-[tabler--search] size-5.5"></span>
+    </button>
+    <div class="input max-md:hidden rounded-full max-w-56">
+      <span class="icon-[tabler--search] text-base-content/80 my-auto me-3 size-5 shrink-0"></span>
+      <label class="sr-only" for="searchInput">Full Name</label>
+      <input type="search" class="grow" placeholder="Search" id="searchInput" />
     </div>
+    <div class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end]">
+      <button id="dropdown-scrollable" type="button" class="dropdown-toggle flex items-center" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+        <div class="avatar">
+          <div class="size-9.5 rounded-full">
+            <img src="https://cdn.flyonui.com/fy-assets/avatar/avatar-1.png" alt="avatar 1" />
+          </div>
+        </div>
+      </button>
+      <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-60" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-avatar">
+        <li class="dropdown-header gap-2">
+          <div class="avatar">
+            <div class="w-10 rounded-full">
+              <img src="https://cdn.flyonui.com/fy-assets/avatar/avatar-1.png" alt="avatar" />
+            </div>
+          </div>
+          <div>
+            <h6 class="text-base-content text-base font-semibold">John Doe</h6>
+            <small class="text-base-content/50">Admin</small>
+          </div>
+        </li>
+        <li>
+          <a class="dropdown-item" href="#">
+            <span class="icon-[tabler--user]"></span>
+            My Profile
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="#">
+            <span class="icon-[tabler--settings]"></span>
+            Settings
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="#">
+            <span class="icon-[tabler--receipt-rupee]"></span>
+            Billing
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="#">
+            <span class="icon-[tabler--help-triangle]"></span>
+            FAQs
+          </a>
+        </li>
+        <li class="dropdown-footer gap-2">
+          <a class="btn btn-error btn-soft btn-block" href="#">
+            <span class="icon-[tabler--logout]"></span>
+            Sign out
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
   );
 }
 export default MainPage;
