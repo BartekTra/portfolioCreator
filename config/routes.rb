@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       post "/user/check_email_availability", to: "user/check_email_availability#show"
       get "/user/current_user", to: "user/current_user#show"
+      resources :projects
       mount_devise_token_auth_for "User", at: "auth", controllers: {
         registrations: "api/v1/auth/registrations",
         sessions: "api/v1/auth/sessions"

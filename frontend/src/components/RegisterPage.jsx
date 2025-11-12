@@ -1,5 +1,6 @@
 // src/components/Register.jsx
 import React, { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Register = ({
   onSwitchToLogin,
@@ -73,6 +74,8 @@ const Register = ({
       onSwitchToRegisterSecondStage();
     }
   };
+  
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -229,7 +232,7 @@ const Register = ({
               Masz już konto?{" "}
               <button
                 type="button"
-                onClick={onSwitchToLogin}
+                onClick={() => navigate("/login")}
                 className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200 underline decoration-2 underline-offset-2 hover:decoration-indigo-500"
               >
                 Zaloguj się

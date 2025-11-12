@@ -2,8 +2,10 @@
 import React, { useState } from "react";
 import { useUser } from "../context/UserContext.jsx";
 import api from "../axios.js";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
+  const navigate = useNavigate();
   const { refetchUser } = useUser();
   const [formData, setFormData] = useState({
     email: "testing2@wp.pl",
@@ -16,6 +18,8 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,13 +46,11 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
           data.tokens.authorization.replace("Bearer ", "")
         );
         console.log("DONE");
+        navigate("/")
       }
 
       // odświeżenie usera w kontekście
       await refetchUser();
-
-      // przejście na stronę główną
-      onSwitchToMainPage();
     } catch (err) {
       console.error(err);
       setError("Something went wrong");
@@ -262,7 +264,7 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
               Nie masz konta?{" "}
               <button
                 type="button"
-                onClick={onSwitchToRegister}
+                onClick={() => navigate("/register")}
                 className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200 underline decoration-2 underline-offset-2 hover:decoration-indigo-500"
               >
                 Zarejestruj się

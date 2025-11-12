@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   has_one_attached :avatar
+  has_many :projects, dependent: :destroy
 
   validates :email, presence: true, uniqueness: true
   validates :first_name, :surname, presence: true, on: :create

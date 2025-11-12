@@ -1,13 +1,13 @@
 // context/UserContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../axios";
-
+import { useNavigate } from "react-router";
 const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   const fetchCurrentUser = async () => {
     setLoading(true);
     try {
@@ -20,6 +20,7 @@ export const UserProvider = ({ children }) => {
     } catch (error) {
       console.error("Error fetching user:", error);
       setUser(null);
+      navigate("/login");
     } finally {
       setLoading(false);
     }

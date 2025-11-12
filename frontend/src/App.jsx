@@ -7,11 +7,13 @@ import MainPage from "./components/MainPage";
 import AuthViewHelper from "./components/AuthViewHelper";
 import AppRoutes from "./components/AppRoutes";
 import { BrowserRouter as Router } from "react-router-dom";
-
+import { UserProvider } from "./context/UserContext.jsx";
 function App() {
   return (
     <Router>
-      <AppRoutes />
+      <UserProvider>
+        <AppRoutes />
+      </UserProvider>
     </Router>
   );
 }
