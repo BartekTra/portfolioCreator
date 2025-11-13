@@ -3,12 +3,16 @@ import { useNavigate } from "react-router-dom";
 import api from "../axios";
 import { Plus, Image as ImageIcon } from "lucide-react";
 import MainPage from "./MainPage";
+import ProjectView from "./ProjectView";
 
 function ProjectsList() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  useEffect(()=>{
+    console.log(projects);
+  },[projects])
 
   useEffect(() => {
     fetchProjects();
@@ -84,7 +88,9 @@ function ProjectsList() {
         {/* Lista projektów */}
         {projects.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <p className="text-gray-600 mb-4">Nie masz jeszcze żadnych projektów.</p>
+            <p className="text-gray-600 mb-4">
+              Nie masz jeszcze żadnych projektów.
+            </p>
             <button
               onClick={() => navigate("/projects/new")}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -93,79 +99,9 @@ function ProjectsList() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="space-y-6">
             {projects.map((project) => (
-              <div
-                key={project.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => navigate(`/projects/${project.id}`)}
-              >
-                {/* Zdjęcie */}
-                {project.images && project.images.length > 0 ? (
-                  <div className="h-48 overflow-hidden">
-                    <img
-                      src={project.images[0]}
-                      alt={project.data?.title || "Project"}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="h-48 bg-gray-200 flex items-center justify-center">
-                    <ImageIcon size={48} className="text-gray-400" />
-                  </div>
-                )}
-
-                {/* Treść */}
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                    {project.data?.title || "Bez tytułu"}
-                  </h2>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {project.data?.description || "Brak opisu"}
-                  </p>
-
-                  {/* Technologie */}
-                  {project.data?.technologies && project.data.technologies.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.data.technologies.slice(0, 3).map((tech, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                      {project.data.technologies.length > 3 && (
-                        <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
-                          +{project.data.technologies.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Akcje */}
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/projects/${project.id}`);
-                      }}
-                      className="flex-1 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
-                    >
-                      Zobacz
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(project.id);
-                      }}
-                      className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700"
-                    >
-                      Usuń
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProjectView key={project.id} project={project} />
             ))}
           </div>
         )}
@@ -175,4 +111,3 @@ function ProjectsList() {
 }
 
 export default ProjectsList;
-

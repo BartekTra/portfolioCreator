@@ -7,7 +7,8 @@ import EditProjectForm from "./EditProjectForm";
 import MainPage from "./MainPage";
 import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
-
+import DynamicProjectForm from "./DynamicProjectForm";
+import ProjectView from "./ProjectView";
 function AppRoutes() {
   return (
     <Routes>
@@ -15,8 +16,8 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/projects" element={<ProjectsList />} />
-      <Route path="/projects/new" element={<NewProjectForm />} />
-      <Route path="/projects/:id" element={<ProjectDetails />} />
+      <Route path="/projects/new" element={<DynamicProjectForm />} />
+      <Route path="/projects/:id" element={<ProjectView />} />
       <Route path="/projects/:id/edit" element={<EditProjectForm />} />
     </Routes>
   );
