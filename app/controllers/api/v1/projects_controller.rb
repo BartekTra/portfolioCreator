@@ -24,7 +24,7 @@ module Api
         # Walidacja podstawowa
         unless valid_project_data?(project_data)
           render json: {
-            error: "Invalid project data. Must include at least one title section."
+            error: "Projekt musi zawierac tytul"
           }, status: :unprocessable_entity
           return
         end
@@ -52,7 +52,7 @@ module Api
 
         unless valid_project_data?(project_data)
           render json: {
-            error: "Invalid project data. Must include at least one title section."
+            error: "Projekt musi zawierac tytul"
           }, status: :unprocessable_entity
           return
         end
@@ -112,12 +112,8 @@ module Api
         images_param = params[:images]
         return unless images_param.present?
 
-        Rails.logger.info "🖼️  Rozpoczynam dodawanie zdjęć..."
-        Rails.logger.info "Images param type: #{images_param.class}"
-
         # Konwertuj ActionController::Parameters na zwykły Hash
         images_hash = images_param.to_unsafe_h
-        Rails.logger.info "Images keys: #{images_hash.keys.inspect}"
 
         # Obsługa hash z kluczami w formacie: "SECTION_ID_FILE_INDEX"
         images_hash.each do |key, file|
@@ -143,11 +139,7 @@ module Api
               section_type: section ? section["type"] : "unknown"
             }
           )
-
-          Rails.logger.info "  ✅ Attached: #{file.original_filename}"
         end
-
-        Rails.logger.info "🎉 Dodano #{@project.images.count} zdjęć do projektu ##{@project.id}"
       end
 
       def project_json(project)

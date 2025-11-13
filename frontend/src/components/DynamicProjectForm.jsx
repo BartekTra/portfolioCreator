@@ -3,12 +3,12 @@ import { Plus, Trash2, GripVertical } from "lucide-react";
 import api from "../axios";
 
 const SECTION_TYPES = {
-  title: { label: "Tytuł", icon: "📝", multiple: false },
-  description: { label: "Opis", icon: "📄", multiple: true },
-  technologies: { label: "Technologie", icon: "⚙️", multiple: false },
-  image: { label: "Zdjęcie", icon: "🖼️", multiple: true },
-  github_url: { label: "Link GitHub", icon: "🔗", multiple: false },
-  live_url: { label: "Link Live", icon: "🌐", multiple: false },
+  title: { label: "Tytuł", multiple: false },
+  description: { label: "Opis", multiple: true },
+  technologies: { label: "Technologie", multiple: false },
+  image: { label: "Zdjęcie", multiple: true },
+  github_url: { label: "Link GitHub", multiple: false },
+  live_url: { label: "Link Live", multiple: false },
 };
 
 function DynamicProjectForm() {
@@ -114,7 +114,7 @@ function DynamicProjectForm() {
       });
 
       // Debug: Zobacz co wysyłamy
-      console.log("📤 Wysyłane dane:");
+      console.log("Wysyłane dane:");
       console.log("JSON data:", projectData);
       console.log("FormData entries:");
       for (let [key, value] of formData.entries()) {
@@ -127,13 +127,13 @@ function DynamicProjectForm() {
         },
       });
       
-      console.log("✅ Odpowiedź z serwera:", response.data);
+      console.log("Odpowiedź z serwera:", response.data);
       setSuccess(true);
       
       // Opcjonalnie: przekieruj po sukcesie
       // setTimeout(() => navigate(`/projects/${response.data.id}`), 2000);
     } catch (err) {
-      console.error("❌ Błąd podczas tworzenia projektu:", err);
+      console.error("Błąd podczas tworzenia projektu:", err);
       setError(
         err.response?.data?.error || 
         err.response?.data?.errors?.join(", ") ||
@@ -195,7 +195,7 @@ function DynamicProjectForm() {
           <textarea
             value={section.value}
             onChange={(e) => updateSection(section.id, e.target.value)}
-            placeholder="Opisz swój projekt..."
+            placeholder="Opisz swój projekt"
             rows={4}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
@@ -276,7 +276,7 @@ function DynamicProjectForm() {
         <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              🚀 Zbuduj swój projekt
+              Zbuduj swój projekt
             </h1>
             <p className="text-gray-600">
               Dodawaj sekcje i dostosuj projekt do swoich potrzeb
@@ -292,7 +292,7 @@ function DynamicProjectForm() {
           {success && (
             <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
               <p className="text-green-700 font-medium">
-                ✅ Projekt utworzony pomyślnie! Sprawdź konsolę przeglądarki dla szczegółów.
+                Projekt utworzony  Sprawdź konsolę przeglądarki dla szczegółów.
               </p>
             </div>
           )}
@@ -327,7 +327,7 @@ function DynamicProjectForm() {
                 disabled={loading}
                 className="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {loading ? "⏳ Tworzenie..." : "🎉 Utwórz projekt"}
+                {loading ? "Tworzeni.." : "Utwórz projekt"}
               </button>
               <button
                 onClick={() =>
@@ -344,7 +344,7 @@ function DynamicProjectForm() {
 
           <details className="mt-8 p-4 bg-gray-100 rounded-lg">
             <summary className="cursor-pointer font-semibold text-gray-700 hover:text-gray-900">
-              🔍 Podgląd struktury danych (JSON)
+              Podgląd json
             </summary>
             <pre className="mt-4 p-4 bg-white rounded border border-gray-300 overflow-x-auto text-xs">
               {JSON.stringify(prepareSubmitData(), null, 2)}
@@ -353,7 +353,7 @@ function DynamicProjectForm() {
 
           <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-sm text-blue-800">
-              💡 <strong>Tip:</strong> Otwórz konsolę przeglądarki (F12), aby zobaczyć szczegóły wysyłanych danych i odpowiedzi z serwera.
+              Otwórz konsolę
             </p>
           </div>
         </div>

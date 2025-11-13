@@ -30,14 +30,12 @@ function NewProjectForm() {
     setError(null);
 
     try {
-      // Walidacja wymaganych pól
       if (!formData.title.trim()) {
         setError("Tytuł projektu jest wymagany");
         setLoading(false);
         return;
       }
 
-      // Konwersja technologies z string na array
       const technologiesArray = formData.technologies
         .split(",")
         .map((tech) => tech.trim())
