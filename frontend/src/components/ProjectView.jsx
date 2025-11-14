@@ -4,11 +4,11 @@ function ProjectView({ project }) {
   const renderSection = (section) => {
     switch (section.type) {
       case "title":
-        return <h1 className="text-4xl font-bold">{section.value}</h1>;
+        return <h1 className="text-4xl font-bold dark:text-gray-100">{section.value}</h1>;
 
       case "description":
         return (
-          <p className="text-gray-700 whitespace-pre-wrap">{section.value}</p>
+          <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{section.value}</p>
         );
 
       case "technologies":
@@ -17,7 +17,7 @@ function ProjectView({ project }) {
             {section.value.map((tech, i) => (
               <span
                 key={i}
-                className="px-3 py-1 bg-blue-100 text-blue-700 rounded"
+                className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded"
               >
                 {tech}
               </span>
@@ -46,7 +46,7 @@ function ProjectView({ project }) {
         return (
           <a
             href={section.value}
-            className="text-blue-600 hover:underline flex items-center gap-2"
+            className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-2"
           >
              Zobacz kod na GitHub
           </a>
@@ -56,7 +56,7 @@ function ProjectView({ project }) {
         return (
           <a
             href={section.value}
-            className="text-blue-600 hover:underline flex items-center gap-2"
+            className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-2"
           >
              Zobacz na żywo
           </a>
@@ -72,7 +72,7 @@ function ProjectView({ project }) {
       {project.data.sections
         .sort((a, b) => a.order - b.order)
         .map((section) => (
-          <div key={section.id} className="p-4 bg-white rounded-lg shadow">
+          <div key={section.id} className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700">
             {renderSection(section)}
           </div>
         ))}

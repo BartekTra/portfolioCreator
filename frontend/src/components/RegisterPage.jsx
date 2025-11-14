@@ -80,13 +80,13 @@ const Register = () => {
   return secondStageView ? (
     <RegisterSecondStage chosenEmail={formData.email} chosenPassword={formData.password}/>
   ) : (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
           <div className="text-center">
-            <div className="mx-auto h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+            <div className="mx-auto h-12 w-12 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center mb-4">
               <svg
-                className="h-6 w-6 text-indigo-600"
+                className="h-6 w-6 text-indigo-600 dark:text-indigo-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -99,18 +99,18 @@ const Register = () => {
                 />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               Utwórz konto
             </h2>
-            <p className="text-gray-600">Dołącz do nas już dziś</p>
+            <p className="text-gray-600 dark:text-gray-300">Dołącz do nas już dziś</p>
           </div>
 
           {errors.length > 0 && (
-            <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
+            <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 dark:border-red-500 p-4 rounded-md">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg
-                    className="h-5 w-5 text-red-400"
+                    className="h-5 w-5 text-red-400 dark:text-red-500"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -122,7 +122,7 @@ const Register = () => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <ul className="text-sm text-red-700 space-y-1">
+                  <ul className="text-sm text-red-700 dark:text-red-400 space-y-1">
                     {errors.map((error, index) => (
                       <li key={index}>{error}</li>
                     ))}
@@ -136,7 +136,7 @@ const Register = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 Adres email
               </label>
@@ -147,7 +147,7 @@ const Register = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="nazwa@example.com"
               />
             </div>
@@ -155,7 +155,7 @@ const Register = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 Hasło
               </label>
@@ -166,7 +166,7 @@ const Register = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Wprowadź hasło"
               />
             </div>
@@ -174,7 +174,7 @@ const Register = () => {
             <div>
               <label
                 htmlFor="passwordConfirmation"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 Potwierdź hasło
               </label>
@@ -185,7 +185,7 @@ const Register = () => {
                 value={formData.passwordConfirmation}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Powtórz hasło"
               />
             </div>
@@ -195,8 +195,8 @@ const Register = () => {
               disabled={loading}
               className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white transition-all duration-200 ${
                 loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 hover:shadow-lg transform hover:-translate-y-0.5"
+                  ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
+                  : "bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-indigo-500 hover:shadow-lg transform hover:-translate-y-0.5"
               }`}
             >
               {loading ? (
@@ -230,12 +230,12 @@ const Register = () => {
           </form>
 
           <div className="text-center">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Masz już konto?{" "}
               <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200 underline decoration-2 underline-offset-2 hover:decoration-indigo-500"
+                className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors duration-200 underline decoration-2 underline-offset-2 hover:decoration-indigo-500"
               >
                 Zaloguj się
               </button>

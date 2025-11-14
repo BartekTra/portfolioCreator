@@ -78,13 +78,13 @@ const handleSubmit = async (e) => {
 };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
           <div className="text-center">
-            <div className="mx-auto h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+            <div className="mx-auto h-12 w-12 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center mb-4">
               <svg
-                className="h-6 w-6 text-indigo-600"
+                className="h-6 w-6 text-indigo-600 dark:text-indigo-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -97,17 +97,17 @@ const handleSubmit = async (e) => {
                 />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               Dokończ rejestrację
             </h2>
-            <p className="text-gray-600">Uzupełnij resztę swoich danych!</p>
+            <p className="text-gray-600 dark:text-gray-300">Uzupełnij resztę swoich danych!</p>
           </div>
 
           <form className="space-y-6">
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 Nazwa użytkownika
               </label>
@@ -117,14 +117,14 @@ const handleSubmit = async (e) => {
                 name="nickname"
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Podaj Nazwę Użytkownika"
               />
             </div>
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 Imię
               </label>
@@ -133,20 +133,20 @@ const handleSubmit = async (e) => {
                 name="firstName"
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Twoje Imię"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nazwisko
               </label>
               <input
                 name="surname"
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Twoje Nazwisko"
               />
             </div>
@@ -154,11 +154,11 @@ const handleSubmit = async (e) => {
             <div>
               <label
                 htmlFor="image"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Wybierz zdjęcie profilowe!
               </label>
-              <label className="text-gray-500 text-xs mb-4 block">
+              <label className="text-gray-500 dark:text-gray-400 text-xs mb-4 block">
                 (lub pomiń, jeżeli chcesz to zrobić później)
               </label>
 
@@ -190,7 +190,7 @@ const handleSubmit = async (e) => {
                     id="file-upload"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                   />
                 </label>
               )}
@@ -207,7 +207,7 @@ const handleSubmit = async (e) => {
             <button
               type="submit"
               onClick={handleSubmit}
-              className={`w-full flex justify-center py-3 px-4 border rounded-lg text-sm font-medium text-white transition-all duration-200 bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 hover:shadow-lg transform hover:-translate-y-0.5"
+              className={`w-full flex justify-center py-3 px-4 border rounded-lg text-sm font-medium text-white transition-all duration-200 bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-indigo-500 hover:shadow-lg transform hover:-translate-y-0.5"
               }`}
             >
               "Zarejestruj się"

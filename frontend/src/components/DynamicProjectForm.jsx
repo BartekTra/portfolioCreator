@@ -158,23 +158,23 @@ function DynamicProjectForm() {
     return (
       <div
         key={section.id}
-        className="bg-white border-2 border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+        className="bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
       >
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center space-x-2">
-            <GripVertical size={20} className="text-gray-400 cursor-move" />
+            <GripVertical size={20} className="text-gray-400 dark:text-gray-500 cursor-move" />
             <span className="text-lg">{config.icon}</span>
-            <h3 className="font-semibold text-gray-700">
+            <h3 className="font-semibold text-gray-700 dark:text-gray-200">
               {config.label}
               {section.type === "title" && (
-                <span className="text-red-500 ml-1">*</span>
+                <span className="text-red-500 dark:text-red-400 ml-1">*</span>
               )}
             </h3>
           </div>
           {section.type !== "title" && (
             <button
               onClick={() => removeSection(section.id)}
-              className="p-1 text-red-600 hover:bg-red-50 rounded"
+              className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
             >
               <Trash2 size={18} />
             </button>
@@ -187,7 +187,7 @@ function DynamicProjectForm() {
             value={section.value}
             onChange={(e) => updateSection(section.id, e.target.value)}
             placeholder="Nazwa projektu"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
           />
         )}
 
@@ -197,7 +197,7 @@ function DynamicProjectForm() {
             onChange={(e) => updateSection(section.id, e.target.value)}
             placeholder="Opisz swój projekt"
             rows={4}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
           />
         )}
 
@@ -208,9 +208,9 @@ function DynamicProjectForm() {
               value={section.value}
               onChange={(e) => updateSection(section.id, e.target.value)}
               placeholder="React, Node.js, MongoDB (oddziel przecinkami)"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
             />
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               Oddziel technologie przecinkami
             </p>
           </div>
@@ -223,11 +223,11 @@ function DynamicProjectForm() {
               multiple
               accept="image/*"
               onChange={(e) => handleImageChange(section.id, e.target.files)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100"
             />
             {section.value.length > 0 && (
               <div className="mt-3">
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                   Wybrano {section.value.length}{" "}
                   {section.value.length === 1 ? "zdjęcie" : "zdjęć"}
                 </p>
@@ -235,7 +235,7 @@ function DynamicProjectForm() {
                   {section.value.map((file, idx) => (
                     <div
                       key={idx}
-                      className="relative h-20 bg-gray-100 rounded border border-gray-300 overflow-hidden"
+                      className="relative h-20 bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 overflow-hidden"
                     >
                       <img
                         src={URL.createObjectURL(file)}
@@ -263,7 +263,7 @@ function DynamicProjectForm() {
                 ? "https://github.com/username/repo"
                 : "https://example.com"
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
           />
         )}
       </div>
@@ -271,27 +271,27 @@ function DynamicProjectForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
               Zbuduj swój projekt
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Dodawaj sekcje i dostosuj projekt do swoich potrzeb
             </p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
-              <p className="text-red-700 font-medium">{error}</p>
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 rounded-lg">
+              <p className="text-red-700 dark:text-red-400 font-medium">{error}</p>
             </div>
           )}
 
           {success && (
-            <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
-              <p className="text-green-700 font-medium">
+            <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-400 rounded-lg">
+              <p className="text-green-700 dark:text-green-400 font-medium">
                 Projekt utworzony  Sprawdź konsolę przeglądarki dla szczegółów.
               </p>
             </div>
@@ -302,8 +302,8 @@ function DynamicProjectForm() {
               {sections.map((section, index) => renderSection(section, index))}
             </div>
 
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
-              <p className="text-sm font-medium text-gray-700 mb-3">
+            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-700">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">
                 Dodaj kolejną sekcję:
               </p>
               <div className="flex flex-wrap gap-2">
@@ -311,21 +311,21 @@ function DynamicProjectForm() {
                   <button
                     key={type}
                     onClick={() => addSection(type)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-600 border-2 border-gray-300 dark:border-gray-500 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                   >
                     <span>{config.icon}</span>
-                    <span className="text-sm font-medium">{config.label}</span>
+                    <span className="text-sm font-medium dark:text-gray-200">{config.label}</span>
                     <Plus size={16} />
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="flex space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? "Tworzeni.." : "Utwórz projekt"}
               </button>
@@ -335,24 +335,24 @@ function DynamicProjectForm() {
                     { id: Date.now(), type: "title", value: "", order: 0 },
                   ])
                 }
-                className="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                className="px-6 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
               >
                 Resetuj
               </button>
             </div>
           </div>
 
-          <details className="mt-8 p-4 bg-gray-100 rounded-lg">
-            <summary className="cursor-pointer font-semibold text-gray-700 hover:text-gray-900">
+          <details className="mt-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <summary className="cursor-pointer font-semibold text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-gray-100">
               Podgląd json
             </summary>
-            <pre className="mt-4 p-4 bg-white rounded border border-gray-300 overflow-x-auto text-xs">
+            <pre className="mt-4 p-4 bg-white dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-600 overflow-x-auto text-xs dark:text-gray-300">
               {JSON.stringify(prepareSubmitData(), null, 2)}
             </pre>
           </details>
 
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-800">
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <p className="text-sm text-blue-800 dark:text-blue-300">
               Otwórz konsolę
             </p>
           </div>

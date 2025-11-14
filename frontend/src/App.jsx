@@ -7,12 +7,15 @@ import MainPage from "./components/MainPage";
 import AppRoutes from "./components/AppRoutes";
 import { BrowserRouter as Router } from "react-router-dom";
 import { UserProvider } from "./context/UserContext.jsx";
+import { DarkModeProvider } from "./context/DarkModeContext.jsx";
 function App() {
   return (
     <Router>
-      <UserProvider>
-        <AppRoutes />
-      </UserProvider>
+      <DarkModeProvider>
+        <UserProvider>
+          <AppRoutes />
+        </UserProvider>
+      </DarkModeProvider>
     </Router>
   );
 }
