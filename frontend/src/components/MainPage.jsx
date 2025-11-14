@@ -48,9 +48,15 @@ function MainPage() {
             {/* Prawa strona - dane użytkownika i przycisk trybu ciemnego */}
             <div className="flex items-center space-x-3">
               <button
-                onClick={toggleDarkMode}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("Toggle dark mode clicked, current state:", isDarkMode);
+                  toggleDarkMode();
+                }}
                 className="flex items-center justify-center w-10 h-10 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
                 aria-label={isDarkMode ? "Przełącz na tryb jasny" : "Przełącz na tryb ciemny"}
+                type="button"
               >
                 {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
               </button>
