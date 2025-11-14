@@ -1,13 +1,8 @@
 // src/components/Register.jsx
 import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-
-const Register = ({
-  onSwitchToLogin,
-  onSwitchToRegisterSecondStage,
-  setEmail,
-  setPassword,
-}) => {
+import RegisterSecondStage from "./RegisterSecondStage";
+const Register = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -18,29 +13,33 @@ const Register = ({
   });
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [secondStageView, setSecondStageView] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const emailTakenError = "Email is already taken!";
     const passwordMatchError = "Passwords must be the same!";
 
-    const result = await fetch("http://localhost:3000/api/v1/user/check_email_availability", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.email
-      })
-    });
-    const data = await result.json()
-    console.log(data)
+    const result = await fetch(
+      "http://localhost:3000/api/v1/user/check_email_availability",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+        }),
+      }
+    );
+    const data = await result.json();
+    console.log(data);
 
     if (data.available == false) {
       setErrors((prevErrors) => {
@@ -68,16 +67,19 @@ const Register = ({
       );
     }
 
-    if(data.available == true && formData.password === formData.passwordConfirmation){
-      setEmail(formData.email);
-      setPassword(formData.password);
-      onSwitchToRegisterSecondStage();
+    if (
+      data.available == true &&
+      formData.password === formData.passwordConfirmation
+    ) {
+      setSecondStageView(true);
     }
   };
-  
+
   const navigate = useNavigate();
 
-  return (
+  return secondStageView ? (
+    <RegisterSecondStage chosenEmail={formData.email} chosenPassword={formData.password}/>
+  ) : (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">

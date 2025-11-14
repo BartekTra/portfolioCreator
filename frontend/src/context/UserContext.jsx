@@ -17,6 +17,7 @@ export const UserProvider = ({ children }) => {
 
       const data = await response.data;
       setUser(data);
+      navigate("/");
     } catch (error) {
       console.error("Error fetching user:", error);
       setUser(null);
