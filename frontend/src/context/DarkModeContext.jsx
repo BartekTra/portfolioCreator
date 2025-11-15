@@ -27,17 +27,13 @@ export const DarkModeProvider = ({ children }) => {
 
   useEffect(() => {
     // Zastosuj klasę dark do elementu html
-    console.log("Dark mode changed to:", isDarkMode);
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
-      console.log("Added 'dark' class to html");
     } else {
       document.documentElement.classList.remove("dark");
-      console.log("Removed 'dark' class from html");
     }
     // Zapisz preferencje użytkownika do localStorage
     localStorage.setItem("darkMode", isDarkMode.toString());
-    console.log("Updated localStorage to:", isDarkMode);
   }, [isDarkMode]);
 
   // Nasłuchuj zmian preferencji przeglądarki, ale tylko jeśli użytkownik nie ustawił własnej preferencji
@@ -77,10 +73,8 @@ export const DarkModeProvider = ({ children }) => {
     console.log("toggleDarkMode called, current state:", isDarkMode);
     setIsDarkMode((prev) => {
       const newValue = !prev;
-      console.log("Setting dark mode to:", newValue);
       // Zapisz natychmiast do localStorage
       localStorage.setItem("darkMode", newValue.toString());
-      console.log("Saved to localStorage:", newValue);
       return newValue;
     });
   };
