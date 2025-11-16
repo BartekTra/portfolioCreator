@@ -1,14 +1,33 @@
-import React, { useState } from "react";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Trash2, GripVertical, Type, FileText, Code, Image as ImageIcon, Github, ExternalLink, X } from "lucide-react";
 import api from "../axios";
 
 const SECTION_TYPES = {
-  title: { label: "Tytuł", multiple: false },
-  description: { label: "Opis", multiple: true },
-  technologies: { label: "Technologie", multiple: false },
-  image: { label: "Zdjęcie", multiple: true },
-  github_url: { label: "Link GitHub", multiple: false },
-  live_url: { label: "Link Live", multiple: false },
+  title: { label: "Tytuł", multiple: false, icon: <Type size={18} /> },
+  description: { label: "Opis", multiple: true, icon: <FileText size={18} /> },
+  technologies: { label: "Technologie", multiple: false, icon: <Code size={18} /> },
+  image: { label: "Zdjęcie", multiple: true, icon: <ImageIcon size={18} /> },
+  github_url: { label: "Link GitHub", multiple: false, icon: <Github size={18} /> },
+  live_url: { label: "Link Live", multiple: false, icon: <ExternalLink size={18} /> },
+};
+
+const SECTION_CATEGORIES = {
+  podstawowe: {
+    label: "Podstawowe",
+    sections: ["title", "description"],
+  },
+  technologie: {
+    label: "Technologie",
+    sections: ["technologies"],
+  },
+  linki: {
+    label: "Linki",
+    sections: ["github_url", "live_url"],
+  },
+  multimedia: {
+    label: "Multimedia",
+    sections: ["image"],
+  },
 };
 
 function DynamicProjectForm() {
@@ -18,6 +37,8 @@ function DynamicProjectForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(Object.keys(SECTION_CATEGORIES)[0]);
 
   const addSection = (type) => {
     const newSection = {
@@ -27,7 +48,27 @@ function DynamicProjectForm() {
       order: sections.length,
     };
     setSections([...sections, newSection]);
+    setIsModalOpen(false);
   };
+
+  // Zamykanie modala po kliknięciu w tło
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsModalOpen(false);
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [isModalOpen]);
 
   const removeSection = (id) => {
     setSections(sections.filter((s) => s.id !== id));
@@ -150,6 +191,19 @@ function DynamicProjectForm() {
       if (config.multiple) return true;
       return !existingTypes.includes(type);
     });
+  };
+
+  const getAvailableSectionsInCategory = (categoryKey) => {
+    const category = SECTION_CATEGORIES[categoryKey];
+    if (!category) return [];
+    
+    const existingTypes = sections.map((s) => s.type);
+    return category.sections
+      .map((type) => [type, SECTION_TYPES[type]])
+      .filter(([type, config]) => {
+        if (config.multiple) return true;
+        return !existingTypes.includes(type);
+      });
   };
 
   const renderSection = (section, index) => {
@@ -303,23 +357,108 @@ function DynamicProjectForm() {
             </div>
 
             <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-700">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">
-                Dodaj kolejną sekcję:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {getAvailableTypes().map(([type, config]) => (
-                  <button
-                    key={type}
-                    onClick={() => addSection(type)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-600 border-2 border-gray-300 dark:border-gray-500 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                  >
-                    <span>{config.icon}</span>
-                    <span className="text-sm font-medium dark:text-gray-200">{config.label}</span>
-                    <Plus size={16} />
-                  </button>
-                ))}
-              </div>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center space-x-2 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
+              >
+                <Plus size={20} />
+                <span>Dodaj sekcję</span>
+              </button>
             </div>
+
+            {/* Modal */}
+            {isModalOpen && (
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/30 backdrop-blur-sm"
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) {
+                    setIsModalOpen(false);
+                  }
+                }}
+              >
+                <div
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                      Dodaj sekcję
+                    </h2>
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                    >
+                      <X size={24} />
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex flex-1 overflow-hidden">
+                    {/* Left Column - Categories */}
+                    <div className="w-64 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 overflow-y-auto">
+                      <div className="p-4 space-y-2">
+                        {Object.entries(SECTION_CATEGORIES).map(([key, category]) => {
+                          const availableCount = getAvailableSectionsInCategory(key).length;
+                          return (
+                            <button
+                              key={key}
+                              onClick={() => setSelectedCategory(key)}
+                              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                                selectedCategory === key
+                                  ? "bg-blue-600 dark:bg-blue-500 text-white font-semibold"
+                                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span>{category.label}</span>
+                                {availableCount > 0 && (
+                                  <span
+                                    className={`text-xs px-2 py-1 rounded-full ${
+                                      selectedCategory === key
+                                        ? "bg-blue-500 dark:bg-blue-600 text-white"
+                                        : "bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
+                                    }`}
+                                  >
+                                    {availableCount}
+                                  </span>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Right Panel - Sections */}
+                    <div className="flex-1 overflow-y-auto p-6">
+                      {getAvailableSectionsInCategory(selectedCategory).length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {getAvailableSectionsInCategory(selectedCategory).map(([type, config]) => (
+                            <button
+                              key={type}
+                              onClick={() => addSection(type)}
+                              className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left"
+                            >
+                              <span className="text-gray-600 dark:text-gray-400">{config.icon}</span>
+                              <span className="font-medium text-gray-700 dark:text-gray-200">
+                                {config.label}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <p className="text-gray-500 dark:text-gray-400 text-center">
+                            Wszystkie dostępne sekcje z tej kategorii zostały już dodane
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
               <button
