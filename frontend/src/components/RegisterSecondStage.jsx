@@ -1,20 +1,17 @@
 import React from "react";
 import { useState } from "react";
 import { useRef } from "react";
-import { REGISTER_USER } from "../graphql/mutations/users/registerUser";
-import { useMutation } from "@apollo/client/react";
+import api from "../axios";
 const RegisterSecondStage = (chosenEmail, chosenPassword) => {
-  console.log(chosenEmail, chosenPassword);
+  console.log(chosenEmail.chosenEmail);
   const [formData, setFormData] = useState({
-    email: chosenEmail,
-    password: chosenPassword,
+    email: chosenEmail.chosenEmail,
+    password: chosenEmail.chosenPassword,
     nickname: "",
     firstName: "",
     surname: "",
   });
   const [selectedImage, setSelectedImage] = useState(null);
-
-  const [registerUser, {loading, error, data}] = useMutation(REGISTER_USER);
 
   const fileInputRef = useRef(null);
 
@@ -38,20 +35,56 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const formDataToSend = new FormData();
+  formDataToSend.append("email", formData.email);
+  formDataToSend.append("password", formData.password);
+  formDataToSend.append("password_confirmation", formData.password);
+  formDataToSend.append("first_name", formData.firstName);
+  formDataToSend.append("surname", formData.surname);
+  formDataToSend.append("nickname", formData.nickname);
+
+  if (selectedImage) {
+    formDataToSend.append("avatar", selectedImage);
   }
 
+  try {
+    const response = await api.post(
+      "http://localhost:3000/api/v1/auth",
+      formDataToSend,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    const data = response.data;
+
+    if (data.status === "success") {
+      localStorage.setItem("access-token", data.tokens["access-token"]);
+      localStorage.setItem("client", data.tokens.client);
+      localStorage.setItem(
+        "authorization",
+        data.tokens.authorization.replace("Bearer ", "")
+      );
+      window.location.reload();
+    }
+  } catch (err) {
+    console.error("Błąd przy wysyłaniu danych:", err.response?.data || err);
+  }
+};
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
           <div className="text-center">
-            <div className="mx-auto h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+            <div className="mx-auto h-12 w-12 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center mb-4">
               <svg
-                className="h-6 w-6 text-indigo-600"
+                className="h-6 w-6 text-indigo-600 dark:text-indigo-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -64,17 +97,17 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
                 />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               Dokończ rejestrację
             </h2>
-            <p className="text-gray-600">Uzupełnij resztę swoich danych!</p>
+            <p className="text-gray-600 dark:text-gray-300">Uzupełnij resztę swoich danych!</p>
           </div>
 
           <form className="space-y-6">
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 Nazwa użytkownika
               </label>
@@ -84,14 +117,14 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
                 name="nickname"
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Podaj Nazwę Użytkownika"
               />
             </div>
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 Imię
               </label>
@@ -100,22 +133,20 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
                 name="firstName"
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Twoje Imię"
               />
             </div>
 
             <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nazwisko
               </label>
               <input
                 name="surname"
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Twoje Nazwisko"
               />
             </div>
@@ -123,11 +154,11 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
             <div>
               <label
                 htmlFor="image"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Wybierz zdjęcie profilowe!
               </label>
-              <label className="text-gray-500 text-xs mb-4 block">
+              <label className="text-gray-500 dark:text-gray-400 text-xs mb-4 block">
                 (lub pomiń, jeżeli chcesz to zrobić później)
               </label>
 
@@ -159,7 +190,7 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
                     id="file-upload"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
                   />
                 </label>
               )}
@@ -173,46 +204,15 @@ const RegisterSecondStage = (chosenEmail, chosenPassword) => {
               />
             </div>
 
-            {/* <button
+            <button
               type="submit"
-              //disabled={loading}
-              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white transition-all duration-200 ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 hover:shadow-lg transform hover:-translate-y-0.5"
+              onClick={handleSubmit}
+              className={`w-full flex justify-center py-3 px-4 border rounded-lg text-sm font-medium text-white transition-all duration-200 bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-indigo-500 hover:shadow-lg transform hover:-translate-y-0.5"
               }`}
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Rejestrowanie...
-                </div>
-              ) : (
-                "Zarejestruj się"
-              )}
-            </button> */}
+              "Zarejestruj się"
+            </button>
           </form>
-
-
         </div>
       </div>
     </div>
