@@ -40,7 +40,4 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
-gem "graphql"
-
-gem "apollo_upload_server", "2.1.6"
 gem "image_processing", ">= 1.2"

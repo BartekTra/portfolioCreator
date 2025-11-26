@@ -44,11 +44,11 @@ DeviseTokenAuth.setup do |config|
   # Makes it possible to change the headers names
   config.headers_names = {
     'authorization': "authorization",
-    'access-token': "accessToken",
+    'access-token': "access-token",
     'client': "client",
     'expiry': "expiry",
     'uid': "uid",
-    'token-type': "tokenType"
+    'token-type': "token-type"
   }
 
   # Makes it possible to use custom uid column

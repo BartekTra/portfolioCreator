@@ -1,12 +1,15 @@
 Rails.application.routes.draw do
-  post "/graphql", to: "graphql#execute"
-  mount_devise_token_auth_for "User", at: "auth"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
-
-  # Defines the root path route ("/")
-  # root "posts#index"
+  namespace :api do
+    namespace :v1 do
+      post "/user/check_email_availability", to: "user/check_email_availability#show"
+      get "/user/current_user", to: "user/current_user#show"
+      resources :projects, only: [ :index, :show, :create, :update, :destroy ]
+      mount_devise_token_auth_for "User", at: "auth", controllers: {
+        registrations: "api/v1/auth/registrations",
+        sessions: "api/v1/auth/sessions"
+      }
+      get "projects/:id/images", to: "projects#images"
+      delete "projects/:id/images/:image_id", to: "projects#destroy_image"
+    end
+  end
 end
