@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../axios";
-import { Plus, Image as ImageIcon } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import MainPage from "./MainPage";
 import ProjectView from "./ProjectView";
 
@@ -10,13 +10,19 @@ function ProjectsList() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  useEffect(()=>{
-    console.log(projects);
-  },[projects])
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    if (projects.length === 0) {
+      setCurrentIndex(0);
+      return;
+    }
+    setCurrentIndex((prev) => Math.min(prev, projects.length - 1));
+  }, [projects.length]);
 
   const fetchProjects = async () => {
     try {
@@ -38,11 +44,36 @@ function ProjectsList() {
 
     try {
       await api.delete(`/projects/${id}`);
-      setProjects(projects.filter((project) => project.id !== id));
+      setProjects((prevProjects) => {
+        const updatedProjects = prevProjects.filter((project) => project.id !== id);
+        setCurrentIndex((prev) => {
+          if (updatedProjects.length === 0) {
+            return 0;
+          }
+          return Math.min(prev, updatedProjects.length - 1);
+        });
+        return updatedProjects;
+      });
     } catch (err) {
       console.error("Error deleting project:", err);
       alert("Nie udało się usunąć projektu");
     }
+  };
+
+  const handleNext = () => {
+    if (projects.length === 0) return;
+    setCurrentIndex((prev) => (prev + 1) % projects.length);
+  };
+
+  const handlePrev = () => {
+    if (projects.length === 0) return;
+    setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
+  };
+
+  const getProjectTitle = (project) => {
+    const sections = project.data?.sections || [];
+    const titleSection = sections.find((section) => section.type === "title");
+    return titleSection?.value || "Bez tytułu";
   };
 
   if (loading) {
@@ -99,10 +130,74 @@ function ProjectsList() {
             </button>
           </div>
         ) : (
-          <div className="space-y-6">
-            {projects.map((project) => (
-              <ProjectView key={project.id} project={project} />
-            ))}
+          <div className="space-y-8">
+            <div className="relative">
+              <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                <div
+                  className="flex transition-transform duration-500 ease-out"
+                  style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                >
+                  {projects.map((project) => (
+                    <div key={project.id} className="w-full flex-shrink-0 px-2 sm:px-6">
+                      <ProjectView project={project} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {projects.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/80 dark:text-gray-100"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/80 dark:text-gray-100"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  Projekt {currentIndex + 1} / {projects.length}
+                </p>
+                <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                  {getProjectTitle(projects[currentIndex])}
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400">
+                  Template: {projects[currentIndex]?.template_key || "Nieznany"}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => navigate(`/projects/${projects[currentIndex].id}`)}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                >
+                  Szczegóły
+                </button>
+                <button
+                  onClick={() => navigate(`/projects/${projects[currentIndex].id}/edit`)}
+                  className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-blue-700 transition hover:bg-blue-100 dark:border-blue-500/40 dark:bg-blue-500/10 dark:text-blue-200"
+                >
+                  Edytuj
+                </button>
+                <button
+                  onClick={() => handleDelete(projects[currentIndex].id)}
+                  className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-red-700 transition hover:bg-red-100 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
+                >
+                  Usuń
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -111,3 +206,4 @@ function ProjectsList() {
 }
 
 export default ProjectsList;
+

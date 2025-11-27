@@ -1,7 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import ProjectsList from "./ProjectsList";
-import NewProjectForm from "./NewProjectForm";
-import ProjectDetails from "./ProjectDetails";
 import EditProjectForm from "./EditProjectForm";
 import MainPage from "./MainPage";
 import LoginPage from "./LoginPage";

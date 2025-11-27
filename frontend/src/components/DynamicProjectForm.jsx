@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, GripVertical, Type, FileText, Code, Image as ImageIcon, Github, ExternalLink, X } from "lucide-react";
+import { Trash2, GripVertical, Type, FileText, Code, Image as ImageIcon, Github, ExternalLink, X } from "lucide-react";
 import api from "../axios";
+import TemplatePicker from "./TemplatePicker";
+import TemplateCanvas from "./TemplateCanvas";
+import { TEMPLATES } from "../templates/templates";
 
 const SECTION_TYPES = {
   title: { label: "Tytuł", multiple: false, icon: <Type size={18} /> },
@@ -31,24 +34,88 @@ const SECTION_CATEGORIES = {
 };
 
 function DynamicProjectForm() {
-  const [sections, setSections] = useState([
-    { id: Date.now(), type: "title", value: "", order: 0 },
-  ]);
+  const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(Object.keys(SECTION_CATEGORIES)[0]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState(null);
+  const [activeSlotId, setActiveSlotId] = useState(null);
+  const selectedTemplate = selectedTemplateId
+    ? TEMPLATES.find((template) => template.id === selectedTemplateId)
+    : null;
+  const activeSlot = selectedTemplate?.slots.find((slot) => slot.id === activeSlotId);
 
-  const addSection = (type) => {
-    const newSection = {
-      id: Date.now(),
-      type,
-      value: type === "image" ? [] : type === "technologies" ? "" : "",
-      order: sections.length,
-    };
-    setSections([...sections, newSection]);
+  const getDefaultValueForType = (type) => {
+    if (type === "image") return [];
+    return "";
+  };
+
+  const handleTemplateSelect = (templateId) => {
+    if (templateId && templateId === selectedTemplateId) return;
+    setSelectedTemplateId(templateId);
+    setSections([]);
+    setActiveSlotId(null);
     setIsModalOpen(false);
+    setSuccess(false);
+    setSelectedCategory(Object.keys(SECTION_CATEGORIES)[0]);
+  };
+
+  const handleSlotClick = (slotId) => {
+    if (!selectedTemplate) return;
+    setActiveSlotId(slotId);
+    setSelectedCategory(Object.keys(SECTION_CATEGORIES)[0]);
+    setIsModalOpen(true);
+  };
+
+  const handleSlotClear = (slotId) => {
+    setSections((prev) => prev.filter((section) => section.slotId !== slotId));
+    if (activeSlotId === slotId) {
+      closeSlotModal();
+    }
+  };
+
+  const assignSectionToSlot = (type) => {
+    if (!activeSlotId) return;
+    const slotSection = sections.find((section) => section.slotId === activeSlotId);
+    const otherSections = sections.filter((section) => section.slotId !== activeSlotId);
+
+    if (!SECTION_TYPES[type].multiple && otherSections.some((section) => section.type === type)) {
+      return;
+    }
+
+    const templateOrder = selectedTemplate
+      ? selectedTemplate.slots.findIndex((slot) => slot.id === activeSlotId)
+      : sections.length;
+
+    const preservedValue =
+      slotSection && slotSection.type === type ? slotSection.value : getDefaultValueForType(type);
+
+    const nextSection = {
+      id: slotSection?.id || Date.now(),
+      slotId: activeSlotId,
+      type,
+      value:
+        type === "technologies"
+          ? typeof preservedValue === "string"
+            ? preservedValue
+            : ""
+          : preservedValue,
+      order: templateOrder > -1 ? templateOrder : sections.length,
+    };
+
+    const updatedSections = [...otherSections, nextSection].sort(
+      (a, b) => (a.order ?? 0) - (b.order ?? 0),
+    );
+
+    setSections(updatedSections);
+    closeSlotModal();
+  };
+
+  const closeSlotModal = () => {
+    setIsModalOpen(false);
+    setActiveSlotId(null);
   };
 
   // Zamykanie modala po kliknięciu w tło
@@ -71,7 +138,11 @@ function DynamicProjectForm() {
   }, [isModalOpen]);
 
   const removeSection = (id) => {
-    setSections(sections.filter((s) => s.id !== id));
+    const sectionToRemove = sections.find((section) => section.id === id);
+    if (sectionToRemove?.slotId === activeSlotId) {
+      closeSlotModal();
+    }
+    setSections(sections.filter((section) => section.id !== id));
   };
 
   const updateSection = (id, value) => {
@@ -82,7 +153,27 @@ function DynamicProjectForm() {
     updateSection(id, Array.from(files));
   };
 
+  const resetBuilder = () => {
+    setSections([]);
+    setSelectedTemplateId(null);
+    setActiveSlotId(null);
+    setIsModalOpen(false);
+    setError(null);
+    setSuccess(false);
+    setSelectedCategory(Object.keys(SECTION_CATEGORIES)[0]);
+  };
+
   const validate = () => {
+    if (!selectedTemplate) {
+      setError("Wybierz template, aby kontynuować.");
+      return false;
+    }
+
+    if (sections.length === 0) {
+      setError("Dodaj co najmniej jedną sekcję do wybranego template'u.");
+      return false;
+    }
+
     const titleSection = sections.find((s) => s.type === "title");
     if (!titleSection || !titleSection.value.trim()) {
       setError("Tytuł projektu jest wymagany");
@@ -92,13 +183,21 @@ function DynamicProjectForm() {
   };
 
   const prepareSubmitData = () => {
+    const orderedSections = selectedTemplate
+      ? selectedTemplate.slots
+          .map((slot) => sections.find((section) => section.slotId === slot.id))
+          .filter(Boolean)
+      : sections;
+
     const projectData = {
-      sections: sections.map((section, index) => {
+      template_key: selectedTemplateId,
+      sections: orderedSections.map((section, index) => {
         if (section.type === "image") {
           return {
             id: section.id,
             type: section.type,
             order: index,
+            slot_id: section.slotId,
             image_ids: section.value.map((_, idx) => `${section.id}_${idx}`),
           };
         } else if (section.type === "technologies") {
@@ -106,6 +205,7 @@ function DynamicProjectForm() {
             id: section.id,
             type: section.type,
             order: index,
+            slot_id: section.slotId,
             value: section.value
               .split(",")
               .map((tech) => tech.trim())
@@ -116,6 +216,7 @@ function DynamicProjectForm() {
             id: section.id,
             type: section.type,
             order: index,
+            slot_id: section.slotId,
             value: section.value,
           };
         }
@@ -139,8 +240,9 @@ function DynamicProjectForm() {
       const projectData = prepareSubmitData();
       const formData = new FormData();
       
-      // Dodaj dane JSON
+      // Dodaj dane JSON i template
       formData.append("data", JSON.stringify(projectData));
+      formData.append("template_key", selectedTemplateId);
       
       // POPRAWKA: Dodaj zdjęcia w formacie zagnieżdżonym
       // Rails oczekuje: images[KEY] = file
@@ -185,35 +287,29 @@ function DynamicProjectForm() {
     }
   };
 
-  const getAvailableTypes = () => {
-    const existingTypes = sections.map((s) => s.type);
-    return Object.entries(SECTION_TYPES).filter(([type, config]) => {
-      if (config.multiple) return true;
-      return !existingTypes.includes(type);
-    });
-  };
-
-  const getAvailableSectionsInCategory = (categoryKey) => {
+  const getAvailableSectionsInCategory = (categoryKey, slotId = activeSlotId) => {
     const category = SECTION_CATEGORIES[categoryKey];
-    if (!category) return [];
+    if (!category || !slotId) return [];
     
-    const existingTypes = sections.map((s) => s.type);
+    const slotSection = sections.find((section) => section.slotId === slotId);
+    const existingTypes = sections
+      .filter((section) => section.slotId !== slotId)
+      .map((section) => section.type);
+
     return category.sections
       .map((type) => [type, SECTION_TYPES[type]])
       .filter(([type, config]) => {
         if (config.multiple) return true;
+        if (slotSection?.type === type) return true;
         return !existingTypes.includes(type);
       });
   };
 
-  const renderSection = (section, index) => {
+  const renderSection = (section) => {
     const config = SECTION_TYPES[section.type];
 
     return (
-      <div
-        key={section.id}
-        className="bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
-      >
+      <div className="bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:border-blue-300 dark:hover:border-blue-500 transition-colors">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center space-x-2">
             <GripVertical size={20} className="text-gray-400 dark:text-gray-500 cursor-move" />
@@ -351,28 +447,53 @@ function DynamicProjectForm() {
             </div>
           )}
 
-          <div className="space-y-6">
-            <div className="space-y-4">
-              {sections.map((section, index) => renderSection(section, index))}
-            </div>
+          <div className="space-y-8">
+            {!selectedTemplate && (
+              <TemplatePicker
+                selectedTemplateId={selectedTemplateId}
+                onSelect={handleTemplateSelect}
+              />
+            )}
 
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-700">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="flex items-center space-x-2 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
-              >
-                <Plus size={20} />
-                <span>Dodaj sekcję</span>
-              </button>
-            </div>
+            {selectedTemplate && (
+              <div className="space-y-6">
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-900">
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Wybrany template
+                      </p>
+                      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                        {selectedTemplate.name}
+                      </h2>
+                      <p className="text-gray-600 dark:text-gray-300">{selectedTemplate.description}</p>
+                    </div>
+                    <button
+                      onClick={() => handleTemplateSelect(null)}
+                      className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
+                    >
+                      Zmień template
+                    </button>
+                  </div>
+                </div>
+
+                <TemplateCanvas
+                  template={selectedTemplate}
+                  sections={sections}
+                  onSlotClick={handleSlotClick}
+                  renderSection={renderSection}
+                  onClearSlot={handleSlotClear}
+                />
+              </div>
+            )}
 
             {/* Modal */}
-            {isModalOpen && (
+            {isModalOpen && selectedTemplate && (
               <div
                 className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/30 backdrop-blur-sm"
                 onClick={(e) => {
                   if (e.target === e.currentTarget) {
-                    setIsModalOpen(false);
+                    closeSlotModal();
                   }
                 }}
               >
@@ -382,11 +503,16 @@ function DynamicProjectForm() {
                 >
                   {/* Header */}
                   <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                      Dodaj sekcję
-                    </h2>
+                    <div>
+                      <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Dodaj sekcję do slotu
+                      </p>
+                      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                        {activeSlot?.label || "Slot"}
+                      </h2>
+                    </div>
                     <button
-                      onClick={() => setIsModalOpen(false)}
+                      onClick={closeSlotModal}
                       className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                     >
                       <X size={24} />
@@ -437,7 +563,7 @@ function DynamicProjectForm() {
                           {getAvailableSectionsInCategory(selectedCategory).map(([type, config]) => (
                             <button
                               key={type}
-                              onClick={() => addSection(type)}
+                              onClick={() => assignSectionToSlot(type)}
                               className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left"
                             >
                               <span className="text-gray-600 dark:text-gray-400">{config.icon}</span>
@@ -450,7 +576,7 @@ function DynamicProjectForm() {
                       ) : (
                         <div className="flex items-center justify-center h-full">
                           <p className="text-gray-500 dark:text-gray-400 text-center">
-                            Wszystkie dostępne sekcje z tej kategorii zostały już dodane
+                            Brak dostępnych sekcji dla tego slotu w tej kategorii
                           </p>
                         </div>
                       )}
@@ -469,11 +595,7 @@ function DynamicProjectForm() {
                 {loading ? "Tworzeni.." : "Utwórz projekt"}
               </button>
               <button
-                onClick={() =>
-                  setSections([
-                    { id: Date.now(), type: "title", value: "", order: 0 },
-                  ])
-                }
+                onClick={resetBuilder}
                 className="px-6 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
               >
                 Resetuj

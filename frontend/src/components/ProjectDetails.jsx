@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../axios";
-import { ArrowLeft, Edit, Trash2, ExternalLink, Github } from "lucide-react";
+import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import MainPage from "./MainPage";
+import ProjectView from "./ProjectView";
 
 function ProjectDetails() {
   const { id } = useParams();
@@ -40,6 +41,12 @@ function ProjectDetails() {
       console.error("Error deleting project:", err);
       alert("Nie udało się usunąć projektu");
     }
+  };
+
+  const getProjectTitle = () => {
+    const sections = project?.data?.sections || [];
+    const titleSection = sections.find((section) => section.type === "title");
+    return titleSection?.value || "Bez tytułu";
   };
 
   if (loading) {
@@ -81,33 +88,15 @@ function ProjectDetails() {
         </button>
 
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {/* Zdjęcia */}
-          {project.images && project.images.length > 0 && (
-            <div className="mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {project.images.map((imageUrl, idx) => (
-                  <div key={idx} className="overflow-hidden rounded-lg">
-                    <img
-                      src={imageUrl}
-                      alt={`${project.data?.title || "Project"} - ${idx + 1}`}
-                      className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Treść */}
           <div className="p-6">
-            {/* Header */}
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                  {project.data?.title || "Bez tytułu"}
-                </h1>
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">{getProjectTitle()}</h1>
                 <p className="text-gray-500 text-sm">
                   Utworzono: {new Date(project.created_at).toLocaleDateString("pl-PL")}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  Template: {project.template_key || project.data?.template_key || "Nieznany"}
                 </p>
               </div>
               <div className="flex space-x-2">
@@ -128,65 +117,8 @@ function ProjectDetails() {
               </div>
             </div>
 
-            {/* Opis */}
-            {project.data?.description && (
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">Opis</h2>
-                <p className="text-gray-600 whitespace-pre-wrap">
-                  {project.data.description}
-                </p>
-              </div>
-            )}
+            <ProjectView project={project} />
 
-            {/* Technologie */}
-            {project.data?.technologies && project.data.technologies.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">Technologie</h2>
-                <div className="flex flex-wrap gap-2">
-                  {project.data.technologies.map((tech, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Linki */}
-            {(project.data?.github_url || project.data?.live_url) && (
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">Linki</h2>
-                <div className="flex flex-wrap gap-4">
-                  {project.data.github_url && (
-                    <a
-                      href={project.data.github_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900"
-                    >
-                      <Github size={20} />
-                      <span>GitHub</span>
-                    </a>
-                  )}
-                  {project.data.live_url && (
-                    <a
-                      href={project.data.live_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                      <ExternalLink size={20} />
-                      <span>Zobacz na żywo</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Surowe dane JSON (opcjonalnie) */}
             <div className="mt-6 pt-6 border-t border-gray-200">
               <details className="cursor-pointer">
                 <summary className="text-sm font-medium text-gray-600 hover:text-gray-800">
@@ -205,4 +137,5 @@ function ProjectDetails() {
 }
 
 export default ProjectDetails;
+
 

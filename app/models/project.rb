@@ -1,5 +1,7 @@
 # app/models/project.rb
 class Project < ApplicationRecord
+  TEMPLATE_KEYS = %w[templateA templateB templateC templateD].freeze
+
   # Relacja z użytkownikiem
   belongs_to :user
 
@@ -9,6 +11,7 @@ class Project < ApplicationRecord
   # Walidacje
   validates :data, presence: true
   validates :user, presence: true
+  validates :template_key, presence: true, inclusion: { in: TEMPLATE_KEYS }
   validate :validate_data_structure
   validate :validate_images_size
 
@@ -38,6 +41,10 @@ class Project < ApplicationRecord
 
     unless has_title
       errors.add(:data, "must have at least one title section with value")
+    end
+
+    if data["template_key"].present? && template_key.present? && data["template_key"] != template_key
+      errors.add(:data, "template_key must match project template")
     end
 
     # Walidacja struktury każdej sekcji
@@ -73,3 +80,4 @@ class Project < ApplicationRecord
     end
   end
 end
+

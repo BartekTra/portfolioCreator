@@ -20,6 +20,14 @@ module Api
       def create
         # Parse JSON data
         project_data = parse_project_data(params[:data])
+        template_key = resolve_template_key
+
+        unless valid_template_key?(template_key)
+          render json: { error: "Niepoprawny template" }, status: :unprocessable_entity
+          return
+        end
+
+        project_data["template_key"] = template_key
 
         # Walidacja podstawowa
         unless valid_project_data?(project_data)
@@ -30,7 +38,7 @@ module Api
         end
 
         # Utwórz projekt dla zalogowanego użytkownika
-        @project = current_api_v1_user.projects.build(data: project_data)
+        @project = current_api_v1_user.projects.build(data: project_data, template_key: template_key)
 
         # KLUCZOWA ZMIANA: Najpierw zapisz projekt, POTEM dodaj zdjęcia
         if @project.save
@@ -49,6 +57,14 @@ module Api
       # PATCH/PUT /api/v1/projects/:id
       def update
         project_data = parse_project_data(params[:data])
+        template_key = resolve_template_key || @project.template_key
+
+        unless valid_template_key?(template_key)
+          render json: { error: "Niepoprawny template" }, status: :unprocessable_entity
+          return
+        end
+
+        project_data["template_key"] = template_key
 
         unless valid_project_data?(project_data)
           render json: {
@@ -57,7 +73,7 @@ module Api
           return
         end
 
-        if @project.update(data: project_data)
+        if @project.update(data: project_data, template_key: template_key)
           # Dodaj nowe zdjęcia (nie usuwaj starych)
           attach_images_with_metadata(project_data) if params[:images].present?
 
@@ -164,10 +180,21 @@ module Api
           id: project.id,
           data: project.data,
           user_id: project.user_id,
+          template_key: project.template_key,
           images: images_data,
           created_at: project.created_at,
           updated_at: project.updated_at
         }
+      end
+
+      def resolve_template_key
+        key = params[:template_key]
+        key = key.presence || params.dig(:project, :template_key)
+        key.presence
+      end
+
+      def valid_template_key?(key)
+        key.present? && Project::TEMPLATE_KEYS.include?(key)
       end
     end
   end
