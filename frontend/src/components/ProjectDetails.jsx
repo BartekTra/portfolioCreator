@@ -63,7 +63,7 @@ function ProjectDetails() {
         <div className="text-center">
           <p className="text-red-600 mb-4">{error || "Projekt nie został znaleziony"}</p>
           <button
-            onClick={() => navigate("/projects")}
+            onClick={() => navigate("/")}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Wróć do listy projektów
@@ -80,7 +80,7 @@ function ProjectDetails() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Przycisk powrotu */}
         <button
-          onClick={() => navigate("/projects")}
+          onClick={() => navigate("/")}
           className="mb-6 flex items-center space-x-2 text-gray-600 hover:text-gray-800"
         >
           <ArrowLeft size={20} />

@@ -4,6 +4,7 @@ import api from "../axios";
 import TemplatePicker from "./TemplatePicker";
 import TemplateCanvas from "./TemplateCanvas";
 import { TEMPLATES } from "../templates/templates";
+import { useNavigate } from "react-router-dom";
 
 const SECTION_TYPES = {
   title: { label: "Tytuł", multiple: false, icon: <Type size={18} /> },
@@ -42,6 +43,7 @@ function DynamicProjectForm() {
   const [selectedCategory, setSelectedCategory] = useState(Object.keys(SECTION_CATEGORIES)[0]);
   const [selectedTemplateId, setSelectedTemplateId] = useState(null);
   const [activeSlotId, setActiveSlotId] = useState(null);
+  const navigate = useNavigate();
   const selectedTemplate = selectedTemplateId
     ? TEMPLATES.find((template) => template.id === selectedTemplateId)
     : null;
@@ -274,7 +276,8 @@ function DynamicProjectForm() {
       setSuccess(true);
       
       // Opcjonalnie: przekieruj po sukcesie
-      // setTimeout(() => navigate(`/projects/${response.data.id}`), 2000);
+      console.log("XD");
+      setTimeout(() => navigate(`/projects/${response.data.id}`), 500);
     } catch (err) {
       console.error("Błąd podczas tworzenia projektu:", err);
       setError(
