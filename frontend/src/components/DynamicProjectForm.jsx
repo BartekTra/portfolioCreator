@@ -148,6 +148,7 @@ function DynamicProjectForm() {
 
   const handleTechnologyCancel = () => {
     setShowTechnologyPicker(false);
+    setEditingTechnologySectionId(null);
   };
 
   const handleEditTechnologies = (sectionId) => {
