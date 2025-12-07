@@ -4,6 +4,20 @@ import { TEMPLATES } from "../templates/templates";
 
 const getTemplateByKey = (key) => TEMPLATES.find((template) => template.id === key);
 
+// Mapowanie typów sekcji na ich nazwy (zgodne z SECTION_TYPES z DynamicProjectForm)
+const SECTION_TYPE_LABELS = {
+  title: "Tytuł",
+  description: "Opis",
+  technologies: "Technologie",
+  image: "Zdjęcie",
+  github_url: "Link GitHub",
+  live_url: "Link Live",
+};
+
+const getSectionLabel = (sectionType) => {
+  return SECTION_TYPE_LABELS[sectionType] || sectionType;
+};
+
 const getSectionImages = (project, sectionId) => {
   if (!project.images || project.images.length === 0) return [];
   return project.images.filter((image) => image.section_id === sectionId);
@@ -115,15 +129,14 @@ function ProjectTemplateRenderer({ project }) {
               key={slot.id}
               className={`rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900 ${slot.className}`}
             >
-              <div className="flex items-center justify-between">
-                <div>
+              {section && (
+                <div className="mb-4">
                   <p className="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                    {slot.label}
+                    {getSectionLabel(section.type)}
                   </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">{slot.helper}</p>
                 </div>
-              </div>
-              <div className="mt-4">
+              )}
+              <div className={section ? "" : "mt-4"}>
                 {section ? (
                   renderSectionContent(project, section)
                 ) : (

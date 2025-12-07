@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, GripVertical, Type, FileText, Code, Image as ImageIcon, Github, ExternalLink, X } from "lucide-react";
+import { Trash2, GripVertical, Type, FileText, Code, Image as ImageIcon, Github, ExternalLink, X, Edit2 } from "lucide-react";
 import api from "../axios";
 import TemplatePicker from "./TemplatePicker";
 import TemplateCanvas from "./TemplateCanvas";
+import TechnologyPicker from "./TechnologyPicker";
 import { TEMPLATES } from "../templates/templates";
 import { useNavigate } from "react-router-dom";
 
@@ -43,6 +44,8 @@ function DynamicProjectForm() {
   const [selectedCategory, setSelectedCategory] = useState(Object.keys(SECTION_CATEGORIES)[0]);
   const [selectedTemplateId, setSelectedTemplateId] = useState(null);
   const [activeSlotId, setActiveSlotId] = useState(null);
+  const [showTechnologyPicker, setShowTechnologyPicker] = useState(false);
+  const [editingTechnologySectionId, setEditingTechnologySectionId] = useState(null);
   const navigate = useNavigate();
   const selectedTemplate = selectedTemplateId
     ? TEMPLATES.find((template) => template.id === selectedTemplateId)
@@ -87,6 +90,12 @@ function DynamicProjectForm() {
       return;
     }
 
+    // Dla technologii pokazujemy TechnologyPicker zamiast od razu dodawać sekcję
+    if (type === "technologies") {
+      setShowTechnologyPicker(true);
+      return;
+    }
+
     const templateOrder = selectedTemplate
       ? selectedTemplate.slots.findIndex((slot) => slot.id === activeSlotId)
       : sections.length;
@@ -98,12 +107,7 @@ function DynamicProjectForm() {
       id: slotSection?.id || Date.now(),
       slotId: activeSlotId,
       type,
-      value:
-        type === "technologies"
-          ? typeof preservedValue === "string"
-            ? preservedValue
-            : ""
-          : preservedValue,
+      value: preservedValue,
       order: templateOrder > -1 ? templateOrder : sections.length,
     };
 
@@ -115,9 +119,62 @@ function DynamicProjectForm() {
     closeSlotModal();
   };
 
+  const handleTechnologySave = (technologiesValue) => {
+    if (!activeSlotId) return;
+
+    const slotSection = sections.find((section) => section.slotId === activeSlotId);
+    const otherSections = sections.filter((section) => section.slotId !== activeSlotId);
+
+    const templateOrder = selectedTemplate
+      ? selectedTemplate.slots.findIndex((slot) => slot.id === activeSlotId)
+      : sections.length;
+
+    const nextSection = {
+      id: slotSection?.id || Date.now(),
+      slotId: activeSlotId,
+      type: "technologies",
+      value: technologiesValue,
+      order: templateOrder > -1 ? templateOrder : sections.length,
+    };
+
+    const updatedSections = [...otherSections, nextSection].sort(
+      (a, b) => (a.order ?? 0) - (b.order ?? 0),
+    );
+
+    setSections(updatedSections);
+    setShowTechnologyPicker(false);
+    closeSlotModal();
+  };
+
+  const handleTechnologyCancel = () => {
+    setShowTechnologyPicker(false);
+  };
+
+  const handleEditTechnologies = (sectionId) => {
+    setEditingTechnologySectionId(sectionId);
+    setShowTechnologyPicker(true);
+  };
+
+  const handleEditTechnologySave = (technologiesValue) => {
+    if (!editingTechnologySectionId) return;
+
+    setSections((prev) =>
+      prev.map((section) =>
+        section.id === editingTechnologySectionId
+          ? { ...section, value: technologiesValue }
+          : section
+      )
+    );
+
+    setShowTechnologyPicker(false);
+    setEditingTechnologySectionId(null);
+  };
+
   const closeSlotModal = () => {
     setIsModalOpen(false);
     setActiveSlotId(null);
+    setShowTechnologyPicker(false);
+    setEditingTechnologySectionId(null);
   };
 
   // Zamykanie modala po kliknięciu w tło
@@ -356,16 +413,43 @@ function DynamicProjectForm() {
 
         {section.type === "technologies" && (
           <div>
-            <input
-              type="text"
-              value={section.value}
-              onChange={(e) => updateSection(section.id, e.target.value)}
-              placeholder="React, Node.js, MongoDB (oddziel przecinkami)"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
-            />
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Oddziel technologie przecinkami
-            </p>
+            {section.value ? (
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {section.value
+                    .split(",")
+                    .map((tech) => tech.trim())
+                    .filter((tech) => tech.length > 0)
+                    .map((tech, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleEditTechnologies(section.id)}
+                  className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                >
+                  <Edit2 size={16} />
+                  <span>Edytuj technologie</span>
+                </button>
+              </div>
+            ) : (
+              <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+                <p className="text-sm mb-2">Brak wybranych technologii</p>
+                <button
+                  type="button"
+                  onClick={() => handleEditTechnologies(section.id)}
+                  className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                >
+                  Dodaj technologie
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -490,8 +574,51 @@ function DynamicProjectForm() {
               </div>
             )}
 
+            {/* Modal dla edycji technologii (poza kontekstem wyboru sekcji) */}
+            {showTechnologyPicker && editingTechnologySectionId && !isModalOpen && (
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/30 backdrop-blur-sm"
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) {
+                    closeSlotModal();
+                  }
+                }}
+              >
+                <div
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div>
+                      <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Edytuj technologie
+                      </p>
+                      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                        Technologie
+                      </h2>
+                    </div>
+                    <button
+                      onClick={closeSlotModal}
+                      className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                    >
+                      <X size={24} />
+                    </button>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-6">
+                    <TechnologyPicker
+                      initialValue={
+                        sections.find((s) => s.id === editingTechnologySectionId)?.value || ""
+                      }
+                      onSave={handleEditTechnologySave}
+                      onCancel={handleTechnologyCancel}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Modal */}
-            {isModalOpen && selectedTemplate && (
+            {(isModalOpen || (showTechnologyPicker && !editingTechnologySectionId)) && selectedTemplate && (
               <div
                 className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/30 backdrop-blur-sm"
                 onClick={(e) => {
@@ -508,10 +635,18 @@ function DynamicProjectForm() {
                   <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <div>
                       <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                        Dodaj sekcję do slotu
+                        {showTechnologyPicker
+                          ? editingTechnologySectionId
+                            ? "Edytuj technologie"
+                            : "Dodaj technologie do slotu"
+                          : "Dodaj sekcję do slotu"}
                       </p>
                       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                        {activeSlot?.label || "Slot"}
+                        {showTechnologyPicker
+                          ? editingTechnologySectionId
+                            ? "Technologie"
+                            : activeSlot?.label || "Slot"
+                          : activeSlot?.label || "Slot"}
                       </h2>
                     </div>
                     <button
@@ -523,68 +658,86 @@ function DynamicProjectForm() {
                   </div>
 
                   {/* Content */}
-                  <div className="flex flex-1 overflow-hidden">
-                    {/* Left Column - Categories */}
-                    <div className="w-64 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 overflow-y-auto">
-                      <div className="p-4 space-y-2">
-                        {Object.entries(SECTION_CATEGORIES).map(([key, category]) => {
-                          const availableCount = getAvailableSectionsInCategory(key).length;
-                          return (
-                            <button
-                              key={key}
-                              onClick={() => setSelectedCategory(key)}
-                              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
-                                selectedCategory === key
-                                  ? "bg-blue-600 dark:bg-blue-500 text-white font-semibold"
-                                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                              }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span>{category.label}</span>
-                                {availableCount > 0 && (
-                                  <span
-                                    className={`text-xs px-2 py-1 rounded-full ${
-                                      selectedCategory === key
-                                        ? "bg-blue-500 dark:bg-blue-600 text-white"
-                                        : "bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
-                                    }`}
-                                  >
-                                    {availableCount}
-                                  </span>
-                                )}
-                              </div>
-                            </button>
-                          );
-                        })}
+                  {showTechnologyPicker ? (
+                    <div className="flex-1 overflow-y-auto p-6">
+                      <TechnologyPicker
+                        initialValue={
+                          editingTechnologySectionId
+                            ? sections.find((s) => s.id === editingTechnologySectionId)?.value || ""
+                            : ""
+                        }
+                        onSave={
+                          editingTechnologySectionId
+                            ? handleEditTechnologySave
+                            : handleTechnologySave
+                        }
+                        onCancel={handleTechnologyCancel}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex flex-1 overflow-hidden">
+                      {/* Left Column - Categories */}
+                      <div className="w-64 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 overflow-y-auto">
+                        <div className="p-4 space-y-2">
+                          {Object.entries(SECTION_CATEGORIES).map(([key, category]) => {
+                            const availableCount = getAvailableSectionsInCategory(key).length;
+                            return (
+                              <button
+                                key={key}
+                                onClick={() => setSelectedCategory(key)}
+                                className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                                  selectedCategory === key
+                                    ? "bg-blue-600 dark:bg-blue-500 text-white font-semibold"
+                                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span>{category.label}</span>
+                                  {availableCount > 0 && (
+                                    <span
+                                      className={`text-xs px-2 py-1 rounded-full ${
+                                        selectedCategory === key
+                                          ? "bg-blue-500 dark:bg-blue-600 text-white"
+                                          : "bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
+                                      }`}
+                                    >
+                                      {availableCount}
+                                    </span>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Right Panel - Sections */}
+                      <div className="flex-1 overflow-y-auto p-6">
+                        {getAvailableSectionsInCategory(selectedCategory).length > 0 ? (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {getAvailableSectionsInCategory(selectedCategory).map(([type, config]) => (
+                              <button
+                                key={type}
+                                onClick={() => assignSectionToSlot(type)}
+                                className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left"
+                              >
+                                <span className="text-gray-600 dark:text-gray-400">{config.icon}</span>
+                                <span className="font-medium text-gray-700 dark:text-gray-200">
+                                  {config.label}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center h-full">
+                            <p className="text-gray-500 dark:text-gray-400 text-center">
+                              Brak dostępnych sekcji dla tego slotu w tej kategorii
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
-
-                    {/* Right Panel - Sections */}
-                    <div className="flex-1 overflow-y-auto p-6">
-                      {getAvailableSectionsInCategory(selectedCategory).length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          {getAvailableSectionsInCategory(selectedCategory).map(([type, config]) => (
-                            <button
-                              key={type}
-                              onClick={() => assignSectionToSlot(type)}
-                              className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left"
-                            >
-                              <span className="text-gray-600 dark:text-gray-400">{config.icon}</span>
-                              <span className="font-medium text-gray-700 dark:text-gray-200">
-                                {config.label}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-center h-full">
-                          <p className="text-gray-500 dark:text-gray-400 text-center">
-                            Brak dostępnych sekcji dla tego slotu w tej kategorii
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             )}
