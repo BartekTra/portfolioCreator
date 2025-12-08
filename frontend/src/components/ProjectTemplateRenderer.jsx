@@ -56,17 +56,17 @@ const renderSectionContent = (project, section, onImageClick) => {
     case "image": {
       const images = getSectionImages(project, section.id);
       return images.length > 0 ? (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="flex flex-col gap-3 h-full w-full">
           {images.map((image) => (
             <div 
               key={image.url} 
-              className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+              className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity w-full flex-1 min-h-[150px] flex items-center justify-center bg-gray-50 dark:bg-gray-800"
               onClick={() => onImageClick && onImageClick(image.url)}
             >
               <img
                 src={image.url}
                 alt={`${section.type || "section"} image`}
-                className="w-full h-auto max-w-full"
+                className="w-full h-full object-contain"
               />
             </div>
           ))}
@@ -131,16 +131,16 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
           return (
             <div
               key={slot.id}
-              className={`rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900 ${slot.className}`}
+              className={`rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900 flex flex-col ${slot.className}`}
             >
               {section && (
-                <div className="mb-4">
+                <div className="mb-4 flex-shrink-0">
                   <p className="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     {getSectionLabel(section.type)}
                   </p>
                 </div>
               )}
-              <div className={section ? "" : "mt-4"}>
+              <div className={`flex-1 ${section ? "" : "mt-4"}`}>
                 {section ? (
                   renderSectionContent(project, section, onImageClick)
                 ) : (
