@@ -62,7 +62,7 @@ const renderSectionContent = (project, section) => {
               <img
                 src={image.url}
                 alt={`${section.type || "section"} image`}
-                className="h-48 w-full object-cover"
+                className="w-full h-auto max-w-full"
               />
             </div>
           ))}
