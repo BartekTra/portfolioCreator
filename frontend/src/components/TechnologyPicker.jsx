@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { X, Check } from "lucide-react";
 
 // Mapa technologii z możliwością łatwego dodania ikon
@@ -78,24 +78,51 @@ const formatTechnologies = (technologies) => {
 };
 
 function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
-  const initialTechs = parseTechnologies(initialValue);
-  
-  // Pobierz wszystkie dostępne nazwy technologii
-  const allAvailableTechNames = Object.values(TECHNOLOGIES)
-    .flatMap((cat) => cat.technologies)
-    .map((t) => t.name.toLowerCase());
-  
-  // Rozdziel technologie na dostępne i inne
-  const availableTechs = initialTechs.filter((tech) =>
-    allAvailableTechNames.includes(tech.toLowerCase())
-  );
-  const otherTechs = initialTechs.filter(
-    (tech) => !allAvailableTechNames.includes(tech.toLowerCase())
+  // Pobierz wszystkie dostępne nazwy technologii (memoized, bo TECHNOLOGIES jest stałą)
+  const allAvailableTechNames = useMemo(
+    () =>
+      Object.values(TECHNOLOGIES)
+        .flatMap((cat) => cat.technologies)
+        .map((t) => t.name.toLowerCase()),
+    []
   );
   
-  const [selectedTechs, setSelectedTechs] = useState(new Set(availableTechs));
-  const [otherEnabled, setOtherEnabled] = useState(otherTechs.length > 0);
-  const [otherValue, setOtherValue] = useState(otherTechs.join(", "));
+  // Funkcja do inicjalizacji stanu z wartości
+  const initializeState = useCallback(
+    (value) => {
+      const initialTechs = parseTechnologies(value);
+      const availableTechs = initialTechs.filter((tech) =>
+        allAvailableTechNames.includes(tech.toLowerCase())
+      );
+      const otherTechs = initialTechs.filter(
+        (tech) => !allAvailableTechNames.includes(tech.toLowerCase())
+      );
+      return {
+        selectedTechs: new Set(availableTechs),
+        otherEnabled: otherTechs.length > 0,
+        otherValue: otherTechs.join(", "),
+      };
+    },
+    [allAvailableTechNames]
+  );
+  
+  const [selectedTechs, setSelectedTechs] = useState(() => 
+    initializeState(initialValue).selectedTechs
+  );
+  const [otherEnabled, setOtherEnabled] = useState(() => 
+    initializeState(initialValue).otherEnabled
+  );
+  const [otherValue, setOtherValue] = useState(() => 
+    initializeState(initialValue).otherValue
+  );
+
+  // Synchronizuj stan gdy initialValue się zmienia
+  useEffect(() => {
+    const newState = initializeState(initialValue);
+    setSelectedTechs(newState.selectedTechs);
+    setOtherEnabled(newState.otherEnabled);
+    setOtherValue(newState.otherValue);
+  }, [initialValue, initializeState]);
 
   const toggleTechnology = (techId, techName) => {
     setSelectedTechs((prev) => {

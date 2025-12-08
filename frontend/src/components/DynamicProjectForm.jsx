@@ -183,10 +183,15 @@ function DynamicProjectForm() {
     const handleEscape = (event) => {
       if (event.key === "Escape") {
         setIsModalOpen(false);
+        setActiveSlotId(null);
+        setShowTechnologyPicker(false);
+        setEditingTechnologySectionId(null);
       }
     };
 
-    if (isModalOpen) {
+    const isAnyModalOpen = isModalOpen || (showTechnologyPicker && editingTechnologySectionId);
+
+    if (isAnyModalOpen) {
       document.addEventListener("keydown", handleEscape);
       document.body.style.overflow = "hidden";
     }
@@ -195,7 +200,7 @@ function DynamicProjectForm() {
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = "unset";
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, showTechnologyPicker, editingTechnologySectionId]);
 
   const removeSection = (id) => {
     const sectionToRemove = sections.find((section) => section.id === id);
