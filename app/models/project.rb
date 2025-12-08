@@ -1,6 +1,9 @@
 # app/models/project.rb
 class Project < ApplicationRecord
-  TEMPLATE_KEYS = %w[templateA templateB templateC templateD].freeze
+  TEMPLATE_KEYS = %w[
+    templateA templateB templateC templateD templateE templateF
+    templateG templateH templateI templateJ templateK templateL templateM
+  ].freeze
 
   # Relacja z użytkownikiem
   belongs_to :user

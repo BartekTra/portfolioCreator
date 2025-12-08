@@ -137,7 +137,7 @@ function ProjectsList() {
                   className="flex transition-transform duration-500 ease-out"
                   style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                 >
-                  {projects.map((project) => (
+            {projects.map((project) => (
                     <div key={project.id} className="w-full flex-shrink-0 px-2 sm:px-6">
                       <ProjectView project={project} />
                     </div>

@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Check } from "lucide-react";
-import { TEMPLATES } from "../templates/templates";
+import { TEMPLATES, TEMPLATE_CATEGORIES } from "../templates/templates";
 
 function TemplatePicker({ selectedTemplateId, onSelect }) {
+  const [activeCategory, setActiveCategory] = useState(Object.keys(TEMPLATE_CATEGORIES)[0]);
+
+  const templatesInCategory = TEMPLATES.filter(
+    (template) => template.category === activeCategory
+  );
+
   return (
     <div className="space-y-6">
       <div>
@@ -15,8 +21,46 @@ function TemplatePicker({ selectedTemplateId, onSelect }) {
         </p>
       </div>
 
+      {/* Zakładki kategorii */}
+      <div className="border-b border-gray-200 dark:border-gray-700">
+        <nav className="flex space-x-1 overflow-x-auto" aria-label="Kategorie template'ów">
+          {Object.entries(TEMPLATE_CATEGORIES).map(([key, category]) => {
+            const categoryTemplates = TEMPLATES.filter((t) => t.category === key);
+            const isActive = activeCategory === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setActiveCategory(key)}
+                className={`
+                  px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors
+                  ${
+                    isActive
+                      ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+                  }
+                `}
+              >
+                {category.label}
+                <span className="ml-2 text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                  {categoryTemplates.length}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Opis kategorii */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <p className="text-sm text-blue-800 dark:text-blue-300">
+          <span className="font-semibold">{TEMPLATE_CATEGORIES[activeCategory].label}:</span>{" "}
+          {TEMPLATE_CATEGORIES[activeCategory].description}
+        </p>
+      </div>
+
+      {/* Template'y w wybranej kategorii */}
       <div className="grid gap-6 md:grid-cols-2 auto-rows-fr">
-        {TEMPLATES.map((template) => {
+        {templatesInCategory.map((template) => {
           const isActive = selectedTemplateId === template.id;
           return (
             <button
