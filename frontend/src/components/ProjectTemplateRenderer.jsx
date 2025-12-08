@@ -23,7 +23,7 @@ const getSectionImages = (project, sectionId) => {
   return project.images.filter((image) => image.section_id === sectionId);
 };
 
-const renderSectionContent = (project, section) => {
+const renderSectionContent = (project, section, onImageClick) => {
   switch (section.type) {
     case "title":
       return (
@@ -58,11 +58,15 @@ const renderSectionContent = (project, section) => {
       return images.length > 0 ? (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {images.map((image) => (
-            <div key={image.url} className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+            <div 
+              key={image.url} 
+              className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+              onClick={() => onImageClick && onImageClick(image.url)}
+            >
               <img
                 src={image.url}
                 alt={`${section.type || "section"} image`}
-                className="h-48 w-full object-cover"
+                className="w-full h-auto max-w-full"
               />
             </div>
           ))}
@@ -103,7 +107,7 @@ const renderSectionContent = (project, section) => {
   }
 };
 
-function ProjectTemplateRenderer({ project }) {
+function ProjectTemplateRenderer({ project, onImageClick }) {
   const templateKey = project.template_key || project.data?.template_key;
   const template = getTemplateByKey(templateKey) || TEMPLATES[0];
   const sections = (project.data?.sections || []).sort(
@@ -138,7 +142,7 @@ function ProjectTemplateRenderer({ project }) {
               )}
               <div className={section ? "" : "mt-4"}>
                 {section ? (
-                  renderSectionContent(project, section)
+                  renderSectionContent(project, section, onImageClick)
                 ) : (
                   <div className="rounded-lg border border-dashed border-gray-300 p-4 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
                     Slot pusty
@@ -158,7 +162,7 @@ function ProjectTemplateRenderer({ project }) {
           <div className="space-y-3">
             {orphanSections.map((section) => (
               <div key={section.id} className="rounded-lg border border-amber-200 bg-white/80 p-3 dark:border-amber-500/30 dark:bg-transparent">
-                {renderSectionContent(project, section)}
+                {renderSectionContent(project, section, onImageClick)}
               </div>
             ))}
           </div>

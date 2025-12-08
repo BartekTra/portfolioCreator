@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../axios";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, X } from "lucide-react";
 import MainPage from "./MainPage";
 import ProjectView from "./ProjectView";
 
@@ -11,6 +11,8 @@ function ProjectsList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [enlargedImage, setEnlargedImage] = useState(null);
 
   useEffect(() => {
     fetchProjects();
@@ -23,6 +25,7 @@ function ProjectsList() {
     }
     setCurrentIndex((prev) => Math.min(prev, projects.length - 1));
   }, [projects.length]);
+
 
   const fetchProjects = async () => {
     try {
@@ -60,15 +63,59 @@ function ProjectsList() {
     }
   };
 
-  const handleNext = () => {
-    if (projects.length === 0) return;
-    setCurrentIndex((prev) => (prev + 1) % projects.length);
-  };
+  const handleNext = useCallback(() => {
+    if (projects.length === 0 || isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % projects.length);
+      setTimeout(() => setIsTransitioning(false), 50);
+    }, 250);
+  }, [projects.length, isTransitioning]);
 
-  const handlePrev = () => {
-    if (projects.length === 0) return;
-    setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
-  };
+  const handlePrev = useCallback(() => {
+    if (projects.length === 0 || isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
+      setTimeout(() => setIsTransitioning(false), 50);
+    }, 250);
+  }, [projects.length, isTransitioning]);
+
+  // Obsługa klawiatury - strzałki lewo/prawo
+  useEffect(() => {
+    if (projects.length <= 1) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        handlePrev();
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        handleNext();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [projects.length, handlePrev, handleNext]);
+
+  // Obsługa Escape do zamykania powiększonego zdjęcia
+  useEffect(() => {
+    if (!enlargedImage) return;
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setEnlargedImage(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [enlargedImage]);
 
   const getProjectTitle = (project) => {
     const sections = project.data?.sections || [];
@@ -132,16 +179,19 @@ function ProjectsList() {
         ) : (
           <div className="space-y-8">
             <div className="relative">
-              <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                 <div
-                  className="flex transition-transform duration-500 ease-out"
-                  style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                  key={projects[currentIndex]?.id}
+                  className={`transition-opacity duration-300 ${
+                    isTransitioning ? "opacity-0" : "opacity-100"
+                  }`}
                 >
-            {projects.map((project) => (
-                    <div key={project.id} className="w-full flex-shrink-0 px-2 sm:px-6">
-                      <ProjectView project={project} />
-                    </div>
-                  ))}
+                  {projects[currentIndex] && (
+                    <ProjectView 
+                      project={projects[currentIndex]} 
+                      onImageClick={(imageUrl) => setEnlargedImage(imageUrl)}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -150,14 +200,16 @@ function ProjectsList() {
                   <button
                     type="button"
                     onClick={handlePrev}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/80 dark:text-gray-100"
+                    className="fixed left-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/70 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/80 dark:text-gray-100"
+                    aria-label="Poprzedni projekt"
                   >
                     <ChevronLeft size={24} />
                   </button>
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/80 dark:text-gray-100"
+                    className="fixed right-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/70 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/80 dark:text-gray-100"
+                    aria-label="Następny projekt"
                   >
                     <ChevronRight size={24} />
                   </button>
@@ -201,6 +253,28 @@ function ProjectsList() {
           </div>
         )}
       </div>
+
+      {/* Modal do powiększania zdjęć */}
+      {enlargedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setEnlargedImage(null)}
+        >
+          <button
+            onClick={() => setEnlargedImage(null)}
+            className="fixed top-4 right-4 z-10 rounded-full bg-white/90 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/90 dark:text-gray-100"
+            aria-label="Zamknij"
+          >
+            <X size={24} />
+          </button>
+          <img
+            src={enlargedImage}
+            alt="Powiększone zdjęcie"
+            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }

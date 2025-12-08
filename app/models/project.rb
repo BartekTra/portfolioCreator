@@ -37,15 +37,6 @@ class Project < ApplicationRecord
       return
     end
 
-    # Sprawdź czy jest przynajmniej jedna sekcja z tytułem
-    has_title = data["sections"].any? do |section|
-      section["type"] == "title" && section["value"].present?
-    end
-
-    unless has_title
-      errors.add(:data, "must have at least one title section with value")
-    end
-
     if data["template_key"].present? && template_key.present? && data["template_key"] != template_key
       errors.add(:data, "template_key must match project template")
     end

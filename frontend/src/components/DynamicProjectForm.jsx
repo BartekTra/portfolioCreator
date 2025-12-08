@@ -239,11 +239,6 @@ function DynamicProjectForm() {
       return false;
     }
 
-    const titleSection = sections.find((s) => s.type === "title");
-    if (!titleSection || !titleSection.value.trim()) {
-      setError("Tytuł projektu jest wymagany");
-      return false;
-    }
     return true;
   };
 

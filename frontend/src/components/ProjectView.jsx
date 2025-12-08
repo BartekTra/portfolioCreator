@@ -6,7 +6,7 @@ import MainPage from "./MainPage";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-function ProjectView({ project: projectProp }) {
+function ProjectView({ project: projectProp, onImageClick }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(projectProp || null);
@@ -126,7 +126,7 @@ function ProjectView({ project: projectProp }) {
               </div>
 
               <div className="space-y-6">
-                <ProjectTemplateRenderer project={project} />
+                <ProjectTemplateRenderer project={project} onImageClick={onImageClick} />
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
@@ -148,7 +148,7 @@ function ProjectView({ project: projectProp }) {
 
   return (
     <div className="space-y-6">
-      <ProjectTemplateRenderer project={project} />
+      <ProjectTemplateRenderer project={project} onImageClick={onImageClick} />
     </div>
   );
 }

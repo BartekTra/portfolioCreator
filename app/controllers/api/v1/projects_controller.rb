@@ -32,7 +32,7 @@ module Api
         # Walidacja podstawowa
         unless valid_project_data?(project_data)
           render json: {
-            error: "Projekt musi zawierac tytul"
+            error: "Projekt musi zawierać przynajmniej jedną sekcję"
           }, status: :unprocessable_entity
           return
         end
@@ -68,7 +68,7 @@ module Api
 
         unless valid_project_data?(project_data)
           render json: {
-            error: "Projekt musi zawierac tytul"
+            error: "Projekt musi zawierać przynajmniej jedną sekcję"
           }, status: :unprocessable_entity
           return
         end
@@ -120,8 +120,8 @@ module Api
         return false unless data.is_a?(Hash)
         return false unless data["sections"].is_a?(Array)
 
-        # Sprawdź czy jest przynajmniej jedna sekcja z tytułem
-        data["sections"].any? { |s| s["type"] == "title" && s["value"].present? }
+        # Projekt jest ważny jeśli ma przynajmniej jedną sekcję
+        data["sections"].length > 0
       end
 
       def attach_images_with_metadata(project_data)
