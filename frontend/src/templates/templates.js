@@ -367,7 +367,7 @@ export const TEMPLATES = [
     category: "mozaika",
     description: "Asymetryczna mozaika 1 + 2",
     layout: {
-      container: "grid grid-cols-3 gap-4 auto-rows-fr",
+      container: "grid grid-cols-3 gap-4 items-start",
     },
     slots: [
       {
@@ -396,7 +396,7 @@ export const TEMPLATES = [
     category: "mozaika",
     description: "Złożona mozaika asymetryczna",
     layout: {
-      container: "grid grid-cols-4 gap-3 auto-rows-fr",
+      container: "grid grid-cols-4 gap-3 items-start",
     },
     slots: [
       {
@@ -431,7 +431,7 @@ export const TEMPLATES = [
     category: "mozaika",
     description: "Zigzag - naprzemienny układ",
     layout: {
-      container: "grid grid-cols-3 gap-4 auto-rows-fr",
+      container: "grid grid-cols-3 gap-4 items-start",
     },
     slots: [
       {
@@ -472,7 +472,7 @@ export const TEMPLATES = [
     category: "mozaika",
     description: "Duża sekcja + dwa mniejsze bloki",
     layout: {
-      container: "grid grid-cols-2 gap-4 auto-rows-fr",
+      container: "grid grid-cols-2 gap-4 items-start",
     },
     slots: [
       {

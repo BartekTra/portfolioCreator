@@ -56,17 +56,17 @@ const renderSectionContent = (project, section, onImageClick) => {
     case "image": {
       const images = getSectionImages(project, section.id);
       return images.length > 0 ? (
-        <div className="flex flex-col gap-3 h-full w-full">
+        <div className="flex flex-col gap-3 w-full">
           {images.map((image) => (
             <div 
               key={image.url} 
-              className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity w-full flex-1 min-h-[150px] flex items-center justify-center bg-gray-50 dark:bg-gray-800"
+              className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity w-full min-h-[150px] flex items-center justify-center bg-gray-50 dark:bg-gray-800"
               onClick={() => onImageClick && onImageClick(image.url)}
             >
               <img
                 src={image.url}
                 alt={`${section.type || "section"} image`}
-                className="w-full h-full object-contain"
+                className="max-w-full max-h-full w-auto h-auto object-contain"
               />
             </div>
           ))}
@@ -114,6 +114,9 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
     (a, b) => (a.order ?? 0) - (b.order ?? 0),
   );
 
+  // Sprawdź czy template używa grid (mozaika) czy flex (pionowe/poziome)
+  const isGridLayout = template.layout.container.includes("grid");
+
   const sectionBySlot = sections.reduce((acc, section) => {
     if (section.slot_id) {
       acc[section.slot_id] = section;
@@ -131,7 +134,7 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
           return (
             <div
               key={slot.id}
-              className={`rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900 flex flex-col ${slot.className}`}
+              className={`rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900 flex flex-col self-start ${slot.className}`}
             >
               {section && (
                 <div className="mb-4 flex-shrink-0">
@@ -140,7 +143,7 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
                   </p>
                 </div>
               )}
-              <div className={`flex-1 ${section ? "" : "mt-4"}`}>
+              <div className={`${isGridLayout ? "" : "flex-1"} ${section ? "" : "mt-4"}`}>
                 {section ? (
                   renderSectionContent(project, section, onImageClick)
                 ) : (

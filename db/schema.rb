@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_11_27_160018) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_08_234824) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,21 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_27_160018) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "homepages", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "phone"
+    t.string "email"
+    t.text "address"
+    t.text "bio"
+    t.jsonb "experience"
+    t.jsonb "skills"
+    t.jsonb "education"
+    t.jsonb "social_links"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_homepages_on_user_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.jsonb "data"
     t.bigint "user_id", null: false
@@ -50,6 +65,27 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_27_160018) do
     t.string "template_key", default: "templateA", null: false
     t.index ["template_key"], name: "index_projects_on_template_key"
     t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "repositories", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_repositories_on_user_id"
+  end
+
+  create_table "repository_projects", force: :cascade do |t|
+    t.bigint "repository_id", null: false
+    t.bigint "project_id", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_repository_projects_on_project_id"
+    t.index ["repository_id", "position"], name: "index_repository_projects_on_repository_id_and_position"
+    t.index ["repository_id", "project_id"], name: "index_repository_projects_on_repository_id_and_project_id", unique: true
+    t.index ["repository_id"], name: "index_repository_projects_on_repository_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -79,5 +115,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_27_160018) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "homepages", "users"
   add_foreign_key "projects", "users"
+  add_foreign_key "repositories", "users"
+  add_foreign_key "repository_projects", "projects"
+  add_foreign_key "repository_projects", "repositories"
 end
