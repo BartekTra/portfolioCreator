@@ -8,6 +8,8 @@ class User < ApplicationRecord
 
   # Relacja z projektami
   has_many :projects, dependent: :destroy
+  has_many :repositories, dependent: :destroy
+  has_many :title_pages, dependent: :destroy
   has_one_attached :avatar, dependent: :destroy
 
   # Walidacje
