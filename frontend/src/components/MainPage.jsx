@@ -49,7 +49,7 @@ function MainPage() {
                 className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
               >
                 <FolderOpen size={20} />
-                <span className="font-medium">Repozytoria</span>
+                <span className="font-medium">Portfolio</span>
               </button>
             </div>
 

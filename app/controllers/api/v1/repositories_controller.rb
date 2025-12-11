@@ -18,7 +18,20 @@ module Api
 
       # POST /api/v1/repositories
       def create
-        @repository = current_api_v1_user.repositories.build(repository_params)
+        # Walidacja title_page_id
+        title_page_id = repository_params[:title_page_id] || params[:title_page_id]
+        unless title_page_id.present?
+          render json: { errors: ["Title page jest wymagane"] }, status: :unprocessable_entity
+          return
+        end
+
+        title_page = current_api_v1_user.title_pages.find_by(id: title_page_id)
+        unless title_page
+          render json: { errors: ["Nie znaleziono strony tytułowej"] }, status: :unprocessable_entity
+          return
+        end
+
+        @repository = current_api_v1_user.repositories.build(repository_params.merge(title_page: title_page))
 
         if @repository.save
           # Dodaj projekty jeśli zostały przekazane
@@ -32,6 +45,15 @@ module Api
 
       # PATCH/PUT /api/v1/repositories/:id
       def update
+        # Jeśli title_page_id jest przekazane, sprawdź czy istnieje
+        if repository_params[:title_page_id].present?
+          title_page = current_api_v1_user.title_pages.find_by(id: repository_params[:title_page_id])
+          unless title_page
+            render json: { errors: ["Nie znaleziono strony tytułowej"] }, status: :unprocessable_entity
+            return
+          end
+        end
+
         if @repository.update(repository_params)
           # Aktualizuj projekty jeśli zostały przekazane
           update_repository_projects if params[:project_ids].present?
@@ -57,7 +79,7 @@ module Api
       end
 
       def repository_params
-        params.require(:repository).permit(:name, :description)
+        params.require(:repository).permit(:name, :description, :title_page_id)
       end
 
       def parse_project_ids
@@ -105,11 +127,29 @@ module Api
       end
 
       def repository_json(repository)
+        title_page_data = if repository.title_page
+          {
+            id: repository.title_page.id,
+            phone: repository.title_page.phone,
+            email: repository.title_page.email,
+            address: repository.title_page.address,
+            bio: repository.title_page.bio,
+            experience: repository.title_page.experience || [],
+            template_key: repository.title_page.template_key,
+            photo_url: repository.title_page.photo.attached? ? 
+              rails_blob_url(repository.title_page.photo, host: request.base_url) : nil
+          }
+        else
+          nil
+        end
+
         {
           id: repository.id,
           name: repository.name,
           description: repository.description,
           user_id: repository.user_id,
+          title_page_id: repository.title_page_id,
+          title_page: title_page_data,
           project_ids: repository.projects_ordered.pluck(:id),
           projects: repository.projects_ordered.map do |project|
             {

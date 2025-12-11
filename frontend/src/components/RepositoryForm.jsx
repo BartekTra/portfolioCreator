@@ -13,6 +13,8 @@ function RepositoryForm() {
   const [description, setDescription] = useState("");
   const [availableProjects, setAvailableProjects] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState([]);
+  const [availableTitlePages, setAvailableTitlePages] = useState([]);
+  const [selectedTitlePageId, setSelectedTitlePageId] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(isEditing);
   const [error, setError] = useState(null);
@@ -20,6 +22,7 @@ function RepositoryForm() {
   useEffect(() => {
     const loadData = async () => {
       await fetchAvailableProjects();
+      await fetchAvailableTitlePages();
       if (isEditing) {
         await fetchRepository();
       }
@@ -37,6 +40,16 @@ function RepositoryForm() {
     }
   };
 
+  const fetchAvailableTitlePages = async () => {
+    try {
+      const response = await api.get("/title_pages");
+      setAvailableTitlePages(response.data);
+    } catch (err) {
+      console.error("Error fetching title pages:", err);
+      setError("Nie udało się załadować stron tytułowych");
+    }
+  };
+
   const fetchRepository = async () => {
     try {
       setLoadingData(true);
@@ -44,6 +57,7 @@ function RepositoryForm() {
       const repo = response.data;
       setName(repo.name);
       setDescription(repo.description || "");
+      setSelectedTitlePageId(repo.title_page_id?.toString() || "");
       
       // Pobierz pełne dane projektów w odpowiedniej kolejności
       const projectPromises = repo.project_ids.map((projectId) =>
@@ -83,11 +97,18 @@ function RepositoryForm() {
     setLoading(true);
 
     try {
+      if (!selectedTitlePageId) {
+        setError("Musisz wybrać stronę tytułową");
+        setLoading(false);
+        return;
+      }
+
       const projectIds = selectedProjects.map((p) => p.id);
       const data = {
         repository: {
           name,
           description,
+          title_page_id: selectedTitlePageId,
         },
         project_ids: projectIds,
       };
@@ -104,7 +125,7 @@ function RepositoryForm() {
       setError(
         err.response?.data?.error ||
         err.response?.data?.errors?.join(", ") ||
-        "Wystąpił błąd podczas zapisywania repozytorium"
+        "Wystąpił błąd podczas zapisywania portfolio"
       );
     } finally {
       setLoading(false);
@@ -138,12 +159,12 @@ function RepositoryForm() {
           className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
         >
           <ArrowLeft size={20} />
-          <span>Wróć do listy repozytoriów</span>
+          <span>Wróć do listy portfolio</span>
         </button>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">
-            {isEditing ? "Edytuj repozytorium" : "Nowe repozytorium"}
+            {isEditing ? "Edytuj portfolio" : "Nowe portfolio"}
           </h1>
 
           {error && (
@@ -157,7 +178,7 @@ function RepositoryForm() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Nazwa repozytorium *
+                  Nazwa portfolio *
                 </label>
                 <input
                   type="text"
@@ -178,9 +199,69 @@ function RepositoryForm() {
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
-                  placeholder="Krótki opis repozytorium..."
+                  placeholder="Krótki opis portfolio..."
                 />
               </div>
+            </div>
+
+            {/* Wybór strony tytułowej */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Strona tytułowa * <span className="text-red-500">(wymagane)</span>
+              </label>
+              {availableTitlePages.length === 0 ? (
+                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-lg">
+                  <p className="text-yellow-800 dark:text-yellow-200 mb-2">
+                    Nie masz jeszcze żadnych stron tytułowych.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/title_pages/new")}
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    Stwórz stronę tytułową →
+                  </button>
+                </div>
+              ) : (
+                <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                  {availableTitlePages.map((titlePage) => (
+                    <button
+                      key={titlePage.id}
+                      type="button"
+                      onClick={() => setSelectedTitlePageId(titlePage.id.toString())}
+                      className={`p-4 text-left border-2 rounded-lg transition-all ${
+                        selectedTitlePageId === titlePage.id.toString()
+                          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                          : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                      }`}
+                    >
+                      {titlePage.photo_url && (
+                        <img
+                          src={titlePage.photo_url}
+                          alt="Zdjęcie profilowe"
+                          className="w-16 h-16 rounded-full object-cover mb-2 mx-auto"
+                        />
+                      )}
+                      <p className="font-medium text-gray-800 dark:text-gray-200 text-sm">
+                        {titlePage.email || "Strona tytułowa"}
+                      </p>
+                      {titlePage.phone && (
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          📞 {titlePage.phone}
+                        </p>
+                      )}
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Template: {titlePage.template_key}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {availableTitlePages.length > 0 && !selectedTitlePageId && (
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                  Musisz wybrać stronę tytułową
+                </p>
+              )}
             </div>
 
             {/* Wybrane projekty */}
@@ -283,11 +364,11 @@ function RepositoryForm() {
             <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
               <button
                 type="submit"
-                disabled={loading || !name.trim()}
+                disabled={loading || !name.trim() || !selectedTitlePageId}
                 className="flex-1 flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Save size={20} />
-                <span>{loading ? "Zapisywanie..." : "Zapisz repozytorium"}</span>
+                <span>{loading ? "Zapisywanie..." : "Zapisz portfolio"}</span>
               </button>
               <button
                 type="button"

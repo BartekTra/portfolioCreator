@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       get "/user/current_user", to: "user/current_user#show"
       resources :projects, only: [ :index, :show, :create, :update, :destroy ]
       resources :repositories, only: [ :index, :show, :create, :update, :destroy ]
+      resources :title_pages, only: [ :index, :show, :create, :update, :destroy ]
       mount_devise_token_auth_for "User", at: "auth", controllers: {
         registrations: "api/v1/auth/registrations",
         sessions: "api/v1/auth/sessions"

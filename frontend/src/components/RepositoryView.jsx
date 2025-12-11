@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../axios";
 import ProjectTemplateRenderer from "./ProjectTemplateRenderer";
 import MainPage from "./MainPage";
-import { ArrowLeft, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, X } from "lucide-react";
 
 function RepositoryView() {
   const { id } = useParams();
@@ -48,14 +48,14 @@ function RepositoryView() {
       setProjects(projectResponses.map((res) => res.data));
     } catch (err) {
       console.error("Error fetching repository:", err);
-      setError("Nie udało się załadować repozytorium");
+      setError("Nie udało się załadować portfolio");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Czy na pewno chcesz usunąć to repozytorium?")) {
+    if (!window.confirm("Czy na pewno chcesz usunąć to portfolio?")) {
       return;
     }
 
@@ -64,14 +64,14 @@ function RepositoryView() {
       navigate("/repositories");
     } catch (err) {
       console.error("Error deleting repository:", err);
-      alert("Nie udało się usunąć repozytorium");
+      alert("Nie udało się usunąć portfolio");
     }
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-600 dark:text-gray-300">Ładowanie repozytorium...</p>
+        <p className="text-gray-600 dark:text-gray-300">Ładowanie portfolio...</p>
       </div>
     );
   }
@@ -81,13 +81,13 @@ function RepositoryView() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400 mb-4">
-            {error || "Repozytorium nie zostało znalezione"}
+            {error || "Portfolio nie zostało znalezione"}
           </p>
           <button
             onClick={() => navigate("/repositories")}
             className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
           >
-            Wróć do listy repozytoriów
+            Wróć do listy portfolio
           </button>
         </div>
       </div>
@@ -103,7 +103,7 @@ function RepositoryView() {
           className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
         >
           <ArrowLeft size={20} />
-          <span>Wróć do listy repozytoriów</span>
+          <span>Wróć do listy portfolio</span>
         </button>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
@@ -147,7 +147,7 @@ function RepositoryView() {
             {projects.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 dark:text-gray-400">
-                  To repozytorium nie zawiera żadnych projektów.
+                  To portfolio nie zawiera żadnych projektów.
                 </p>
               </div>
             ) : (
