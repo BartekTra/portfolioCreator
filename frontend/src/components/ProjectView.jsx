@@ -6,7 +6,7 @@ import MainPage from "./MainPage";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-function ProjectView({ project: projectProp, onImageClick }) {
+function ProjectView({ project: projectProp, onImageClick, hideNavbar = false }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(projectProp || null);
@@ -80,7 +80,7 @@ function ProjectView({ project: projectProp, onImageClick }) {
     return null;
   }
 
-  if (id) {
+  if (id && !hideNavbar) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <MainPage />
