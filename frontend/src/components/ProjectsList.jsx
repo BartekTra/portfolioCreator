@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../axios";
 import { Plus, ChevronLeft, ChevronRight, X } from "lucide-react";
-import MainPage from "./MainPage";
 import ProjectView from "./ProjectView";
 
 function ProjectsList() {
@@ -148,9 +147,7 @@ function ProjectsList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <MainPage />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Moje projekty</h1>
@@ -252,7 +249,6 @@ function ProjectsList() {
             </div>
           </div>
         )}
-      </div>
 
       {/* Modal do powiększania zdjęć */}
       {enlargedImage && (
@@ -275,7 +271,7 @@ function ProjectsList() {
           />
         </div>
       )}
-    </div>
+      </div>
   );
 }
 

@@ -166,12 +166,13 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
               </div>
 
               <div className="text-sm">
-                <a
-                  href="#"
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
                   className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors duration-200"
                 >
                   Zapomniałeś hasła?
-                </a>
+                </button>
               </div>
             </div>
 

@@ -4,10 +4,14 @@ import api from "../axios";
 import { useNavigate } from "react-router";
 const UserContext = createContext(null);
 
+// Strony, które nie wymagają autentykacji
+const PUBLIC_PAGES = ["/login", "/register", "/forgot-password", "/reset-password"];
+
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
   const fetchCurrentUser = async () => {
     setLoading(true);
     try {
@@ -17,11 +21,21 @@ export const UserProvider = ({ children }) => {
 
       const data = await response.data;
       setUser(data);
-      navigate("/");
+      
+      // Przekieruj tylko jeśli jesteśmy na stronie publicznej
+      const currentPath = window.location.pathname;
+      if (PUBLIC_PAGES.includes(currentPath)) {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Error fetching user:", error);
       setUser(null);
-      navigate("/login");
+      
+      // Przekieruj do /login tylko jeśli nie jesteśmy już na stronie publicznej
+      const currentPath = window.location.pathname;
+      if (!PUBLIC_PAGES.includes(currentPath)) {
+        navigate("/login");
+      }
     } finally {
       setLoading(false);
     }

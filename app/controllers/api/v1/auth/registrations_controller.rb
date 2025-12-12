@@ -31,11 +31,45 @@ module Api
           end
         end
 
+        # PUT /api/v1/auth
+        def update
+          user = current_api_v1_user
+
+          # Aktualizuj podstawowe pola
+          user_params = account_update_params.except(:avatar)
+          if user.update(user_params)
+            # Jeśli przesłano nowy avatar, przypnij go
+            if params[:avatar].present?
+              user.avatar.attach(params[:avatar])
+            end
+
+            user.reload
+
+            render json: {
+              status: "success",
+              data: user.as_json(
+                only: [:id, :email, :first_name, :surname, :nickname, :created_at]
+              ).merge(
+                avatar_url: user.avatar.attached? ? url_for(user.avatar) : nil
+              )
+            }, status: :ok
+          else
+            render json: {
+              status: "error",
+              errors: user.errors.full_messages
+            }, status: :unprocessable_entity
+          end
+        end
+
         private
 
         def sign_up_params
           params.permit(:email, :password, :password_confirmation,
                                        :first_name, :surname, :nickname, :avatar)
+        end
+
+        def account_update_params
+          params.permit(:email, :first_name, :surname, :nickname, :avatar)
         end
       end
     end

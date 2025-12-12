@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../axios";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
-import MainPage from "./MainPage";
 import ProjectView from "./ProjectView";
 
 function ProjectDetails() {
@@ -74,10 +73,7 @@ function ProjectDetails() {
   }
 
   return (
-    
-    <div className="min-h-screen bg-gray-50">
-      <MainPage />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Przycisk powrotu */}
         <button
           onClick={() => navigate("/")}
@@ -132,7 +128,6 @@ function ProjectDetails() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

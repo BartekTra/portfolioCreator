@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../axios";
-import MainPage from "./MainPage";
+import TitlePageTemplateRenderer from "./TitlePageTemplateRenderer";
 import { ArrowLeft, Edit } from "lucide-react";
 
 function TitlePageView() {
@@ -55,9 +55,7 @@ function TitlePageView() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <MainPage />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <button
           onClick={() => navigate("/title_pages")}
           className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
@@ -86,93 +84,10 @@ function TitlePageView() {
               </button>
             </div>
 
-            <div className="space-y-6">
-              {titlePage.photo_url && (
-                <div className="flex justify-center">
-                  <img
-                    src={titlePage.photo_url}
-                    alt="Zdjęcie profilowe"
-                    className="w-48 h-48 rounded-full object-cover border-4 border-gray-200 dark:border-gray-600"
-                  />
-                </div>
-              )}
-
-              <div className="grid gap-4 md:grid-cols-2">
-                {titlePage.phone && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                      Telefon
-                    </h3>
-                    <p className="text-gray-800 dark:text-gray-200">{titlePage.phone}</p>
-                  </div>
-                )}
-                {titlePage.email && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                      Email
-                    </h3>
-                    <p className="text-gray-800 dark:text-gray-200">{titlePage.email}</p>
-                  </div>
-                )}
-              </div>
-
-              {titlePage.address && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                    Adres
-                  </h3>
-                  <p className="text-gray-800 dark:text-gray-200">{titlePage.address}</p>
-                </div>
-              )}
-
-              {titlePage.bio && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                    Opis
-                  </h3>
-                  <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
-                    {titlePage.bio}
-                  </p>
-                </div>
-              )}
-
-              {titlePage.experience && titlePage.experience.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                    Doświadczenie zawodowe
-                  </h3>
-                  <div className="space-y-4">
-                    {titlePage.experience.map((exp, index) => (
-                      <div
-                        key={index}
-                        className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-blue-500"
-                      >
-                        <h4 className="font-semibold text-gray-800 dark:text-gray-200">
-                          {exp.position || "Stanowisko"}
-                        </h4>
-                        <p className="text-gray-600 dark:text-gray-300 mb-1">
-                          {exp.company || "Firma"}
-                        </p>
-                        {exp.period && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                            {exp.period}
-                          </p>
-                        )}
-                        {exp.description && (
-                          <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                            {exp.description}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            <TitlePageTemplateRenderer titlePage={titlePage} />
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../axios";
 import { ArrowLeft, Save } from "lucide-react";
-import MainPage from "./MainPage";
 
 const TITLE_TEMPLATES = [
   {
@@ -155,9 +154,7 @@ function TitlePageForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <MainPage />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <button
           onClick={() => navigate("/title_pages")}
           className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
@@ -396,7 +393,6 @@ function TitlePageForm() {
           </form>
         </div>
       </div>
-    </div>
   );
 }
 

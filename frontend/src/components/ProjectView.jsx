@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import api from "../axios";
 import ProjectTemplateRenderer from "./ProjectTemplateRenderer";
-import MainPage from "./MainPage";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -82,9 +81,7 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
 
   if (id && !hideNavbar) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <MainPage />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
             onClick={() => navigate("/")}
             className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
@@ -142,7 +139,6 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
             </div>
           </div>
         </div>
-      </div>
     );
   }
 
