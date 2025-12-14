@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../axios";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, X, Languages, Code, Edit2 } from "lucide-react";
+import TechnologyPicker from "./TechnologyPicker";
+import LanguagePicker from "./LanguagePicker";
 
 const TITLE_TEMPLATES = [
   {
@@ -21,6 +23,11 @@ const TITLE_TEMPLATES = [
   }
 ];
 
+const SECTION_TYPES = {
+  languages: { label: "Języki", icon: <Languages size={18} /> },
+  technologies: { label: "Technologie", icon: <Code size={18} /> },
+};
+
 function TitlePageForm() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -39,6 +46,11 @@ function TitlePageForm() {
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(isEditing);
   const [error, setError] = useState(null);
+  const [sections, setSections] = useState([]);
+  const [showAddSectionModal, setShowAddSectionModal] = useState(false);
+  const [showTechnologyPicker, setShowTechnologyPicker] = useState(false);
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const [editingSectionId, setEditingSectionId] = useState(null);
 
   useEffect(() => {
     if (isEditing) {
@@ -60,6 +72,10 @@ function TitlePageForm() {
         template_key: page.template_key || "titleTemplate1"
       });
       setExistingPhotoUrl(page.photo_url);
+      // Załaduj sekcje jeśli istnieją
+      if (page.sections && Array.isArray(page.sections)) {
+        setSections(page.sections);
+      }
     } catch (err) {
       console.error("Error fetching title page:", err);
       setError("Nie udało się załadować strony tytułowej");
@@ -100,6 +116,75 @@ function TitlePageForm() {
     setFormData({ ...formData, experience: newExperience });
   };
 
+  // Funkcje do zarządzania sekcjami
+  const addSection = (type) => {
+    if (type === "technologies") {
+      setShowTechnologyPicker(true);
+      setEditingSectionId(null);
+    } else if (type === "languages") {
+      setShowLanguagePicker(true);
+      setEditingSectionId(null);
+    }
+    setShowAddSectionModal(false);
+  };
+
+  const handleTechnologySave = (technologiesValue) => {
+    if (editingSectionId) {
+      // Edytuj istniejącą sekcję
+      setSections(sections.map(section => 
+        section.id === editingSectionId 
+          ? { ...section, value: technologiesValue }
+          : section
+      ));
+    } else {
+      // Dodaj nową sekcję
+      const newSection = {
+        id: Date.now(),
+        type: "technologies",
+        value: technologiesValue,
+        order: sections.length
+      };
+      setSections([...sections, newSection]);
+    }
+    setShowTechnologyPicker(false);
+    setEditingSectionId(null);
+  };
+
+  const handleLanguageSave = (languagesValue) => {
+    if (editingSectionId) {
+      // Edytuj istniejącą sekcję
+      setSections(sections.map(section => 
+        section.id === editingSectionId 
+          ? { ...section, value: languagesValue }
+          : section
+      ));
+    } else {
+      // Dodaj nową sekcję
+      const newSection = {
+        id: Date.now(),
+        type: "languages",
+        value: languagesValue,
+        order: sections.length
+      };
+      setSections([...sections, newSection]);
+    }
+    setShowLanguagePicker(false);
+    setEditingSectionId(null);
+  };
+
+  const removeSection = (sectionId) => {
+    setSections(sections.filter(section => section.id !== sectionId));
+  };
+
+  const editSection = (section) => {
+    setEditingSectionId(section.id);
+    if (section.type === "technologies") {
+      setShowTechnologyPicker(true);
+    } else if (section.type === "languages") {
+      setShowLanguagePicker(true);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -113,6 +198,7 @@ function TitlePageForm() {
       submitData.append("bio", formData.bio);
       submitData.append("template_key", formData.template_key);
       submitData.append("experience", JSON.stringify(formData.experience));
+      submitData.append("sections", JSON.stringify(sections));
 
       if (photo) {
         submitData.append("photo", photo);
@@ -372,6 +458,116 @@ function TitlePageForm() {
               )}
             </div>
 
+            {/* Sekcje dynamiczne */}
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Dodatkowe sekcje
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowAddSectionModal(true)}
+                  className="flex items-center space-x-2 px-3 py-1 text-sm bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
+                >
+                  <Plus size={16} />
+                  <span>Dodaj sekcję</span>
+                </button>
+              </div>
+
+              {sections.length > 0 && (
+                <div className="space-y-4">
+                  {sections.map((section) => (
+                    <div
+                      key={section.id}
+                      className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center space-x-2">
+                          {SECTION_TYPES[section.type]?.icon}
+                          <h3 className="font-semibold text-gray-800 dark:text-gray-200">
+                            {SECTION_TYPES[section.type]?.label || section.type}
+                          </h3>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => editSection(section)}
+                            className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeSection(section.id)}
+                            className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {section.type === "technologies" && (
+                        <div>
+                          {section.value ? (
+                            <div className="flex flex-wrap gap-2">
+                              {section.value
+                                .split(",")
+                                .map((tech) => tech.trim())
+                                .filter((tech) => tech.length > 0)
+                                .map((tech, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Brak wybranych technologii
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {section.type === "languages" && (
+                        <div>
+                          {Array.isArray(section.value) && section.value.length > 0 ? (
+                            <div className="space-y-2">
+                              {section.value.map((lang, idx) => (
+                                <div
+                                  key={lang.id || idx}
+                                  className="flex items-center justify-between p-2 bg-white dark:bg-gray-600 rounded"
+                                >
+                                  <span className="font-medium text-gray-800 dark:text-gray-200">
+                                    {lang.name}
+                                  </span>
+                                  <span className="px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-sm">
+                                    {lang.level === "ojczysty" ? "Ojczysty" : lang.level}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Brak dodanych języków
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {sections.length === 0 && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                  Brak sekcji. Kliknij "Dodaj sekcję", aby dodać języki lub technologie.
+                </p>
+              )}
+            </div>
+
             {/* Przyciski */}
             <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
               <button
@@ -392,6 +588,143 @@ function TitlePageForm() {
             </div>
           </form>
         </div>
+
+        {/* Modal wyboru typu sekcji */}
+        {showAddSectionModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/30 backdrop-blur-sm"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowAddSectionModal(false);
+              }
+            }}
+          >
+            <div
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                  Wybierz typ sekcji
+                </h2>
+                <button
+                  onClick={() => setShowAddSectionModal(false)}
+                  className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+              <div className="space-y-3">
+                {Object.entries(SECTION_TYPES).map(([type, config]) => (
+                  <button
+                    key={type}
+                    onClick={() => addSection(type)}
+                    className="w-full flex items-center space-x-3 p-4 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left"
+                  >
+                    <span className="text-gray-600 dark:text-gray-400">{config.icon}</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-200">
+                      {config.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal TechnologyPicker */}
+        {showTechnologyPicker && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/30 backdrop-blur-sm"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowTechnologyPicker(false);
+                setEditingSectionId(null);
+              }
+            }}
+          >
+            <div
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                  {editingSectionId ? "Edytuj technologie" : "Dodaj technologie"}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowTechnologyPicker(false);
+                    setEditingSectionId(null);
+                  }}
+                  className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-6">
+                <TechnologyPicker
+                  initialValue={
+                    editingSectionId
+                      ? sections.find((s) => s.id === editingSectionId)?.value || ""
+                      : ""
+                  }
+                  onSave={handleTechnologySave}
+                  onCancel={() => {
+                    setShowTechnologyPicker(false);
+                    setEditingSectionId(null);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal LanguagePicker */}
+        {showLanguagePicker && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/30 backdrop-blur-sm"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowLanguagePicker(false);
+                setEditingSectionId(null);
+              }
+            }}
+          >
+            <div
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                  {editingSectionId ? "Edytuj języki" : "Dodaj języki"}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowLanguagePicker(false);
+                    setEditingSectionId(null);
+                  }}
+                  className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-6">
+                <LanguagePicker
+                  initialValue={
+                    editingSectionId
+                      ? sections.find((s) => s.id === editingSectionId)?.value || []
+                      : []
+                  }
+                  onSave={handleLanguageSave}
+                  onCancel={() => {
+                    setShowLanguagePicker(false);
+                    setEditingSectionId(null);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
   );
 }

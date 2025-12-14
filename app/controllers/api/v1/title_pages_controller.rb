@@ -73,7 +73,33 @@ module Api
       end
 
       def title_page_params
-        params.permit(:phone, :email, :address, :bio, experience: [])
+        permitted = params.permit(:phone, :email, :address, :bio, :experience, :sections)
+        
+        # Parse experience if it's a JSON string
+        if permitted[:experience].is_a?(String)
+          begin
+            parsed_experience = JSON.parse(permitted[:experience])
+            permitted[:experience] = parsed_experience.is_a?(Array) ? parsed_experience : []
+          rescue JSON::ParserError
+            permitted[:experience] = []
+          end
+        elsif permitted[:experience].nil?
+          permitted[:experience] = []
+        end
+
+        # Parse sections if it's a JSON string
+        if permitted[:sections].is_a?(String)
+          begin
+            parsed_sections = JSON.parse(permitted[:sections])
+            permitted[:sections] = parsed_sections.is_a?(Array) ? parsed_sections : []
+          rescue JSON::ParserError
+            permitted[:sections] = []
+          end
+        elsif permitted[:sections].nil?
+          permitted[:sections] = []
+        end
+        
+        permitted
       end
 
       def attach_photo
@@ -100,6 +126,7 @@ module Api
           address: title_page.address,
           bio: title_page.bio,
           experience: title_page.experience || [],
+          sections: title_page.sections || [],
           template_key: title_page.template_key,
           photo_url: photo_url,
           user_id: title_page.user_id,

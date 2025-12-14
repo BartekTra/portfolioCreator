@@ -30,6 +30,7 @@ module Api
               address: repository.title_page.address,
               bio: repository.title_page.bio,
               experience: repository.title_page.experience || [],
+              sections: repository.title_page.sections || [],
               template_key: repository.title_page.template_key,
               photo_url: repository.title_page.photo.attached? ? 
                 rails_blob_url(repository.title_page.photo, host: request.base_url) : nil

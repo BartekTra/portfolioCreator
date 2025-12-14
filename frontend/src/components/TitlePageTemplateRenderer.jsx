@@ -87,6 +87,61 @@ const TITLE_TEMPLATES = {
             </div>
           </div>
         )}
+
+        {/* Sekcje dynamiczne */}
+        {titlePage.sections && titlePage.sections.length > 0 && (
+          <div className="space-y-6">
+            {titlePage.sections.map((section) => (
+              <div key={section.id}>
+                {section.type === "technologies" && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                      Technologie
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {section.value
+                        ?.split(",")
+                        .map((tech) => tech.trim())
+                        .filter((tech) => tech.length > 0)
+                        .map((tech, idx) => (
+                          <span
+                            key={idx}
+                            className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {section.type === "languages" && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                      Języki
+                    </h3>
+                    <div className="space-y-2">
+                      {Array.isArray(section.value) &&
+                        section.value.map((lang, idx) => (
+                          <div
+                            key={lang.id || idx}
+                            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                          >
+                            <span className="font-medium text-gray-800 dark:text-gray-200">
+                              {lang.name}
+                            </span>
+                            <span className="px-3 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
+                              {lang.level === "ojczysty" ? "Ojczysty" : lang.level}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     ),
   },
@@ -175,6 +230,61 @@ const TITLE_TEMPLATES = {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Sekcje dynamiczne */}
+        {titlePage.sections && titlePage.sections.length > 0 && (
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-6">
+            {titlePage.sections.map((section) => (
+              <div key={section.id}>
+                {section.type === "technologies" && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+                      Technologie
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {section.value
+                        ?.split(",")
+                        .map((tech) => tech.trim())
+                        .filter((tech) => tech.length > 0)
+                        .map((tech, idx) => (
+                          <span
+                            key={idx}
+                            className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {section.type === "languages" && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+                      Języki
+                    </h3>
+                    <div className="space-y-3">
+                      {Array.isArray(section.value) &&
+                        section.value.map((lang, idx) => (
+                          <div
+                            key={lang.id || idx}
+                            className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-700 dark:to-gray-800 rounded-lg"
+                          >
+                            <span className="font-semibold text-gray-800 dark:text-gray-200">
+                              {lang.name}
+                            </span>
+                            <span className="px-4 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
+                              {lang.level === "ojczysty" ? "Ojczysty" : lang.level}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -271,6 +381,61 @@ const TITLE_TEMPLATES = {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Sekcje dynamiczne */}
+        {titlePage.sections && titlePage.sections.length > 0 && (
+          <div className="max-w-3xl mx-auto space-y-6">
+            {titlePage.sections.map((section) => (
+              <div key={section.id}>
+                {section.type === "technologies" && (
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 text-center">
+                      Technologie
+                    </h3>
+                    <div className="flex flex-wrap justify-center gap-3">
+                      {section.value
+                        ?.split(",")
+                        .map((tech) => tech.trim())
+                        .filter((tech) => tech.length > 0)
+                        .map((tech, idx) => (
+                          <span
+                            key={idx}
+                            className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {section.type === "languages" && (
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 text-center">
+                      Języki
+                    </h3>
+                    <div className="space-y-3">
+                      {Array.isArray(section.value) &&
+                        section.value.map((lang, idx) => (
+                          <div
+                            key={lang.id || idx}
+                            className="flex items-center justify-between p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-green-500 dark:hover:border-green-400 transition-colors"
+                          >
+                            <span className="font-semibold text-gray-800 dark:text-gray-200">
+                              {lang.name}
+                            </span>
+                            <span className="px-4 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
+                              {lang.level === "ojczysty" ? "Ojczysty" : lang.level}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>

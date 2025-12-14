@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_12_195021) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_14_190534) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -102,6 +102,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_12_195021) do
     t.string "template_key", default: "titleTemplate1", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "sections"
     t.index ["template_key"], name: "index_title_pages_on_template_key"
     t.index ["user_id"], name: "index_title_pages_on_user_id"
   end
