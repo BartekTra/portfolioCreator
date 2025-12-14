@@ -42,7 +42,7 @@ const getHeightForGrid = (containerClass, slotsCount) => {
   return `${heightPercent}%`;
 };
 
-const renderSectionContent = (project, section, onImageClick) => {
+const renderSectionContent = (project, section, onImageClick, isMosaic = false) => {
   switch (section.type) {
     case "title":
       return (
@@ -82,19 +82,27 @@ const renderSectionContent = (project, section, onImageClick) => {
 
     case "image": {
       const images = getSectionImages(project, section.id);
+      // Dla mozaik ustawiamy maksymalną wysokość sekcji ze zdjęciami
+      const maxHeightClass = isMosaic ? "max-h-[400px]" : "";
       return images.length > 0 ? (
-        <div className="flex flex-col gap-3 w-full h-full overflow-y-auto">
+        <div className={`flex flex-col gap-3 w-full ${isMosaic ? 'h-auto' : 'h-full'} ${isMosaic ? '' : 'overflow-y-auto'} ${maxHeightClass}`}>
           {images.map((image) => {
             const hasDescription =
               image.description && image.description.trim();
             return (
               <div
                 key={image.url}
-                className="w-full h-full flex flex-col min-h-0"
+                className={`w-full ${isMosaic ? 'h-auto' : 'h-full'} flex flex-col ${isMosaic ? 'max-h-[400px]' : 'min-h-0'}`}
               >
                 <div
                   className={`overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity w-full flex items-center justify-center bg-gray-50 dark:bg-gray-800 ${
-                    hasDescription ? "flex-1 min-h-0" : "h-full"
+                    isMosaic 
+                      ? hasDescription 
+                        ? "flex-1 min-h-0 max-h-[350px]" 
+                        : "h-full max-h-[380px]"
+                      : hasDescription 
+                        ? "flex-1 min-h-0" 
+                        : "h-full"
                   }`}
                   onClick={() => onImageClick && onImageClick(image.url)}
                 >
@@ -103,7 +111,13 @@ const renderSectionContent = (project, section, onImageClick) => {
                     alt={`${section.type || "section"} image`}
                     className="max-w-full max-h-full w-auto h-auto object-contain"
                     style={{
-                      maxHeight: hasDescription ? "calc(100% - 0px)" : "100%",
+                      maxHeight: isMosaic 
+                        ? hasDescription 
+                          ? "350px" 
+                          : "380px"
+                        : hasDescription 
+                          ? "calc(100% - 0px)" 
+                          : "100%",
                     }}
                   />
                 </div>
@@ -234,7 +248,7 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
                 } ${section ? "" : "mt-4"}`}
               >
                 {section ? (
-                  renderSectionContent(project, section, onImageClick)
+                  renderSectionContent(project, section, onImageClick, isMosaic)
                 ) : (
                   <div className="rounded-lg border border-dashed border-gray-300 p-4 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500 h-full flex items-center justify-center">
                     Slot pusty
@@ -257,7 +271,7 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
                 key={section.id}
                 className="rounded-lg border border-amber-200 bg-white/80 p-3 dark:border-amber-500/30 dark:bg-transparent "
               >
-                {renderSectionContent(project, section, onImageClick)}
+                {renderSectionContent(project, section, onImageClick, isMosaic)}
               </div>
             ))}
           </div>
