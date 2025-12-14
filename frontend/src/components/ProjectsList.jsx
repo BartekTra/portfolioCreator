@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import api from "../axios";
 import { Plus, ChevronLeft, ChevronRight, X } from "lucide-react";
 import ProjectView from "./ProjectView";
 
 function ProjectsList() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,14 +34,14 @@ function ProjectsList() {
       setProjects(response.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
-      setError("Nie udało się załadować projektów");
+      setError(t("projects.list.errorLoading"));
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Czy na pewno chcesz usunąć ten projekt?")) {
+    if (!window.confirm(t("projects.list.deleteConfirm"))) {
       return;
     }
 
@@ -59,7 +61,7 @@ function ProjectsList() {
       });
     } catch (err) {
       console.error("Error deleting project:", err);
-      alert("Nie udało się usunąć projektu");
+      alert(t("projects.list.deleteError"));
     }
   };
 
@@ -120,14 +122,14 @@ function ProjectsList() {
   const getProjectTitle = (project) => {
     const sections = project.data?.sections || [];
     const titleSection = sections.find((section) => section.type === "title");
-    return titleSection?.value || "Bez tytułu";
+    return titleSection?.value || t("projects.list.noTitle");
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <p className="text-gray-600 dark:text-gray-300">
-          Ładowanie projektów...
+          {t("projects.list.loading")}
         </p>
       </div>
     );
@@ -142,7 +144,7 @@ function ProjectsList() {
             onClick={fetchProjects}
             className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
           >
-            Spróbuj ponownie
+            {t("common.tryAgain")}
           </button>
         </div>
       </div>
@@ -157,7 +159,7 @@ function ProjectsList() {
           type="button"
           onClick={handlePrev}
           className="w-[5%] h-full flex items-center justify-start pl-2 z-10 cursor-pointer transition-all duration-200 bg-gradient-to-r from-transparent via-white/30 to-white/70 dark:from-transparent dark:via-gray-800/30 dark:to-gray-800/70 hover:via-white/60 hover:to-white/90 dark:hover:via-gray-800/60 dark:hover:to-gray-800/90"
-          aria-label="Poprzedni projekt"
+          aria-label={t("common.previous")}
         >
           <ChevronLeft size={32} className="text-gray-800 dark:text-gray-200 opacity-70 hover:opacity-100 transition-opacity" />
         </button>
@@ -169,13 +171,13 @@ function ProjectsList() {
           <div className="h-full flex items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
             <div>
               <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Nie masz jeszcze żadnych projektów.
+                {t("projects.list.noProjectsYet")}
               </p>
               <button
                 onClick={() => navigate("/projects/new")}
                 className="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
               >
-                Dodaj pierwszy projekt
+                {t("projects.list.addFirstProject")}
               </button>
             </div>
           </div>
@@ -204,13 +206,13 @@ function ProjectsList() {
               <div className="flex flex-wrap items-center justify-between gap-4 ">
                 <div>
                   <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                    Projekt {currentIndex + 1} / {projects.length}
+                    {t("projects.list.view")} {currentIndex + 1} {t("repositories.view.of")} {projects.length}
                   </p>
                   <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
                     {getProjectTitle(projects[currentIndex])}
                   </h2>
                   <p className="text-gray-500 dark:text-gray-400">
-                    Template: {projects[currentIndex]?.template_key || "Nieznany"}
+                    {t("projects.view.template")}: {projects[currentIndex]?.template_key || t("common.unknown")}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -219,7 +221,7 @@ function ProjectsList() {
                     className="flex items-center space-x-2 px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                   >
                     <Plus size={20} />
-                    <span>Dodaj projekt</span>
+                    <span>{t("projects.list.addProject")}</span>
                   </button>
                   <button
                     onClick={() =>
@@ -227,7 +229,7 @@ function ProjectsList() {
                     }
                     className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
-                    Szczegóły
+                    {t("projects.list.view")}
                   </button>
                   <button
                     onClick={() =>
@@ -235,13 +237,13 @@ function ProjectsList() {
                     }
                     className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-blue-700 transition hover:bg-blue-100 dark:border-blue-500/40 dark:bg-blue-500/10 dark:text-blue-200"
                   >
-                    Edytuj
+                    {t("common.edit")}
                   </button>
                   <button
                     onClick={() => handleDelete(projects[currentIndex].id)}
                     className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-red-700 transition hover:bg-red-100 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
                   >
-                    Usuń
+                    {t("common.delete")}
                   </button>
                 </div>
               </div>
@@ -256,7 +258,7 @@ function ProjectsList() {
           type="button"
           onClick={handleNext}
           className="w-[5%] h-full flex items-center justify-end pr-2 z-10 cursor-pointer transition-all duration-200 bg-gradient-to-l from-transparent via-white/30 to-white/70 dark:from-transparent dark:via-gray-800/30 dark:to-gray-800/70 hover:via-white/60 hover:to-white/90 dark:hover:via-gray-800/60 dark:hover:to-gray-800/90"
-          aria-label="Następny projekt"
+          aria-label={t("common.next")}
         >
           <ChevronRight size={32} className="text-gray-800 dark:text-gray-200 opacity-70 hover:opacity-100 transition-opacity" />
         </button>
@@ -271,13 +273,13 @@ function ProjectsList() {
           <button
             onClick={() => setEnlargedImage(null)}
             className="fixed top-4 right-4 z-10 rounded-full bg-white/90 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/90 dark:text-gray-100"
-            aria-label="Zamknij"
+            aria-label={t("common.close")}
           >
             <X size={24} />
           </button>
           <img
             src={enlargedImage}
-            alt="Powiększone zdjęcie"
+            alt={t("common.enlargedImage")}
             className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />

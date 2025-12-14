@@ -1,10 +1,12 @@
 // src/components/Login.tsx
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useUser } from "../context/UserContext.jsx";
 import api from "../axios.js";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { refetchUser } = useUser();
   const [formData, setFormData] = useState({
@@ -53,7 +55,7 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
       await refetchUser();
     } catch (err) {
       console.error(err);
-      setError("Something went wrong");
+      setError(t("auth.login.error"));
     } finally {
       setLoading(false);
     }
@@ -80,9 +82,9 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
               </svg>
             </div>
             <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Zaloguj się
+              {t("auth.login.title")}
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">Witaj z powrotem!</p>
+            <p className="text-gray-600 dark:text-gray-300">{t("auth.login.subtitle")}</p>
           </div>
 
           {error && (
@@ -116,7 +118,7 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                Adres email
+                {t("auth.login.email")}
               </label>
               <input
                 type="email"
@@ -126,7 +128,7 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="nazwa@example.com"
+                placeholder={t("auth.login.email")}
               />
             </div>
 
@@ -135,7 +137,7 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                Hasło
+                {t("auth.login.password")}
               </label>
               <input
                 type="password"
@@ -145,7 +147,7 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="Wprowadź hasło"
+                placeholder={t("auth.login.password")}
               />
             </div>
 
@@ -171,7 +173,7 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
                   onClick={() => navigate("/forgot-password")}
                   className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors duration-200"
                 >
-                  Zapomniałeś hasła?
+                  {t("auth.login.forgotPassword")}
                 </button>
               </div>
             </div>
@@ -207,10 +209,10 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Logowanie...
+                  {t("common.loading")}
                 </div>
               ) : (
-                "Zaloguj się"
+                t("auth.login.submit")
               )}
             </button>
           </form>
@@ -221,7 +223,7 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
                   <div className="w-full border-t border-gray-300 dark:border-gray-600" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">lub</span>
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">{t("common.or", "lub")}</span>
                 </div>
               </div>
 
@@ -262,13 +264,13 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
 
             <div className="text-center">
               <p className="text-gray-600 dark:text-gray-300">
-                Nie masz konta?{" "}
+                {t("auth.login.noAccount")}{" "}
                 <button
                   type="button"
                   onClick={() => navigate("/register")}
                   className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors duration-200 underline decoration-2 underline-offset-2 hover:decoration-indigo-500"
                 >
-                  Zarejestruj się
+                  {t("auth.login.register")}
                 </button>
               </p>
             </div>

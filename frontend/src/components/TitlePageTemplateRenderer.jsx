@@ -20,7 +20,7 @@ const TITLE_TEMPLATES = {
           {titlePage.phone && (
             <div>
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                Telefon
+                {t("common.phone")}
               </h3>
               <p className="text-gray-800 dark:text-gray-200">{titlePage.phone}</p>
             </div>
@@ -28,7 +28,7 @@ const TITLE_TEMPLATES = {
           {titlePage.email && (
             <div>
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                Email
+                {t("common.email")}
               </h3>
               <p className="text-gray-800 dark:text-gray-200">{titlePage.email}</p>
             </div>
@@ -38,7 +38,7 @@ const TITLE_TEMPLATES = {
         {titlePage.address && (
           <div>
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-              Adres
+              {t("common.address")}
             </h3>
             <p className="text-gray-800 dark:text-gray-200">{titlePage.address}</p>
           </div>
@@ -47,7 +47,7 @@ const TITLE_TEMPLATES = {
         {titlePage.bio && (
           <div>
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-              Opis
+              {t("common.description")}
             </h3>
             <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
               {titlePage.bio}
@@ -58,7 +58,7 @@ const TITLE_TEMPLATES = {
         {titlePage.experience && titlePage.experience.length > 0 && (
           <div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-              Doświadczenie zawodowe
+              {t("titlePages.experience.title")}
             </h3>
             <div className="space-y-4">
               {titlePage.experience.map((exp, index) => (
@@ -67,21 +67,21 @@ const TITLE_TEMPLATES = {
                   className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-blue-500"
                 >
                   <h4 className="font-semibold text-gray-800 dark:text-gray-200">
-                    {exp.position || "Stanowisko"}
-                  </h4>
-                  <p className="text-gray-600 dark:text-gray-300 mb-1">
-                    {exp.company || "Firma"}
-                  </p>
-                  {exp.period && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                      {exp.period}
+                      {exp.position || t("titlePages.experience.position")}
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-300 mb-1">
+                      {exp.company || t("titlePages.experience.company")}
                     </p>
-                  )}
-                  {exp.description && (
-                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                      {exp.description}
-                    </p>
-                  )}
+                    {exp.period && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                        {exp.period}
+                      </p>
+                    )}
+                    {exp.description && (
+                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                        {exp.description}
+                      </p>
+                    )}
                 </div>
               ))}
             </div>

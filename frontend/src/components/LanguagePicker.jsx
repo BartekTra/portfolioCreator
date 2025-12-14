@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Plus, Trash2 } from "lucide-react";
 
 // Popularne języki
@@ -37,6 +38,7 @@ const LANGUAGE_LEVELS = [
 ];
 
 function LanguagePicker({ initialValue = [], onSave, onCancel }) {
+  const { t } = useTranslation();
   const [languages, setLanguages] = useState(() => {
     if (Array.isArray(initialValue) && initialValue.length > 0) {
       return initialValue;
@@ -75,10 +77,10 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
-          Języki
+          {t("titlePages.sections.languages.title")}
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Dodaj języki, które znasz, wraz z poziomem znajomości.
+          {t("titlePages.sections.languages.instruction")}
         </p>
       </div>
 
@@ -86,7 +88,7 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
       {languages.length > 0 && (
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            Dodane języki ({languages.length})
+            {t("titlePages.sections.languages.title")} ({languages.length})
           </h4>
           <div className="space-y-2">
             {languages.map((lang) => (
@@ -99,7 +101,7 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
                     {lang.name}
                   </span>
                   <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-sm font-medium">
-                    {LANGUAGE_LEVELS.find((l) => l.value === lang.level)?.label || lang.level}
+                    {lang.level === "ojczysty" ? t("titlePages.sections.languages.native") : (LANGUAGE_LEVELS.find((l) => l.value === lang.level)?.label || lang.level)}
                   </span>
                 </div>
                 <button
@@ -120,7 +122,7 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
         <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 space-y-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Nazwa języka
+              {t("titlePages.sections.languages.languageName")}
             </label>
             <div className="flex space-x-2">
               <input
@@ -142,7 +144,7 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
                 disabled={!newLanguage.trim()}
                 className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Dodaj
+                {t("common.add")}
               </button>
               <button
                 type="button"
@@ -158,18 +160,18 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Poziom znajomości
+              {t("titlePages.sections.languages.level")}
             </label>
             <select
               value={newLevel}
               onChange={(e) => setNewLevel(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100"
             >
-              {LANGUAGE_LEVELS.map((level) => (
-                <option key={level.value} value={level.value}>
-                  {level.label}
-                </option>
-              ))}
+                    {LANGUAGE_LEVELS.map((level) => (
+                      <option key={level.value} value={level.value}>
+                        {level.value === "ojczysty" ? t("titlePages.sections.languages.native") : level.label}
+                      </option>
+                    ))}
             </select>
           </div>
         </div>
@@ -180,7 +182,7 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
           className="w-full flex items-center justify-center space-x-2 px-4 py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-gray-700 dark:text-gray-300"
         >
           <Plus size={20} />
-          <span>Dodaj język</span>
+          <span>{t("titlePages.sections.languages.add")}</span>
         </button>
       )}
 
@@ -188,7 +190,7 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
       {languages.length === 0 && (
         <div>
           <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Popularne języki
+            {t("titlePages.sections.languages.popular")}
           </h4>
           <div className="flex flex-wrap gap-2">
             {POPULAR_LANGUAGES.slice(0, 8).map((lang) => (
@@ -214,13 +216,13 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
           onClick={handleSave}
           className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
         >
-          Zapisz języki
+          {t("common.save")}
         </button>
         <button
           onClick={onCancel}
           className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
         >
-          Anuluj
+          {t("common.cancel")}
         </button>
       </div>
     </div>

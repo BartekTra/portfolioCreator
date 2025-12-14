@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ExternalLink, Github } from "lucide-react";
 import { TEMPLATES } from "../templates/templates";
 
@@ -46,7 +47,8 @@ const renderSectionContent = (
   project,
   section,
   onImageClick,
-  isMosaic = false
+  isMosaic = false,
+  t
 ) => {
   switch (section.type) {
     case "title":
@@ -134,7 +136,7 @@ const renderSectionContent = (
           })}
         </div>
       ) : (
-        <p className="text-sm text-gray-500 dark:text-gray-400">Brak zdjęć</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t("sections.noImages")}</p>
       );
     }
 
@@ -148,7 +150,7 @@ const renderSectionContent = (
             className="inline-flex items-center gap-2 text-blue-600 hover:underline dark:text-blue-300"
           >
             <Github size={18} />
-            Zobacz kod na GitHub
+            {t("sections.githubUrl")}
           </a>
         </div>
       );
@@ -163,7 +165,7 @@ const renderSectionContent = (
             className="inline-flex items-center gap-2 text-blue-600 hover:underline dark:text-blue-300"
           >
             <ExternalLink size={18} />
-            Zobacz wersję live
+            {t("sections.liveUrl")}
           </a>
         </div>
       );
@@ -171,13 +173,14 @@ const renderSectionContent = (
     default:
       return (
         <p className="text-gray-500 dark:text-gray-400">
-          Brak danych dla tej sekcji
+          {t("sections.noData")}
         </p>
       );
   }
 };
 
 function ProjectTemplateRenderer({ project, onImageClick }) {
+  const { t } = useTranslation();
   const templateKey = project.template_key || project.data?.template_key;
   const template = getTemplateByKey(templateKey) || TEMPLATES[0];
   const sections = (project.data?.sections || []).sort(
@@ -259,10 +262,10 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
                   // Było: renderSectionContent(project, section, onImageClick, isMosaic)
                   // Jest: renderSectionContent(project, section, onImageClick, false)
 
-                  renderSectionContent(project, section, onImageClick, false)
+                  renderSectionContent(project, section, onImageClick, false, t)
                 ) : (
                   <div className="rounded-lg border border-dashed ... ">
-                    Slot pusty
+                    {t("sections.emptySlot")}
                   </div>
                 )}
               </div>
@@ -274,7 +277,7 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
       {orphanSections.length > 0 && (
         <div className="flex-shrink-0 mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/40 dark:bg-amber-500/10 no-scrollbar">
           <p className="mb-3 text-sm font-semibold text-amber-700 dark:text-amber-200">
-            Sekcje nieprzypisane do template'u
+            {t("sections.orphanSections")}
           </p>
           <div className="space-y-3">
             {orphanSections.map((section) => (
@@ -282,7 +285,7 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
                 key={section.id}
                 className="rounded-lg border border-amber-200 bg-white/80 p-3 dark:border-amber-500/30 dark:bg-transparent "
               >
-                {renderSectionContent(project, section, onImageClick, false)}
+                {renderSectionContent(project, section, onImageClick, false, t)}
               </div>
             ))}
           </div>

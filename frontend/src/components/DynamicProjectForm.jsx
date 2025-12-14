@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Trash2, GripVertical, Type, FileText, Code, Image as ImageIcon, Github, ExternalLink, X, Edit2 } from "lucide-react";
 import api from "../axios";
 import TemplatePicker from "./TemplatePicker";
@@ -7,35 +8,38 @@ import TechnologyPicker from "./TechnologyPicker";
 import { TEMPLATES } from "../templates/templates";
 import { useNavigate } from "react-router-dom";
 
-const SECTION_TYPES = {
-  title: { label: "Tytuł", multiple: false, icon: <Type size={18} /> },
-  description: { label: "Opis", multiple: true, icon: <FileText size={18} /> },
-  technologies: { label: "Technologie", multiple: false, icon: <Code size={18} /> },
-  image: { label: "Zdjęcie", multiple: true, icon: <ImageIcon size={18} /> },
-  github_url: { label: "Link GitHub", multiple: false, icon: <Github size={18} /> },
-  live_url: { label: "Link Live", multiple: false, icon: <ExternalLink size={18} /> },
-};
+const getSECTION_TYPES = (t) => ({
+  title: { label: t("sections.title"), multiple: false, icon: <Type size={18} /> },
+  description: { label: t("sections.description"), multiple: true, icon: <FileText size={18} /> },
+  technologies: { label: t("sections.technologies"), multiple: false, icon: <Code size={18} /> },
+  image: { label: t("sections.image"), multiple: true, icon: <ImageIcon size={18} /> },
+  github_url: { label: t("sections.githubUrl"), multiple: false, icon: <Github size={18} /> },
+  live_url: { label: t("sections.liveUrl"), multiple: false, icon: <ExternalLink size={18} /> },
+});
 
-const SECTION_CATEGORIES = {
+const getSECTION_CATEGORIES = (t) => ({
   podstawowe: {
-    label: "Podstawowe",
+    label: t("sections.categories.basic"),
     sections: ["title", "description"],
   },
   technologie: {
-    label: "Technologie",
+    label: t("sections.categories.technologies"),
     sections: ["technologies"],
   },
   linki: {
-    label: "Linki",
+    label: t("sections.categories.links"),
     sections: ["github_url", "live_url"],
   },
   multimedia: {
-    label: "Multimedia",
+    label: t("sections.categories.multimedia"),
     sections: ["image"],
   },
-};
+});
 
 function DynamicProjectForm() {
+  const { t } = useTranslation();
+  const SECTION_TYPES = getSECTION_TYPES(t);
+  const SECTION_CATEGORIES = getSECTION_CATEGORIES(t);
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -261,12 +265,12 @@ function DynamicProjectForm() {
 
   const validate = () => {
     if (!selectedTemplate) {
-      setError("Wybierz template, aby kontynuować.");
+      setError(t("projects.form.selectTemplate"));
       return false;
     }
 
     if (sections.length === 0) {
-      setError("Dodaj co najmniej jedną sekcję do wybranego template'u.");
+      setError(t("projects.form.selectTemplateError"));
       return false;
     }
 
@@ -436,7 +440,7 @@ function DynamicProjectForm() {
             type="text"
             value={section.value}
             onChange={(e) => updateSection(section.id, e.target.value)}
-            placeholder="Nazwa projektu"
+            placeholder={t("projects.form.create")}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
           />
         )}
@@ -445,7 +449,7 @@ function DynamicProjectForm() {
           <textarea
             value={section.value}
             onChange={(e) => updateSection(section.id, e.target.value)}
-            placeholder="Opisz swój projekt"
+            placeholder={t("common.description")}
             rows={4}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
           />
@@ -475,18 +479,18 @@ function DynamicProjectForm() {
                   className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                 >
                   <Edit2 size={16} />
-                  <span>Edytuj technologie</span>
+                  <span>{t("titlePages.sections.technologies.edit")}</span>
                 </button>
               </div>
             ) : (
               <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-                <p className="text-sm mb-2">Brak wybranych technologii</p>
+                <p className="text-sm mb-2">{t("titlePages.sections.technologies.empty")}</p>
                 <button
                   type="button"
                   onClick={() => handleEditTechnologies(section.id)}
                   className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                 >
-                  Dodaj technologie
+                  {t("titlePages.sections.technologies.add")}
                 </button>
               </div>
             )}
@@ -577,10 +581,10 @@ function DynamicProjectForm() {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
-              Zbuduj swój projekt
+              {t("projects.form.builderTitle")}
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Dodawaj sekcje i dostosuj projekt do swoich potrzeb
+              {t("projects.form.builderSubtitle")}
             </p>
           </div>
 
@@ -593,7 +597,7 @@ function DynamicProjectForm() {
           {success && (
             <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-400 rounded-lg">
               <p className="text-green-700 dark:text-green-400 font-medium">
-                Projekt utworzony  Sprawdź konsolę przeglądarki dla szczegółów.
+                {t("projects.form.create")} {t("common.success")}
               </p>
             </div>
           )}
@@ -655,7 +659,7 @@ function DynamicProjectForm() {
                   <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <div>
                       <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                        Edytuj technologie
+                        {t("titlePages.sections.technologies.edit")}
                       </p>
                       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                         Technologie
@@ -701,9 +705,9 @@ function DynamicProjectForm() {
                       <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
                         {showTechnologyPicker
                           ? editingTechnologySectionId
-                            ? "Edytuj technologie"
-                            : "Dodaj technologie do slotu"
-                          : "Dodaj sekcję do slotu"}
+                            ? t("titlePages.sections.technologies.edit")
+                            : t("sections.addSectionToSlot")
+                          : t("sections.addSectionToSlot")}
                       </p>
                       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                         {showTechnologyPicker
@@ -795,7 +799,7 @@ function DynamicProjectForm() {
                         ) : (
                           <div className="flex items-center justify-center h-full">
                             <p className="text-gray-500 dark:text-gray-400 text-center">
-                              Brak dostępnych sekcji dla tego slotu w tej kategorii
+                              {t("sections.noSectionsAvailable")}
                             </p>
                           </div>
                         )}
@@ -812,20 +816,20 @@ function DynamicProjectForm() {
                 disabled={loading}
                 className="flex-1 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {loading ? "Tworzeni.." : "Utwórz projekt"}
+                {loading ? t("projects.form.creating") : t("projects.form.createProject")}
               </button>
               <button
                 onClick={resetBuilder}
                 className="px-6 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
               >
-                Resetuj
+                {t("projects.form.reset")}
               </button>
             </div>
           </div>
 
           <details className="mt-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
             <summary className="cursor-pointer font-semibold text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-gray-100">
-              Podgląd json
+              {t("projects.form.jsonPreview")}
             </summary>
             <pre className="mt-4 p-4 bg-white dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-600 overflow-x-auto text-xs dark:text-gray-300">
               {JSON.stringify(prepareSubmitData(), null, 2)}

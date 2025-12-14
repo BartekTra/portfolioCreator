@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Check } from "lucide-react";
 
 // Mapa technologii z możliwością łatwego dodania ikon
@@ -78,6 +79,7 @@ const formatTechnologies = (technologies) => {
 };
 
 function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
+  const { t } = useTranslation();
   // Pobierz wszystkie dostępne nazwy technologii (memoized, bo TECHNOLOGIES jest stałą)
   const allAvailableTechNames = useMemo(
     () =>
@@ -168,10 +170,10 @@ function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
-          Wybierz technologie
+          {t("titlePages.sections.technologies.title")}
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Zaznacz technologie używane w projekcie. Możesz wybrać wiele opcji.
+          {t("titlePages.sections.technologies.instruction")}
         </p>
       </div>
 
@@ -239,7 +241,7 @@ function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500"
           />
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Inne (wpisz ręcznie)
+            {t("titlePages.sections.technologies.other")}
           </span>
         </label>
 
@@ -249,7 +251,7 @@ function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
               type="text"
               value={otherValue}
               onChange={(e) => setOtherValue(e.target.value)}
-              placeholder="np. Elixir, Haskell, Clojure (oddziel przecinkami)"
+              placeholder={t("titlePages.sections.technologies.otherPlaceholder")}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -290,13 +292,13 @@ function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
           onClick={handleSave}
           className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
         >
-          Zapisz technologie
+          {t("titlePages.sections.technologies.save")}
         </button>
         <button
           onClick={onCancel}
           className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
         >
-          Anuluj
+          {t("common.cancel")}
         </button>
       </div>
     </div>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../axios";
 import TitlePageTemplateRenderer from "./TitlePageTemplateRenderer";
 import { ArrowLeft, Edit } from "lucide-react";
 
 function TitlePageView() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [titlePage, setTitlePage] = useState(null);
@@ -22,7 +24,7 @@ function TitlePageView() {
       setTitlePage(response.data);
     } catch (err) {
       console.error("Error fetching title page:", err);
-      setError("Nie udało się załadować strony tytułowej");
+      setError(t("titlePages.list.errorLoading"));
     } finally {
       setLoading(false);
     }
@@ -31,7 +33,7 @@ function TitlePageView() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-600 dark:text-gray-300">Ładowanie strony tytułowej...</p>
+        <p className="text-gray-600 dark:text-gray-300">{t("titlePages.list.loading")}</p>
       </div>
     );
   }
@@ -41,13 +43,13 @@ function TitlePageView() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400 mb-4">
-            {error || "Strona tytułowa nie została znaleziona"}
+            {error || t("errors.notFound")}
           </p>
           <button
             onClick={() => navigate("/title_pages")}
             className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
           >
-            Wróć do listy stron tytułowych
+            {t("titlePages.view.back")}
           </button>
         </div>
       </div>
@@ -61,7 +63,7 @@ function TitlePageView() {
           className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
         >
           <ArrowLeft size={20} />
-          <span>Wróć do listy stron tytułowych</span>
+          <span>{t("titlePages.view.back")}</span>
         </button>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
@@ -69,16 +71,16 @@ function TitlePageView() {
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-                  Strona tytułowa
+                  {t("titlePages.view.title")}
                 </h1>
                 <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  Template: {titlePage.template_key}
+                  {t("titlePages.view.template")}: {titlePage.template_key}
                 </p>
               </div>
               <button
                 onClick={() => navigate(`/title_pages/${id}/edit`)}
                 className="p-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
-                title="Edytuj"
+                title={t("common.edit")}
               >
                 <Edit size={20} />
               </button>

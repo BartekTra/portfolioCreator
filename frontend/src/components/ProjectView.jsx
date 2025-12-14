@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import api from "../axios";
 import ProjectTemplateRenderer from "./ProjectTemplateRenderer";
@@ -6,6 +7,7 @@ import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function ProjectView({ project: projectProp, onImageClick, hideNavbar = false }) {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(projectProp || null);
@@ -48,13 +50,13 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
   const getProjectTitle = () => {
     const sections = project?.data?.sections || [];
     const titleSection = sections.find((section) => section.type === "title");
-    return titleSection?.value || "Bez tytułu";
+    return titleSection?.value || t("projects.list.noTitle");
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-600 dark:text-gray-300">Ładowanie projektu...</p>
+        <p className="text-gray-600 dark:text-gray-300">{t("projects.list.loading")}</p>
       </div>
     );
   }
@@ -63,12 +65,12 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 dark:text-red-400 mb-4">{error || "Projekt nie został znaleziony"}</p>
+          <p className="text-red-600 dark:text-red-400 mb-4">{error || t("errors.notFound")}</p>
           <button
             onClick={() => navigate("/")}
             className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
           >
-            Wróć do listy projektów
+            {t("common.back")}
           </button>
         </div>
       </div>
@@ -87,7 +89,7 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
             className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
           >
             <ArrowLeft size={20} />
-            <span>Wróć do listy projektów</span>
+            <span>{t("common.back")}</span>
           </button>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden ">
@@ -98,24 +100,24 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
                     {getProjectTitle()}
                   </h1>
                   <p className="text-gray-500 dark:text-gray-400 text-sm">
-                    Utworzono: {new Date(project.created_at).toLocaleDateString("pl-PL")}
+                    {t("projects.view.createdAt")}: {new Date(project.created_at).toLocaleDateString()}
                   </p>
                   <p className="text-gray-500 dark:text-gray-400 text-sm">
-                    Template: {project.template_key || project.data?.template_key || "Nieznany"}
+                    {t("projects.view.template")}: {project.template_key || project.data?.template_key || t("common.unknown")}
                   </p>
                 </div>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => navigate(`/projects/${id}/edit`)}
                     className="p-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
-                    title="Edytuj"
+                    title={t("common.edit")}
                   >
                     <Edit size={20} />
                   </button>
                   <button
                     onClick={handleDelete}
                     className="p-2 bg-red-600 dark:bg-red-500 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600"
-                    title="Usuń"
+                    title={t("common.delete")}
                   >
                     <Trash2 size={20} />
                   </button>
@@ -129,7 +131,7 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <details className="cursor-pointer">
                   <summary className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
-                    Zobacz surowe dane JSON
+                    {t("projects.view.rawData")}
                   </summary>
                   <pre className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-x-auto text-xs dark:text-gray-300">
                     {JSON.stringify(project.data, null, 2)}

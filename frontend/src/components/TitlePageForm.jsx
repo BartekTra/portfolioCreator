@@ -1,36 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import api from "../axios";
 import { ArrowLeft, Save, Plus, Trash2, X, Languages, Code, Edit2 } from "lucide-react";
 import TechnologyPicker from "./TechnologyPicker";
 import LanguagePicker from "./LanguagePicker";
 
-const TITLE_TEMPLATES = [
-  {
-    id: "titleTemplate1",
-    name: "Template 1",
-    description: "Klasyczny układ z dużą fotografią"
-  },
-  {
-    id: "titleTemplate2",
-    name: "Template 2",
-    description: "Nowoczesny układ z akcentem na tekst"
-  },
-  {
-    id: "titleTemplate3",
-    name: "Template 3",
-    description: "Minimalistyczny układ z wyróżnionymi danymi kontaktowymi"
-  }
-];
-
 const SECTION_TYPES = {
-  languages: { label: "Języki", icon: <Languages size={18} /> },
-  technologies: { label: "Technologie", icon: <Code size={18} /> },
+  languages: { labelKey: "titlePages.sections.languages.title", icon: <Languages size={18} /> },
+  technologies: { labelKey: "titlePages.sections.technologies.title", icon: <Code size={18} /> },
 };
 
 function TitlePageForm() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const isEditing = Boolean(id);
 
   const [formData, setFormData] = useState({
@@ -224,17 +208,35 @@ function TitlePageForm() {
       setError(
         err.response?.data?.error ||
         err.response?.data?.errors?.join(", ") ||
-        "Wystąpił błąd podczas zapisywania strony tytułowej"
+        t("errors.generic")
       );
     } finally {
       setLoading(false);
     }
   };
 
+  const getTITLE_TEMPLATES = () => [
+    {
+      id: "titleTemplate1",
+      name: t("titlePages.templates.template1.name"),
+      description: t("titlePages.templates.template1.description")
+    },
+    {
+      id: "titleTemplate2",
+      name: t("titlePages.templates.template2.name"),
+      description: t("titlePages.templates.template2.description")
+    },
+    {
+      id: "titleTemplate3",
+      name: t("titlePages.templates.template3.name"),
+      description: t("titlePages.templates.template3.description")
+    }
+  ];
+
   if (loadingData) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-600 dark:text-gray-300">Ładowanie...</p>
+        <p className="text-gray-600 dark:text-gray-300">{t("common.loading")}</p>
       </div>
     );
   }
@@ -246,12 +248,12 @@ function TitlePageForm() {
           className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
         >
           <ArrowLeft size={20} />
-          <span>Wróć do listy stron tytułowych</span>
+          <span>{t("titlePages.view.back")}</span>
         </button>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">
-            {isEditing ? "Edytuj stronę tytułową" : "Nowa strona tytułowa"}
+            {isEditing ? t("titlePages.form.edit") : t("titlePages.form.create")}
           </h1>
 
           {error && (
@@ -264,10 +266,10 @@ function TitlePageForm() {
             {/* Wybór template */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Wybierz template *
+                {t("titlePages.form.template")}
               </label>
               <div className="grid gap-4 md:grid-cols-3">
-                {TITLE_TEMPLATES.map((template) => (
+                {getTITLE_TEMPLATES().map((template) => (
                   <button
                     key={template.id}
                     type="button"
@@ -292,13 +294,13 @@ function TitlePageForm() {
             {/* Zdjęcie */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Zdjęcie profilowe
+                {t("titlePages.form.photo")}
               </label>
               {existingPhotoUrl && !photo && (
                 <div className="mb-4">
                   <img
                     src={existingPhotoUrl}
-                    alt="Obecne zdjęcie"
+                    alt={t("titlePages.form.currentPhoto")}
                     className="w-32 h-32 rounded-full object-cover mb-2"
                   />
                 </div>
@@ -311,7 +313,7 @@ function TitlePageForm() {
               />
               {photo && (
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                  Wybrano: {photo.name}
+                  {t("titlePages.form.selected")}: {photo.name}
                 </p>
               )}
             </div>
@@ -320,7 +322,7 @@ function TitlePageForm() {
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Numer telefonu
+                  {t("titlePages.form.phone")}
                 </label>
                 <input
                   type="tel"
@@ -333,7 +335,7 @@ function TitlePageForm() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email *
+                  {t("titlePages.form.email")}
                 </label>
                 <input
                   type="email"
@@ -349,7 +351,7 @@ function TitlePageForm() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Adres
+                {t("titlePages.form.address")}
               </label>
               <textarea
                 name="address"
@@ -364,7 +366,7 @@ function TitlePageForm() {
             {/* Opis */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Krótki opis
+                {t("titlePages.form.bio")}
               </label>
               <textarea
                 name="bio"
@@ -372,7 +374,7 @@ function TitlePageForm() {
                 onChange={handleChange}
                 rows={4}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
-                placeholder="Krótki opis o sobie..."
+                placeholder={t("titlePages.form.bioPlaceholder")}
               />
             </div>
 
@@ -380,14 +382,14 @@ function TitlePageForm() {
             <div>
               <div className="flex justify-between items-center mb-3">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Doświadczenie zawodowe
+                  {t("titlePages.form.experience.title")}
                 </label>
                 <button
                   type="button"
                   onClick={addExperience}
                   className="px-3 py-1 text-sm bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
                 >
-                  + Dodaj
+                  {t("titlePages.form.experience.add")}
                 </button>
               </div>
               {formData.experience.map((exp, index) => (
@@ -395,51 +397,51 @@ function TitlePageForm() {
                   <div className="grid gap-4 md:grid-cols-2 mb-3">
                     <div>
                       <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                        Firma
+                        {t("titlePages.form.experience.company")}
                       </label>
                       <input
                         type="text"
                         value={exp.company || ""}
                         onChange={(e) => handleExperienceChange(index, "company", e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:text-gray-100 text-sm"
-                        placeholder="Nazwa firmy"
+                        placeholder={t("titlePages.form.experience.company")}
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                        Stanowisko
+                        {t("titlePages.form.experience.position")}
                       </label>
                       <input
                         type="text"
                         value={exp.position || ""}
                         onChange={(e) => handleExperienceChange(index, "position", e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:text-gray-100 text-sm"
-                        placeholder="Stanowisko"
+                        placeholder={t("titlePages.form.experience.position")}
                       />
                     </div>
                   </div>
                   <div className="mb-3">
                     <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                      Okres
+                      {t("titlePages.form.experience.period")}
                     </label>
                     <input
                       type="text"
                       value={exp.period || ""}
                       onChange={(e) => handleExperienceChange(index, "period", e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:text-gray-100 text-sm"
-                      placeholder="np. 2020 - obecnie"
+                      placeholder={t("titlePages.form.experience.periodPlaceholder")}
                     />
                   </div>
                   <div className="mb-3">
                     <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                      Opis
+                      {t("titlePages.form.experience.description")}
                     </label>
                     <textarea
                       value={exp.description || ""}
                       onChange={(e) => handleExperienceChange(index, "description", e.target.value)}
                       rows={2}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:text-gray-100 text-sm"
-                      placeholder="Opis obowiązków..."
+                      placeholder={t("titlePages.form.experience.descriptionPlaceholder")}
                     />
                   </div>
                   <button
@@ -447,13 +449,13 @@ function TitlePageForm() {
                     onClick={() => removeExperience(index)}
                     className="text-sm text-red-600 dark:text-red-400 hover:underline"
                   >
-                    Usuń
+                    {t("common.delete")}
                   </button>
                 </div>
               ))}
               {formData.experience.length === 0 && (
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                  Brak doświadczenia. Kliknij "Dodaj", aby dodać pozycję.
+                  {t("titlePages.form.experience.empty")}
                 </p>
               )}
             </div>
@@ -462,7 +464,7 @@ function TitlePageForm() {
             <div>
               <div className="flex justify-between items-center mb-3">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Dodatkowe sekcje
+                  {t("titlePages.form.sections.title")}
                 </label>
                 <button
                   type="button"
@@ -470,7 +472,7 @@ function TitlePageForm() {
                   className="flex items-center space-x-2 px-3 py-1 text-sm bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
                 >
                   <Plus size={16} />
-                  <span>Dodaj sekcję</span>
+                  <span>{t("titlePages.form.sections.add")}</span>
                 </button>
               </div>
 
@@ -485,7 +487,7 @@ function TitlePageForm() {
                         <div className="flex items-center space-x-2">
                           {SECTION_TYPES[section.type]?.icon}
                           <h3 className="font-semibold text-gray-800 dark:text-gray-200">
-                            {SECTION_TYPES[section.type]?.label || section.type}
+                            {t(SECTION_TYPES[section.type]?.labelKey || section.type)}
                           </h3>
                         </div>
                         <div className="flex space-x-2">
@@ -525,7 +527,7 @@ function TitlePageForm() {
                             </div>
                           ) : (
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Brak wybranych technologii
+                              {t("titlePages.sections.technologies.empty")}
                             </p>
                           )}
                         </div>
@@ -544,14 +546,14 @@ function TitlePageForm() {
                                     {lang.name}
                                   </span>
                                   <span className="px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-sm">
-                                    {lang.level === "ojczysty" ? "Ojczysty" : lang.level}
+                                    {lang.level === "ojczysty" ? t("titlePages.sections.languages.native") : lang.level}
                                   </span>
                                 </div>
                               ))}
                             </div>
                           ) : (
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Brak dodanych języków
+                              {t("titlePages.sections.languages.empty")}
                             </p>
                           )}
                         </div>
@@ -563,7 +565,7 @@ function TitlePageForm() {
 
               {sections.length === 0 && (
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                  Brak sekcji. Kliknij "Dodaj sekcję", aby dodać języki lub technologie.
+                  {t("titlePages.form.sections.empty")}
                 </p>
               )}
             </div>
@@ -576,14 +578,14 @@ function TitlePageForm() {
                 className="flex-1 flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Save size={20} />
-                <span>{loading ? "Zapisywanie..." : "Zapisz stronę tytułową"}</span>
+                <span>{loading ? t("common.loading") : (isEditing ? t("titlePages.form.edit") : t("common.save"))}</span>
               </button>
               <button
                 type="button"
                 onClick={() => navigate("/title_pages")}
                 className="px-6 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
               >
-                Anuluj
+                {t("common.cancel")}
               </button>
             </div>
           </form>
@@ -605,7 +607,7 @@ function TitlePageForm() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                  Wybierz typ sekcji
+                  {t("titlePages.form.sections.selectType")}
                 </h2>
                 <button
                   onClick={() => setShowAddSectionModal(false)}
@@ -623,7 +625,7 @@ function TitlePageForm() {
                   >
                     <span className="text-gray-600 dark:text-gray-400">{config.icon}</span>
                     <span className="font-medium text-gray-700 dark:text-gray-200">
-                      {config.label}
+                      {t(config.labelKey)}
                     </span>
                   </button>
                 ))}
@@ -649,7 +651,7 @@ function TitlePageForm() {
             >
               <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                  {editingSectionId ? "Edytuj technologie" : "Dodaj technologie"}
+                  {editingSectionId ? t("titlePages.sections.technologies.edit") : t("titlePages.sections.technologies.add")}
                 </h2>
                 <button
                   onClick={() => {
@@ -696,7 +698,7 @@ function TitlePageForm() {
             >
               <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                  {editingSectionId ? "Edytuj języki" : "Dodaj języki"}
+                  {editingSectionId ? t("titlePages.sections.languages.edit") : t("titlePages.sections.languages.add")}
                 </h2>
                 <button
                   onClick={() => {

@@ -1,0 +1,305 @@
+{
+  "common": {
+    "loading": "Ładowanie...",
+    "loadingUser": "Ładowanie danych użytkownika...",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "add": "Dodaj",
+    "remove": "Usuń",
+    "back": "Wróć",
+    "submit": "Wyślij",
+    "close": "Zamknij",
+    "next": "Następny",
+    "previous": "Poprzedni",
+    "search": "Szukaj",
+    "filter": "Filtruj",
+    "actions": "Akcje",
+    "name": "Nazwa",
+    "description": "Opis",
+    "email": "Email",
+    "phone": "Telefon",
+    "address": "Adres",
+    "title": "Tytuł",
+    "required": "Wymagane",
+    "optional": "Opcjonalne",
+    "yes": "Tak",
+    "no": "Nie",
+    "confirm": "Potwierdź",
+    "error": "Błąd",
+    "success": "Sukces",
+    "warning": "Ostrzeżenie",
+    "info": "Informacja",
+    "tryAgain": "Spróbuj ponownie",
+    "unknown": "Nieznany",
+    "photo": "Zdjęcie",
+    "or": "lub",
+    "enlargedImage": "Powiększone zdjęcie",
+    "details": "Szczegóły"
+  },
+  "navigation": {
+    "projects": "Projekty",
+    "titlePage": "O mnie",
+    "portfolio": "Portfolio",
+    "profile": "Profil",
+    "login": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "logout": "Wyloguj",
+    "language": "Język"
+  },
+  "darkMode": {
+    "toggleLight": "Przełącz na tryb jasny",
+    "toggleDark": "Przełącz na tryb ciemny"
+  },
+  "auth": {
+    "login": {
+      "title": "Zaloguj się",
+      "subtitle": "Witaj z powrotem!",
+      "email": "Email",
+      "password": "Hasło",
+      "submit": "Zaloguj się",
+      "forgotPassword": "Zapomniałeś hasła?",
+      "noAccount": "Nie masz konta?",
+      "register": "Zarejestruj się",
+      "error": "Coś poszło nie tak"
+    },
+    "register": {
+      "title": "Zarejestruj się",
+      "subtitle": "Utwórz nowe konto",
+      "email": "Email",
+      "password": "Hasło",
+      "passwordConfirmation": "Potwierdź hasło",
+      "submit": "Zarejestruj się",
+      "haveAccount": "Masz już konto?",
+      "login": "Zaloguj się"
+    },
+    "forgotPassword": {
+      "title": "Zapomniałeś hasła?",
+      "subtitle": "Podaj swój email, a wyślemy Ci link do resetowania hasła",
+      "email": "Email",
+      "submit": "Wyślij link",
+      "backToLogin": "Wróć do logowania"
+    },
+    "resetPassword": {
+      "title": "Resetuj hasło",
+      "password": "Nowe hasło",
+      "passwordConfirmation": "Potwierdź nowe hasło",
+      "submit": "Resetuj hasło"
+    }
+  },
+  "projects": {
+    "title": "Projekty",
+    "list": {
+      "title": "Lista projektów",
+      "empty": "Brak projektów",
+      "createNew": "Utwórz nowy projekt",
+      "view": "Zobacz",
+      "edit": "Edytuj",
+      "delete": "Usuń",
+      "deleteConfirm": "Czy na pewno chcesz usunąć ten projekt?",
+      "noTitle": "Bez tytułu",
+      "loading": "Ładowanie projektów...",
+      "errorLoading": "Nie udało się załadować projektów",
+      "myProjects": "Moje projekty",
+      "addProject": "Dodaj projekt",
+      "noProjectsYet": "Nie masz jeszcze żadnych projektów.",
+      "addFirstProject": "Utwórz pierwszy projekt",
+      "unknownTemplate": "Nieznany",
+      "deleteError": "Nie udało się usunąć projektu"
+    },
+    "form": {
+      "create": "Utwórz nowy projekt",
+      "edit": "Edytuj projekt",
+      "template": "Wybierz template",
+      "sections": "Sekcje",
+      "addSection": "Dodaj sekcję",
+      "builderTitle": "Zbuduj swój projekt",
+      "builderSubtitle": "Dodawaj sekcje i dostosuj projekt do swoich potrzeb",
+      "selectTemplate": "Wybierz template, aby kontynuować.",
+      "selectTemplateError": "Dodaj co najmniej jedną sekcję do wybranego template'u.",
+      "creating": "Tworzenie...",
+      "createProject": "Utwórz projekt",
+      "reset": "Resetuj",
+      "jsonPreview": "Podgląd json",
+      "openConsole": "Otwórz konsolę"
+    },
+    "view": {
+      "createdAt": "Utworzono",
+      "template": "Template",
+      "rawData": "Zobacz surowe dane JSON"
+    }
+  },
+  "titlePages": {
+    "title": "CV",
+    "list": {
+      "title": "Lista CV",
+      "empty": "Brak CV",
+      "createNew": "Utwórz nowe CV",
+      "view": "Zobacz",
+      "edit": "Edytuj",
+      "delete": "Usuń",
+      "deleteConfirm": "Czy na pewno chcesz usunąć to CV?",
+      "loading": "Ładowanie CV...",
+      "errorLoading": "Nie udało się załadować CV",
+      "tryAgain": "Spróbuj ponownie",
+      "myTitlePages": "Moje CV",
+      "addTitlePage": "Dodaj CV",
+      "noTitlePagesYet": "Nie masz jeszcze żadnych CV.",
+      "addFirstTitlePage": "Dodaj pierwsze CV",
+      "defaultTitle": "CV",
+      "profilePhoto": "Zdjęcie profilowe",
+      "deleteError": "Nie udało się usunąć CV"
+    },
+    "form": {
+      "create": "Nowe CV",
+      "edit": "Edytuj CV",
+      "template": "Wybierz template *",
+      "photo": "Zdjęcie profilowe",
+      "currentPhoto": "Obecne zdjęcie",
+      "selected": "Wybrano",
+      "contactInfo": "Dane kontaktowe",
+      "phone": "Numer telefonu",
+      "email": "Email *",
+      "address": "Adres",
+      "bio": "Krótki opis",
+      "bioPlaceholder": "Krótki opis o sobie...",
+      "experience": {
+        "title": "Doświadczenie zawodowe",
+        "add": "+ Dodaj",
+        "empty": "Brak doświadczenia. Kliknij \"Dodaj\", aby dodać pozycję.",
+        "company": "Firma",
+        "position": "Stanowisko",
+        "period": "Okres",
+        "periodPlaceholder": "np. 2020 - obecnie",
+        "description": "Opis",
+        "descriptionPlaceholder": "Opis obowiązków..."
+      },
+      "sections": {
+        "title": "Dodatkowe sekcje",
+        "add": "Dodaj sekcję",
+        "empty": "Brak sekcji. Kliknij \"Dodaj sekcję\", aby dodać języki lub technologie.",
+        "selectType": "Wybierz typ sekcji"
+      }
+    },
+    "view": {
+      "title": "CV",
+      "template": "Template",
+      "back": "Wróć do listy CV"
+    },
+    "templates": {
+      "template1": {
+        "name": "Template 1",
+        "description": "Klasyczny układ z dużą fotografią"
+      },
+      "template2": {
+        "name": "Template 2",
+        "description": "Nowoczesny układ z akcentem na tekst"
+      },
+      "template3": {
+        "name": "Template 3",
+        "description": "Minimalistyczny układ z wyróżnionymi danymi kontaktowymi"
+      }
+    },
+    "sections": {
+      "languages": {
+        "title": "Języki",
+        "add": "Dodaj języki",
+        "edit": "Edytuj języki",
+        "empty": "Brak dodanych języków",
+        "instruction": "Dodaj języki, które znasz, wraz z poziomem znajomości.",
+        "languageName": "Nazwa języka",
+        "level": "Poziom znajomości",
+        "popular": "Popularne języki",
+        "native": "Ojczysty"
+      },
+      "technologies": {
+        "title": "Technologie",
+        "add": "Dodaj technologie",
+        "edit": "Edytuj technologie",
+        "empty": "Brak wybranych technologii",
+        "instruction": "Zaznacz technologie używane w projekcie. Możesz wybrać wiele opcji.",
+        "save": "Zapisz technologie",
+        "other": "Inne (wpisz ręcznie)",
+        "otherPlaceholder": "np. Elixir, Haskell, Clojure (oddziel przecinkami)"
+      }
+    },
+    "experience": {
+      "title": "Doświadczenie zawodowe",
+      "position": "Stanowisko",
+      "company": "Firma",
+      "period": "Okres",
+      "description": "Opis"
+    }
+  },
+  "repositories": {
+    "title": "Portfolio",
+    "list": {
+      "title": "Lista portfolio",
+      "empty": "Brak portfolio",
+      "createNew": "Utwórz nowe portfolio",
+      "view": "Zobacz",
+      "edit": "Edytuj",
+      "delete": "Usuń",
+      "share": "Udostępnij",
+      "deleteConfirm": "Czy na pewno chcesz usunąć to portfolio?"
+    },
+    "form": {
+      "create": "Utwórz nowe portfolio",
+      "edit": "Edytuj portfolio",
+      "name": "Nazwa portfolio",
+      "description": "Opis",
+      "selectTitlePage": "Wybierz CV",
+      "mustSelectTitlePage": "Musisz wybrać CV",
+      "selectProjects": "Wybierz projekty",
+      "selectedProjects": "Wybrane projekty",
+      "noProjects": "Brak dostępnych projektów"
+    },
+    "view": {
+      "titlePage": "CV",
+      "project": "Projekt",
+      "shareUrl": "URL do udostępnienia",
+      "copyUrl": "Kopiuj URL",
+      "urlCopied": "URL skopiowany!",
+      "shareLink": "Udostępnij link",
+      "loading": "Ładowanie portfolio...",
+      "notFound": "Portfolio nie zostało znalezione",
+      "emptyPortfolio": "To portfolio nie zawiera żadnych projektów.",
+      "of": "/"
+    }
+  },
+  "errors": {
+    "generic": "Wystąpił błąd",
+    "notFound": "Nie znaleziono",
+    "unauthorized": "Brak autoryzacji",
+    "network": "Błąd połączenia z serwerem",
+    "validation": "Błąd walidacji",
+    "loadingFailed": "Nie udało się załadować",
+    "deleteFailed": "Nie udało się usunąć",
+    "saveFailed": "Nie udało się zapisać"
+  },
+  "sections": {
+    "title": "Tytuł",
+    "description": "Opis",
+    "technologies": "Technologie",
+    "image": "Zdjęcie",
+    "githubUrl": "Link GitHub",
+    "liveUrl": "Link Live",
+    "categories": {
+      "basic": "Podstawowe",
+      "technologies": "Technologie",
+      "links": "Linki",
+      "multimedia": "Multimedia"
+    },
+    "noSectionsAvailable": "Brak dostępnych sekcji dla tego slotu w tej kategorii",
+    "addSectionToSlot": "Dodaj sekcję do slotu",
+    "editSection": "Edytuj sekcję",
+    "noImages": "Brak zdjęć",
+    "selectImages": "Wybrano",
+    "imagesSelected": "zdjęć",
+    "imageDescription": "Opis zdjęcia (opcjonalnie)",
+    "imageDescriptionPlaceholder": "Dodaj opis do tego zdjęcia...",
+    "removeImage": "Usuń zdjęcie",
+    "noData": "Brak danych dla tej sekcji"
+  }
+}
