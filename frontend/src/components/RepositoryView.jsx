@@ -4,7 +4,7 @@ import api from "../axios";
 import ProjectTemplateRenderer from "./ProjectTemplateRenderer";
 import ProjectView from "./ProjectView";
 import TitlePageTemplateRenderer from "./TitlePageTemplateRenderer";
-import { ArrowLeft, Edit, Trash2, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, X, ChevronLeft, ChevronRight, Share2, Copy, Check } from "lucide-react";
 
 function RepositoryView() {
   const { id } = useParams();
@@ -16,10 +16,20 @@ function RepositoryView() {
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [shareUrl, setShareUrl] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     fetchRepository();
   }, [id]);
+
+  // Sprawdź czy portfolio ma już token udostępniania
+  useEffect(() => {
+    if (repository?.public_share_token) {
+      const url = `${window.location.origin}/share/${repository.public_share_token}`;
+      setShareUrl(url);
+    }
+  }, [repository]);
 
   const totalItems = (repository?.title_page ? 1 : 0) + projects.length;
 
@@ -120,6 +130,30 @@ function RepositoryView() {
     }
   };
 
+  const handleGenerateShareToken = async () => {
+    try {
+      const response = await api.post(`/repositories/${id}/generate_share_token`);
+      const url = response.data.share_url;
+      setShareUrl(url);
+      
+      // Skopiuj do schowka
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Error generating share token:", err);
+      alert("Nie udało się wygenerować linku udostępniania");
+    }
+  };
+
+  const handleCopyShareUrl = async () => {
+    if (shareUrl) {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -167,145 +201,178 @@ function RepositoryView() {
   const hasTitlePage = repository?.title_page;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full h-full flex flex-row overflow-hidden">
+      {/* Lewa strzałka - 5% szerokości z gradientem */}
+      {totalItems > 1 && (
         <button
-          onClick={() => navigate("/repositories")}
-          className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+          type="button"
+          onClick={handlePrev}
+          className="w-[5%] h-full flex items-center justify-start pl-2 z-10 cursor-pointer transition-all duration-200 bg-gradient-to-r from-transparent via-white/30 to-white/70 dark:from-transparent dark:via-gray-800/30 dark:to-gray-800/70 hover:via-white/60 hover:to-white/90 dark:hover:via-gray-800/60 dark:hover:to-gray-800/90"
+          aria-label="Poprzedni element"
         >
-          <ArrowLeft size={20} />
-          <span>Wróć do listy portfolio</span>
+          <ChevronLeft size={32} className="text-gray-800 dark:text-gray-200 opacity-70 hover:opacity-100 transition-opacity" />
         </button>
+      )}
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-          <div className="p-6">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
-                  {repository.name}
-                </h1>
-                {repository.description && (
-                  <p className="text-gray-600 dark:text-gray-300 mb-2">
-                    {repository.description}
-                  </p>
-                )}
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  Utworzono: {new Date(repository.created_at).toLocaleDateString("pl-PL")}
-                </p>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  Projekty: {repository.project_count}
-                </p>
+      {/* Główna zawartość - 90% szerokości (lub 100% jeśli brak strzałek) */}
+      <div className={`h-full overflow-y-auto flex flex-col ${totalItems > 1 ? 'w-[90%]' : 'w-full'}`}>
+        {/* Header z informacjami o repozytorium */}
+        <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <button
+                  onClick={() => navigate("/repositories")}
+                  className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                >
+                  <ArrowLeft size={20} />
+                  <span>Wróć do listy portfolio</span>
+                </button>
               </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => navigate(`/repositories/${id}/edit`)}
-                  className="p-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
-                  title="Edytuj"
-                >
-                  <Edit size={20} />
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="p-2 bg-red-600 dark:bg-red-500 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600"
-                  title="Usuń"
-                >
-                  <Trash2 size={20} />
-                </button>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+                {repository.name}
+              </h1>
+              {repository.description && (
+                <p className="text-gray-600 dark:text-gray-300 mb-2">
+                  {repository.description}
+                </p>
+              )}
+              <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400">
+                <p>Utworzono: {new Date(repository.created_at).toLocaleDateString("pl-PL")}</p>
+                <p>Projekty: {repository.project_count}</p>
               </div>
             </div>
-
-            {/* Wyświetlanie elementów portfolio */}
-            {totalItems === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500 dark:text-gray-400">
-                  To portfolio nie zawiera żadnych projektów.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-8">
-                <div className="relative">
-                  <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-                    <div
-                      key={currentItem?.type === "title_page" ? "title_page" : currentItem?.data?.id}
-                      className={`transition-opacity duration-300 ${
-                        isTransitioning ? "opacity-0" : "opacity-100"
-                      }`}
-                    >
-                      {currentItem?.type === "title_page" ? (
-                        <div>
-                          <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-                            Strona tytułowa
-                          </h2>
-                          <TitlePageTemplateRenderer titlePage={currentItem.data} />
-                        </div>
-                      ) : currentItem?.type === "project" && currentItem.data ? (
-                        <ProjectView 
-                          project={currentItem.data} 
-                          onImageClick={(imageUrl) => setEnlargedImage(imageUrl)}
-                          hideNavbar={true}
-                        />
-                      ) : null}
-                    </div>
-                  </div>
-
-                  {totalItems > 1 && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={handlePrev}
-                        className="fixed left-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/70 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/80 dark:text-gray-100"
-                        aria-label="Poprzedni element"
-                      >
-                        <ChevronLeft size={24} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleNext}
-                        className="fixed right-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/70 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/80 dark:text-gray-100"
-                        aria-label="Następny element"
-                      >
-                        <ChevronRight size={24} />
-                      </button>
-                    </>
-                  )}
+            <div className="flex space-x-2">
+              {shareUrl ? (
+                <div className="flex items-center space-x-2 bg-green-100 dark:bg-green-900 px-4 py-2 rounded-lg">
+                  <input
+                    type="text"
+                    value={shareUrl}
+                    readOnly
+                    className="bg-transparent border-none text-sm text-gray-700 dark:text-gray-200 min-w-[300px]"
+                  />
+                  <button
+                    onClick={handleCopyShareUrl}
+                    className="p-1 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800 rounded"
+                    title={copied ? "Skopiowano!" : "Kopiuj link"}
+                  >
+                    {copied ? <Check size={16} /> : <Copy size={16} />}
+                  </button>
                 </div>
-
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                      {currentItem?.type === "title_page" 
-                        ? "Strona tytułowa" 
-                        : `Projekt ${hasTitlePage ? currentIndex : currentIndex + 1}`} / {totalItems}
-                    </p>
-                    {currentItem?.type === "project" && currentItem.data && (
-                      <>
-                        <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-                          {(() => {
-                            const sections = currentItem.data.data?.sections || [];
-                            const titleSection = sections.find((section) => section.type === "title");
-                            return titleSection?.value || "Bez tytułu";
-                          })()}
-                        </h2>
-                        <p className="text-gray-500 dark:text-gray-400">
-                          Template: {currentItem.data?.template_key || "Nieznany"}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                  {currentItem?.type === "project" && currentItem.data && (
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => navigate(`/projects/${currentItem.data.id}`)}
-                        className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
-                      >
-                        Szczegóły
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+              ) : (
+                <button
+                  onClick={handleGenerateShareToken}
+                  className="p-2 bg-green-600 dark:bg-green-500 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600"
+                  title="Udostępnij portfolio"
+                >
+                  <Share2 size={20} />
+                </button>
+              )}
+              <button
+                onClick={() => navigate(`/repositories/${id}/edit`)}
+                className="p-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
+                title="Edytuj"
+              >
+                <Edit size={20} />
+              </button>
+              <button
+                onClick={handleDelete}
+                className="p-2 bg-red-600 dark:bg-red-500 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600"
+                title="Usuń"
+              >
+                <Trash2 size={20} />
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Wyświetlanie elementów portfolio */}
+        {totalItems === 0 ? (
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-gray-500 dark:text-gray-400">
+              To portfolio nie zawiera żadnych projektów.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Projekt/Strona tytułowa - zajmuje dokładnie (screen - navbar - header) wysokości */}
+            <div className="h-[calc(100vh-4.5rem-120px)] flex-shrink-0">
+              <div
+                key={currentItem?.type === "title_page" ? "title_page" : currentItem?.data?.id}
+                className={`h-full transition-opacity duration-300 ${
+                  isTransitioning ? "opacity-0" : "opacity-100"
+                }`}
+              >
+                {currentItem?.type === "title_page" ? (
+                  <div className="h-full p-6">
+                    <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                      Strona tytułowa
+                    </h2>
+                    <TitlePageTemplateRenderer titlePage={currentItem.data} />
+                  </div>
+                ) : currentItem?.type === "project" && currentItem.data ? (
+                  <ProjectView 
+                    project={currentItem.data} 
+                    onImageClick={(imageUrl) => setEnlargedImage(imageUrl)}
+                    hideNavbar={true}
+                  />
+                ) : null}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Footer z informacjami o aktualnym elemencie */}
+        {totalItems > 0 && (
+          <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  {currentItem?.type === "title_page" 
+                    ? "Strona tytułowa" 
+                    : `Projekt ${hasTitlePage ? currentIndex : currentIndex + 1}`} / {totalItems}
+                </p>
+                {currentItem?.type === "project" && currentItem.data && (
+                  <>
+                    <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                      {(() => {
+                        const sections = currentItem.data.data?.sections || [];
+                        const titleSection = sections.find((section) => section.type === "title");
+                        return titleSection?.value || "Bez tytułu";
+                      })()}
+                    </h2>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      Template: {currentItem.data?.template_key || "Nieznany"}
+                    </p>
+                  </>
+                )}
+              </div>
+              {currentItem?.type === "project" && currentItem.data && (
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => navigate(`/projects/${currentItem.data.id}`)}
+                    className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                  >
+                    Szczegóły
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Prawa strzałka - 5% szerokości z gradientem */}
+      {totalItems > 1 && (
+        <button
+          type="button"
+          onClick={handleNext}
+          className="w-[5%] h-full flex items-center justify-end pr-2 z-10 cursor-pointer transition-all duration-200 bg-gradient-to-l from-transparent via-white/30 to-white/70 dark:from-transparent dark:via-gray-800/30 dark:to-gray-800/70 hover:via-white/60 hover:to-white/90 dark:hover:via-gray-800/60 dark:hover:to-gray-800/90"
+          aria-label="Następny element"
+        >
+          <ChevronRight size={32} className="text-gray-800 dark:text-gray-200 opacity-70 hover:opacity-100 transition-opacity" />
+        </button>
+      )}
 
       {/* Modal do powiększania zdjęć */}
       {enlargedImage && (
@@ -328,7 +395,7 @@ function RepositoryView() {
           />
         </div>
       )}
-      </div>
+    </div>
   );
 }
 

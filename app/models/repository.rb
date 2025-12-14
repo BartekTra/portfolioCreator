@@ -22,5 +22,15 @@ class Repository < ApplicationRecord
   def project_count
     projects.count
   end
+
+  # Generuje unikalny token do udostępniania portfolio
+  def generate_share_token!
+    loop do
+      self.public_share_token = SecureRandom.urlsafe_base64(32)
+      break unless Repository.exists?(public_share_token: public_share_token)
+    end
+    save!
+    public_share_token
+  end
 end
 

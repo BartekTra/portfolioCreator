@@ -90,7 +90,7 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
             <span>Wróć do listy projektów</span>
           </button>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden ">
             <div className="p-6">
               <div className="flex justify-between items-start mb-6">
                 <div>
@@ -123,7 +123,7 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
               </div>
 
               <div className="space-y-6">
-                <ProjectTemplateRenderer project={project} onImageClick={onImageClick} />
+                <ProjectTemplateRenderer project={project} onImageClick={onImageClick} /> 
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
@@ -143,7 +143,7 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
   }
 
   return (
-    <div className="space-y-6">
+    <div className="h-full w-full">
       <ProjectTemplateRenderer project={project} onImageClick={onImageClick} />
     </div>
   );

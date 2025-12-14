@@ -130,6 +130,7 @@ module Api
 
         # Konwertuj ActionController::Parameters na zwykły Hash
         images_hash = images_param.to_unsafe_h
+        descriptions_hash = params[:image_descriptions]&.to_unsafe_h || {}
 
         # Obsługa hash z kluczami w formacie: "SECTION_ID_FILE_INDEX"
         images_hash.each do |key, file|
@@ -143,6 +144,9 @@ module Api
           # Znajdź sekcję w danych projektu
           section = project_data["sections"].find { |s| s["id"] == section_id }
 
+          # Pobierz opis dla tego zdjęcia
+          description = descriptions_hash[key]&.strip || ""
+
           # Attach z metadaną
           @project.images.attach(
             io: file.tempfile,
@@ -152,7 +156,8 @@ module Api
               section_id: section_id,
               file_index: file_index,
               section_order: section ? section["order"] : 0,
-              section_type: section ? section["type"] : "unknown"
+              section_type: section ? section["type"] : "unknown",
+              description: description
             }
           )
         end
@@ -167,6 +172,7 @@ module Api
               file_index: img.metadata[:file_index],
               section_order: img.metadata[:section_order],
               section_type: img.metadata[:section_type],
+              description: img.metadata[:description] || "",
               filename: img.filename.to_s,
               content_type: img.content_type,
               byte_size: img.byte_size

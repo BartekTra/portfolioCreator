@@ -53,7 +53,7 @@ function DynamicProjectForm() {
   const activeSlot = selectedTemplate?.slots.find((slot) => slot.id === activeSlotId);
 
   const getDefaultValueForType = (type) => {
-    if (type === "image") return [];
+    if (type === "image") return []; // Array of {file, description} objects
     return "";
   };
 
@@ -215,7 +215,38 @@ function DynamicProjectForm() {
   };
 
   const handleImageChange = (id, files) => {
-    updateSection(id, Array.from(files));
+    const fileArray = Array.from(files);
+    const currentSection = sections.find(s => s.id === id);
+    const currentImages = currentSection?.value || [];
+    
+    // Mapuj nowe pliki do obiektów z file i description
+    const newImages = fileArray.map(file => ({
+      file: file,
+      description: "" // Domyślnie pusty opis
+    }));
+    
+    updateSection(id, newImages);
+  };
+
+  const handleImageDescriptionChange = (sectionId, imageIndex, description) => {
+    const currentSection = sections.find(s => s.id === sectionId);
+    if (!currentSection) return;
+    
+    const updatedImages = [...currentSection.value];
+    updatedImages[imageIndex] = {
+      ...updatedImages[imageIndex],
+      description: description
+    };
+    
+    updateSection(sectionId, updatedImages);
+  };
+
+  const removeImage = (sectionId, imageIndex) => {
+    const currentSection = sections.find(s => s.id === sectionId);
+    if (!currentSection) return;
+    
+    const updatedImages = currentSection.value.filter((_, idx) => idx !== imageIndex);
+    updateSection(sectionId, updatedImages);
   };
 
   const resetBuilder = () => {
@@ -259,6 +290,10 @@ function DynamicProjectForm() {
             order: index,
             slot_id: section.slotId,
             image_ids: section.value.map((_, idx) => `${section.id}_${idx}`),
+            image_descriptions: section.value.map((img, idx) => ({
+              index: idx,
+              description: img.description || ""
+            })),
           };
         } else if (section.type === "technologies") {
           return {
@@ -308,10 +343,14 @@ function DynamicProjectForm() {
       // Rails oczekuje: images[KEY] = file
       sections.forEach((section) => {
         if (section.type === "image" && section.value.length > 0) {
-          section.value.forEach((file, idx) => {
+          section.value.forEach((imgObj, idx) => {
             const key = `${section.id}_${idx}`;
             // Użyj formatu images[key] zamiast images[][key]
-            formData.append(`images[${key}]`, file);
+            formData.append(`images[${key}]`, imgObj.file);
+            // Dodaj opis jako osobny parametr
+            if (imgObj.description) {
+              formData.append(`image_descriptions[${key}]`, imgObj.description);
+            }
           });
         }
       });
@@ -464,24 +503,48 @@ function DynamicProjectForm() {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100"
             />
             {section.value.length > 0 && (
-              <div className="mt-3">
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+              <div className="mt-3 space-y-4">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Wybrano {section.value.length}{" "}
                   {section.value.length === 1 ? "zdjęcie" : "zdjęć"}
                 </p>
-                <div className="grid grid-cols-3 gap-2">
-                  {section.value.map((file, idx) => (
+                <div className="space-y-4">
+                  {section.value.map((imgObj, idx) => (
                     <div
                       key={idx}
-                      className="relative h-20 bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 overflow-hidden"
+                      className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700"
                     >
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`Preview ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 truncate">
-                        {file.name}
+                      <div className="flex items-start gap-3">
+                        <div className="relative h-24 w-24 bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 overflow-hidden flex-shrink-0">
+                          <img
+                            src={URL.createObjectURL(imgObj.file)}
+                            alt={`Preview ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(section.id, idx)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                            title="Usuń zdjęcie"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 truncate">
+                            {imgObj.file.name}
+                          </p>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Opis zdjęcia (opcjonalnie)
+                          </label>
+                          <textarea
+                            value={imgObj.description || ""}
+                            onChange={(e) => handleImageDescriptionChange(section.id, idx, e.target.value)}
+                            placeholder="Dodaj opis do tego zdjęcia..."
+                            rows={2}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
+                          />
+                        </div>
                       </div>
                     </div>
                   ))}

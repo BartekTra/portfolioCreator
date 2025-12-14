@@ -107,7 +107,7 @@ export const TEMPLATES = [
     category: "symetryczne",
     description: "Układ 9-polowy symetryczny",
     layout: {
-      container: "grid grid-cols-3 gap-3",
+      container: "grid grid-cols-3 gap-1",
     },
     slots: [
       {

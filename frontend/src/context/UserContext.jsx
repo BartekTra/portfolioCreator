@@ -7,12 +7,28 @@ const UserContext = createContext(null);
 // Strony, które nie wymagają autentykacji
 const PUBLIC_PAGES = ["/login", "/register", "/forgot-password", "/reset-password"];
 
+// Funkcja sprawdzająca czy ścieżka jest publiczna (w tym udostępnione portfolio)
+const isPublicPage = (pathname) => {
+  if (PUBLIC_PAGES.includes(pathname)) return true;
+  // Sprawdź czy to udostępnione portfolio (/share/:token)
+  if (pathname.startsWith("/share/")) return true;
+  return false;
+};
+
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
   const fetchCurrentUser = async () => {
+    // Sprawdź czy jesteśmy na stronie udostępnionego portfolio
+    const currentPath = window.location.pathname;
+    if (currentPath.startsWith("/share/")) {
+      // Na stronie udostępnionego portfolio nie loguj użytkownika i nie przekierowuj
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await api.get("/user/current_user")
@@ -22,9 +38,8 @@ export const UserProvider = ({ children }) => {
       const data = await response.data;
       setUser(data);
       
-      // Przekieruj tylko jeśli jesteśmy na stronie publicznej
-      const currentPath = window.location.pathname;
-      if (PUBLIC_PAGES.includes(currentPath)) {
+      // Przekieruj tylko jeśli jesteśmy na stronie publicznej (ale nie /share/:token)
+      if (isPublicPage(currentPath) && !currentPath.startsWith("/share/")) {
         navigate("/");
       }
     } catch (error) {
@@ -32,8 +47,7 @@ export const UserProvider = ({ children }) => {
       setUser(null);
       
       // Przekieruj do /login tylko jeśli nie jesteśmy już na stronie publicznej
-      const currentPath = window.location.pathname;
-      if (!PUBLIC_PAGES.includes(currentPath)) {
+      if (!isPublicPage(currentPath)) {
         navigate("/login");
       }
     } finally {
@@ -42,6 +56,12 @@ export const UserProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    // Sprawdź ścieżkę przed wywołaniem fetchCurrentUser
+    const currentPath = window.location.pathname;
+    if (currentPath.startsWith("/share/")) {
+      // Na stronie udostępnionego portfolio nie wykonuj żadnych akcji związanych z logowaniem
+      return;
+    }
     fetchCurrentUser();
   }, []);
 

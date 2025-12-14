@@ -16,6 +16,7 @@ import TitlePageForm from "./TitlePageForm";
 import TitlePageView from "./TitlePageView";
 import UserProfile from "./UserProfile";
 import UserProfileForm from "./UserProfileForm";
+import PublicRepositoryView from "./PublicRepositoryView";
 
 function AppRoutes() {
   return (
@@ -25,6 +26,7 @@ function AppRoutes() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/share/:token" element={<PublicRepositoryView />} />
       
       {/* Trasy z navbarem */}
       <Route

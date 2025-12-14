@@ -3,7 +3,7 @@ module Api
   module V1
     class RepositoriesController < ApplicationController
       before_action :authenticate_api_v1_user!
-      before_action :set_repository, only: [:show, :update, :destroy]
+      before_action :set_repository, only: [:show, :update, :destroy, :generate_share_token]
 
       # GET /api/v1/repositories
       def index
@@ -68,6 +68,19 @@ module Api
       def destroy
         @repository.destroy
         head :no_content
+      end
+
+      # POST /api/v1/repositories/:id/generate_share_token
+      def generate_share_token
+        token = @repository.generate_share_token!
+        # Użyj URL frontendu z nagłówka Origin lub zmiennej środowiskowej
+        client_url = request.headers["Origin"] || ENV.fetch("FRONTEND_URL", "http://localhost:5173")
+        share_url = "#{client_url}/share/#{token}"
+        render json: {
+          status: "success",
+          token: token,
+          share_url: share_url
+        }
       end
 
       private
@@ -160,6 +173,7 @@ module Api
             }
           end,
           project_count: repository.project_count,
+          public_share_token: repository.public_share_token,
           created_at: repository.created_at,
           updated_at: repository.updated_at
         }
