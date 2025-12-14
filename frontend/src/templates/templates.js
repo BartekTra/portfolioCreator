@@ -60,7 +60,7 @@ export const TEMPLATES = [
     category: "symetryczne",
     description: "Układ 6-polowy symetryczny",
     layout: {
-      container: "grid grid-cols-3 gap-4",
+      container: "grid grid-cols-3 gap-8",
     },
     slots: [
       {

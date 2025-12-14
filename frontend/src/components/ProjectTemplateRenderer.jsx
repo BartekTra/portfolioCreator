@@ -207,7 +207,7 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
     const totalGap = (rows - 1) * gapPx;
     const totalPadding = rows * sectionPadding;
     const totalBorder = rows * sectionBorder;
-    const heightWithGap = `calc((100% - ${totalGap}px - ${totalPadding}px - ${totalBorder}px) / ${rows})`;
+    const heightWithGap = `calc((100vh - 4.5rem - ${totalGap}px) / ${rows})`;
     gridContainerStyle = { gridAutoRows: heightWithGap };
   }
 
