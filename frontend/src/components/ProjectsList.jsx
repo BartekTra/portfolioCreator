@@ -164,7 +164,7 @@ function ProjectsList() {
       )}
 
       {/* Główna zawartość - 90% szerokości (lub 100% jeśli brak strzałek) */}
-      <div className={`h-full overflow-y-auto ${projects.length > 1 ? 'w-[90%]' : 'w-full'}`}>
+      <div className={`h-full overflow-y-auto ${projects.length > 1 ? 'w-[90%]' : 'w-full'} no-scrollbar`}>
         {projects.length === 0 ? (
           <div className="h-full flex items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
             <div>
@@ -182,11 +182,11 @@ function ProjectsList() {
         ) : (
           <>
             {/* Projekt - zajmuje dokładnie (screen - navbar) wysokości */}
-            <div className="h-[calc(100vh-4.5rem)] flex-shrink-0">
+            <div className="h-[calc(100vh-4.5rem)] flex-shrink-0 ">
               <div
                 key={projects[currentIndex]?.id}
                 className={`h-full transition-opacity duration-300 ${
-                  isTransitioning ? "opacity-0" : "opacity-100"
+                  isTransitioning ? "opacity-0" : "opacity-100 "
                 }`}
               >
                 {projects[currentIndex] && (
@@ -200,8 +200,8 @@ function ProjectsList() {
             </div>
 
             {/* Informacje o projekcie na dole - pod projektem (poza ekranem) */}
-            <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 ">
+              <div className="flex flex-wrap items-center justify-between gap-4 ">
                 <div>
                   <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     Projekt {currentIndex + 1} / {projects.length}
