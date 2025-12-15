@@ -543,7 +543,20 @@ function TitlePageForm() {
                                   className="flex items-center justify-between p-2 bg-white dark:bg-gray-600 rounded"
                                 >
                                   <span className="font-medium text-gray-800 dark:text-gray-200">
-                                    {lang.name}
+                                    {(() => {
+                                      // Konwersja starej nazwy polskiej na klucz
+                                      const LANGUAGE_NAME_TO_KEY = {
+                                        "Polski": "polish", "Angielski": "english", "Niemiecki": "german",
+                                        "Francuski": "french", "Hiszpański": "spanish", "Włoski": "italian",
+                                        "Rosyjski": "russian", "Chiński": "chinese", "Japoński": "japanese",
+                                        "Koreański": "korean", "Portugalski": "portuguese", "Holenderski": "dutch",
+                                        "Szwedzki": "swedish", "Norweski": "norwegian", "Duński": "danish",
+                                        "Czeski": "czech", "Słowacki": "slovak", "Ukraiński": "ukrainian",
+                                        "Węgierski": "hungarian", "Rumuński": "romanian"
+                                      };
+                                      const languageKey = LANGUAGE_NAME_TO_KEY[lang.name] || lang.name?.toLowerCase() || lang.name;
+                                      return t(`titlePages.languageNames.${languageKey}`, { defaultValue: lang.name });
+                                    })()}
                                   </span>
                                   <span className="px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-sm">
                                     {lang.level === "ojczysty" ? t("titlePages.sections.languages.native") : lang.level}

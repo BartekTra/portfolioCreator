@@ -217,7 +217,7 @@ function RepositoryView() {
       )}
 
       {/* Główna zawartość - 90% szerokości (lub 100% jeśli brak strzałek) */}
-      <div className={`h-full overflow-y-auto flex flex-col ${totalItems > 1 ? 'w-[90%]' : 'w-full'}`}>
+      <div className={`h-full flex flex-col overflow-hidden ${totalItems > 1 ? 'w-[90%]' : 'w-full'}`}>
         {/* Header z informacjami o repozytorium */}
         <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-start">
@@ -297,16 +297,16 @@ function RepositoryView() {
           </div>
         ) : (
           <>
-            {/* Projekt/Strona tytułowa - zajmuje dokładnie (screen - navbar - header) wysokości */}
-            <div className="h-[calc(100vh-4.5rem-120px)] flex-shrink-0">
+            {/* Projekt/Strona tytułowa - zajmuje dokładnie (screen - navbar - header - footer) wysokości */}
+            <div className="flex-1 flex flex-col min-h-0">
               <div
                 key={currentItem?.type === "title_page" ? "title_page" : currentItem?.data?.id}
-                className={`h-full transition-opacity duration-300 ${
+                className={`flex-1 overflow-y-auto transition-opacity duration-300 ${
                   isTransitioning ? "opacity-0" : "opacity-100"
                 }`}
               >
                 {currentItem?.type === "title_page" ? (
-                  <div className="h-full p-6">
+                  <div className="p-6">
                     <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
                       {t("repositories.view.titlePage")}
                     </h2>

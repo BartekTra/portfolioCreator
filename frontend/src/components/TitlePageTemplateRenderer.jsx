@@ -1,6 +1,43 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+// Mapowanie starych nazw polskich na klucze (dla kompatybilności z istniejącymi danymi)
+const LANGUAGE_NAME_TO_KEY = {
+  "Polski": "polish",
+  "Angielski": "english",
+  "Niemiecki": "german",
+  "Francuski": "french",
+  "Hiszpański": "spanish",
+  "Włoski": "italian",
+  "Rosyjski": "russian",
+  "Chiński": "chinese",
+  "Japoński": "japanese",
+  "Koreański": "korean",
+  "Portugalski": "portuguese",
+  "Holenderski": "dutch",
+  "Szwedzki": "swedish",
+  "Norweski": "norwegian",
+  "Duński": "danish",
+  "Czeski": "czech",
+  "Słowacki": "slovak",
+  "Ukraiński": "ukrainian",
+  "Węgierski": "hungarian",
+  "Rumuński": "romanian",
+};
+
+// Funkcja pomocnicza do konwersji nazwy języka na klucz
+const getLanguageKey = (languageName) => {
+  if (!languageName) return languageName;
+  
+  // Jeśli to już jest klucz (lowercase, bez polskich znaków), użyj go
+  if (LANGUAGE_NAME_TO_KEY[languageName]) {
+    return LANGUAGE_NAME_TO_KEY[languageName];
+  }
+  
+  // W przeciwnym razie użyj wartości jako klucza (konwertuj na lowercase)
+  return languageName.toLowerCase();
+};
+
 const TITLE_TEMPLATES = {
   titleTemplate1: {
     name: "Template 1",
@@ -135,7 +172,7 @@ const TITLE_TEMPLATES = {
                             className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                           >
                             <span className="font-medium text-gray-800 dark:text-gray-200">
-                              {t(`titlePages.languageNames.${lang.name}`, { defaultValue: lang.name })}
+                              {t(`titlePages.languageNames.${getLanguageKey(lang.name)}`, { defaultValue: lang.name })}
                             </span>
                             <span className="px-3 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
                               {lang.level === "ojczysty" ||
@@ -289,7 +326,7 @@ const TITLE_TEMPLATES = {
                             className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-700 dark:to-gray-800 rounded-lg"
                           >
                             <span className="font-semibold text-gray-800 dark:text-gray-200">
-                              {t(`titlePages.languageNames.${lang.name}`, { defaultValue: lang.name })}
+                              {t(`titlePages.languageNames.${getLanguageKey(lang.name)}`, { defaultValue: lang.name })}
                             </span>
                             <span className="px-4 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
                               {lang.level === "ojczysty" ||
@@ -443,7 +480,7 @@ const TITLE_TEMPLATES = {
                             className="flex items-center justify-between p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-green-500 dark:hover:border-green-400 transition-colors"
                           >
                             <span className="font-semibold text-gray-800 dark:text-gray-200">
-                              {t(`titlePages.languageNames.${lang.name}`, { defaultValue: lang.name })}
+                              {t(`titlePages.languageNames.${getLanguageKey(lang.name)}`, { defaultValue: lang.name })}
                             </span>
                             <span className="px-4 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
                               {lang.level === "ojczysty" ||

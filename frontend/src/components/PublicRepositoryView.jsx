@@ -168,7 +168,7 @@ function PublicRepositoryView() {
       )}
 
       {/* Główna zawartość - 90% szerokości (lub 100% jeśli brak strzałek) */}
-      <div className={`h-screen overflow-y-auto flex flex-col ${totalItems > 1 ? 'w-[90%]' : 'w-full'} no-scrollbar`}>
+      <div className={`h-screen flex flex-col ${totalItems > 1 ? 'w-[90%]' : 'w-full'} overflow-hidden`}>
         {/* Wyświetlanie elementów portfolio */}
         {totalItems === 0 ? (
           <div className="flex-1 flex items-center justify-center">
