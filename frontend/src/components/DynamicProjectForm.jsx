@@ -41,6 +41,7 @@ function DynamicProjectForm() {
   const SECTION_TYPES = getSECTION_TYPES(t);
   const SECTION_CATEGORIES = getSECTION_CATEGORIES(t);
   const [sections, setSections] = useState([]);
+  const [projectTitle, setProjectTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -69,6 +70,7 @@ function DynamicProjectForm() {
     setIsModalOpen(false);
     setSuccess(false);
     setSelectedCategory(Object.keys(SECTION_CATEGORIES)[0]);
+    // Nie resetuj tytułu - użytkownik może go już wpisać
   };
 
   const handleSlotClick = (slotId) => {
@@ -255,6 +257,7 @@ function DynamicProjectForm() {
 
   const resetBuilder = () => {
     setSections([]);
+    setProjectTitle("");
     setSelectedTemplateId(null);
     setActiveSlotId(null);
     setIsModalOpen(false);
@@ -266,6 +269,11 @@ function DynamicProjectForm() {
   const validate = () => {
     if (!selectedTemplate) {
       setError(t("projects.form.selectTemplate"));
+      return false;
+    }
+
+    if (!projectTitle || projectTitle.trim() === "") {
+      setError(t("projects.form.titleRequired"));
       return false;
     }
 
@@ -286,6 +294,7 @@ function DynamicProjectForm() {
 
     const projectData = {
       template_key: selectedTemplateId,
+      title: projectTitle.trim(),
       sections: orderedSections.map((section, index) => {
         if (section.type === "image") {
           return {
@@ -420,28 +429,23 @@ function DynamicProjectForm() {
             <span className="text-lg">{config.icon}</span>
             <h3 className="font-semibold text-gray-700 dark:text-gray-200">
               {config.label}
-              {section.type === "title" && (
-                <span className="text-red-500 dark:text-red-400 ml-1">*</span>
-              )}
-            </h3>
-          </div>
-          {section.type !== "title" && (
-            <button
-              onClick={() => removeSection(section.id)}
-              className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
-            >
-              <Trash2 size={18} />
-            </button>
-          )}
+          </h3>
+        </div>
+        <button
+          onClick={() => removeSection(section.id)}
+          className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+        >
+          <Trash2 size={18} />
+        </button>
         </div>
 
         {section.type === "title" && (
-          <input
-            type="text"
+          <textarea
             value={section.value}
             onChange={(e) => updateSection(section.id, e.target.value)}
-            placeholder={t("projects.form.create")}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
+            placeholder={t("sections.title")}
+            rows={4}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400 text-lg font-bold"
           />
         )}
 
@@ -630,6 +634,20 @@ function DynamicProjectForm() {
                       Zmień template
                     </button>
                   </div>
+                </div>
+
+                {/* Pole tytułu projektu */}
+                <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t("projects.form.projectTitle")} <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={projectTitle}
+                    onChange={(e) => setProjectTitle(e.target.value)}
+                    placeholder={t("projects.form.projectTitlePlaceholder")}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
+                  />
                 </div>
 
                 <TemplateCanvas

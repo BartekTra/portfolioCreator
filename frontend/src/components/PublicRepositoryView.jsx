@@ -231,8 +231,12 @@ function PublicRepositoryView() {
                     <>
                       <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
                         {(() => {
-                          const sections =
-                            currentItem.data.data?.sections || [];
+                          // Najpierw sprawdź czy jest tytuł w data.title (nowy sposób)
+                          if (currentItem.data?.data?.title) {
+                            return currentItem.data.data.title;
+                          }
+                          // Fallback do starego sposobu (sekcja title) dla kompatybilności
+                          const sections = currentItem.data.data?.sections || [];
                           const titleSection = sections.find(
                             (section) => section.type === "title"
                           );

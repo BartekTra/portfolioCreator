@@ -53,10 +53,10 @@ const renderSectionContent = (
   switch (section.type) {
     case "title":
       return (
-        <div className="h-full flex items-center">
-          <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+        <div className="h-full overflow-y-auto no-scrollbar">
+          <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-words no-scrollbar text-lg font-bold">
             {section.value}
-          </h3>
+          </p>
         </div>
       );
 

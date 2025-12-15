@@ -130,7 +130,10 @@
       "createProject": "Utwórz projekt",
       "reset": "Resetuj",
       "jsonPreview": "Podgląd json",
-      "openConsole": "Otwórz konsolę"
+      "openConsole": "Otwórz konsolę",
+      "projectTitle": "Tytuł projektu",
+      "projectTitlePlaceholder": "Wprowadź tytuł projektu...",
+      "titleRequired": "Tytuł projektu jest wymagany"
     },
     "view": {
       "createdAt": "Utworzono",

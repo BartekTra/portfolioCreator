@@ -48,6 +48,11 @@ function ProjectView({ project: projectProp, onImageClick, hideNavbar = false })
   };
 
   const getProjectTitle = () => {
+    // Najpierw sprawdź czy jest tytuł w data.title (nowy sposób)
+    if (project?.data?.title) {
+      return project.data.title;
+    }
+    // Fallback do starego sposobu (sekcja title) dla kompatybilności
     const sections = project?.data?.sections || [];
     const titleSection = sections.find((section) => section.type === "title");
     return titleSection?.value || t("projects.list.noTitle");
