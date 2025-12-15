@@ -2,29 +2,53 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Plus, Trash2 } from "lucide-react";
 
-// Popularne języki
-const POPULAR_LANGUAGES = [
-  "Polski",
-  "Angielski",
-  "Niemiecki",
-  "Francuski",
-  "Hiszpański",
-  "Włoski",
-  "Rosyjski",
-  "Chiński",
-  "Japoński",
-  "Koreański",
-  "Portugalski",
-  "Holenderski",
-  "Szwedzki",
-  "Norweski",
-  "Duński",
-  "Czeski",
-  "Słowacki",
-  "Ukraiński",
-  "Węgierski",
-  "Rumuński",
+// Popularne języki - klucze dla tłumaczeń
+const POPULAR_LANGUAGE_KEYS = [
+  "polish",
+  "english",
+  "german",
+  "french",
+  "spanish",
+  "italian",
+  "russian",
+  "chinese",
+  "japanese",
+  "korean",
+  "portuguese",
+  "dutch",
+  "swedish",
+  "norwegian",
+  "danish",
+  "czech",
+  "slovak",
+  "ukrainian",
+  "hungarian",
+  "romanian",
 ];
+
+// Mapowanie starych nazw na klucze (dla kompatybilności z istniejącymi danymi)
+const LANGUAGE_NAME_TO_KEY = {
+  "Polski": "polish",
+  "Angielski": "english",
+  "Niemiecki": "german",
+  "Francuski": "french",
+  "Hiszpański": "spanish",
+  "Włoski": "italian",
+  "Rosyjski": "russian",
+  "Chiński": "chinese",
+  "Japoński": "japanese",
+  "Koreański": "korean",
+  "Portugalski": "portuguese",
+  "Holenderski": "dutch",
+  "Szwedzki": "swedish",
+  "Norweski": "norwegian",
+  "Duński": "danish",
+  "Czeski": "czech",
+  "Słowacki": "slovak",
+  "Ukraiński": "ukrainian",
+  "Węgierski": "hungarian",
+  "Rumuński": "romanian",
+};
 
 // Poziomy znajomości języka
 const LANGUAGE_LEVELS = [
@@ -41,7 +65,13 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
   const { t } = useTranslation();
   const [languages, setLanguages] = useState(() => {
     if (Array.isArray(initialValue) && initialValue.length > 0) {
-      return initialValue;
+      // Konwersja starych nazw na klucze dla kompatybilności
+      return initialValue.map(lang => {
+        if (lang.name && LANGUAGE_NAME_TO_KEY[lang.name]) {
+          return { ...lang, name: LANGUAGE_NAME_TO_KEY[lang.name] };
+        }
+        return lang;
+      });
     }
     return [];
   });
@@ -53,9 +83,29 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
   const addLanguage = () => {
     if (!newLanguage.trim()) return;
 
+    // Konwertuj wpisaną nazwę na klucz
+    let languageKey;
+    
+    // 1. Sprawdź czy to tłumaczona nazwa z popularnych języków
+    const foundKey = POPULAR_LANGUAGE_KEYS.find(key => 
+      t(`titlePages.languageNames.${key}`).toLowerCase() === newLanguage.trim().toLowerCase()
+    );
+    
+    if (foundKey) {
+      languageKey = foundKey;
+    } 
+    // 2. Sprawdź czy to stara polska nazwa
+    else if (LANGUAGE_NAME_TO_KEY[newLanguage.trim()]) {
+      languageKey = LANGUAGE_NAME_TO_KEY[newLanguage.trim()];
+    }
+    // 3. W przeciwnym razie użyj wpisanej wartości jako klucz (lowercase)
+    else {
+      languageKey = newLanguage.trim().toLowerCase();
+    }
+
     const languageObj = {
       id: Date.now(),
-      name: newLanguage.trim(),
+      name: languageKey,
       level: newLevel,
     };
 
@@ -98,7 +148,7 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
               >
                 <div className="flex items-center space-x-3">
                   <span className="font-medium text-gray-800 dark:text-gray-200">
-                    {lang.name}
+                    {t(`titlePages.languageNames.${lang.name}`, { defaultValue: lang.name })}
                   </span>
                   <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-sm font-medium">
                     {lang.level === "ojczysty" ? t("titlePages.sections.languages.native") : (LANGUAGE_LEVELS.find((l) => l.value === lang.level)?.label || lang.level)}
@@ -129,13 +179,13 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
                 type="text"
                 value={newLanguage}
                 onChange={(e) => setNewLanguage(e.target.value)}
-                placeholder="np. Angielski"
+                placeholder={t("titlePages.sections.languages.languageName")}
                 className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
                 list="languages-list"
               />
               <datalist id="languages-list">
-                {POPULAR_LANGUAGES.map((lang) => (
-                  <option key={lang} value={lang} />
+                {POPULAR_LANGUAGE_KEYS.map((langKey) => (
+                  <option key={langKey} value={t(`titlePages.languageNames.${langKey}`)} />
                 ))}
               </datalist>
               <button
@@ -193,19 +243,23 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
             {t("titlePages.sections.languages.popular")}
           </h4>
           <div className="flex flex-wrap gap-2">
-            {POPULAR_LANGUAGES.slice(0, 8).map((lang) => (
-              <button
-                key={lang}
-                type="button"
-                onClick={() => {
-                  setNewLanguage(lang);
-                  setShowAddForm(true);
-                }}
-                className="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
-              >
-                {lang}
-              </button>
-            ))}
+            {POPULAR_LANGUAGE_KEYS.slice(0, 8).map((langKey) => {
+              const translatedName = t(`titlePages.languageNames.${langKey}`);
+              return (
+                <button
+                  key={langKey}
+                  type="button"
+                  onClick={() => {
+                    // Ustawiamy przetłumaczoną nazwę w input (użytkownik widzi nazwę w swoim języku)
+                    setNewLanguage(translatedName);
+                    setShowAddForm(true);
+                  }}
+                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
+                >
+                  {translatedName}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

@@ -79,13 +79,18 @@
       "subtitle": "Enter your email and we'll send you a link to reset your password",
       "email": "Email",
       "submit": "Send link",
-      "backToLogin": "Back to login"
+      "backToLogin": "Back to login",
+      "emailSent": "Password reset instructions have been sent to your email address. Please check your inbox."
     },
     "resetPassword": {
       "title": "Reset password",
+      "subtitle": "Enter new password for account:",
       "password": "New password",
       "passwordConfirmation": "Confirm new password",
-      "submit": "Reset password"
+      "submit": "Reset password",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "success": "Password has been reset successfully. Redirecting to login page..."
     }
   },
   "projects": {
@@ -213,17 +218,39 @@
         "popular": "Popular languages",
         "native": "Native"
       },
-      "technologies": {
-        "title": "Technologies",
-        "add": "Add technologies",
-        "edit": "Edit technologies",
-        "empty": "No technologies selected",
-        "instruction": "Select technologies used in the project. You can select multiple options.",
-        "save": "Save technologies",
-        "other": "Other (type manually)",
-        "otherPlaceholder": "e.g. Elixir, Haskell, Clojure (separate with commas)"
-      }
-    },
+          "technologies": {
+            "title": "Technologies",
+            "add": "Add technologies",
+            "edit": "Edit technologies",
+            "empty": "No technologies selected",
+            "instruction": "Select technologies used in the project. You can select multiple options.",
+            "save": "Save technologies",
+            "other": "Other (type manually)",
+            "otherPlaceholder": "e.g. Elixir, Haskell, Clojure (separate with commas)"
+          }
+        },
+        "languageNames": {
+          "polish": "Polish",
+          "english": "English",
+          "german": "German",
+          "french": "French",
+          "spanish": "Spanish",
+          "italian": "Italian",
+          "russian": "Russian",
+          "chinese": "Chinese",
+          "japanese": "Japanese",
+          "korean": "Korean",
+          "portuguese": "Portuguese",
+          "dutch": "Dutch",
+          "swedish": "Swedish",
+          "norwegian": "Norwegian",
+          "danish": "Danish",
+          "czech": "Czech",
+          "slovak": "Slovak",
+          "ukrainian": "Ukrainian",
+          "hungarian": "Hungarian",
+          "romanian": "Romanian"
+        },
     "experience": {
       "title": "Work experience",
       "position": "Position",
@@ -253,11 +280,14 @@
       "mustSelectTitlePage": "You must select a CV",
       "selectProjects": "Select projects",
       "selectedProjects": "Selected projects",
-      "noProjects": "No available projects"
+      "noProjects": "No available projects",
+      "noProjectsAdded": "No projects selected. Add projects from the list below.",
+      "allProjectsAdded": "All projects have been added"
     },
     "view": {
       "titlePage": "CV",
       "project": "Project",
+      "projects": "Projects",
       "shareUrl": "Share URL",
       "copyUrl": "Copy URL",
       "urlCopied": "URL copied!",

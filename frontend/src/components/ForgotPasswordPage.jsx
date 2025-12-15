@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import api from "../axios";
 import { ArrowLeft, Mail } from "lucide-react";
 
 function ForgotPasswordPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +31,7 @@ function ForgotPasswordPage() {
       setError(
         err.response?.data?.errors?.[0] ||
         err.response?.data?.error ||
-        "Nie udało się wysłać emaila z instrukcjami resetowania hasła"
+        t("errors.generic")
       );
     } finally {
       setLoading(false);
@@ -45,14 +47,14 @@ function ForgotPasswordPage() {
             className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
           >
             <ArrowLeft size={20} />
-            <span>Wróć do logowania</span>
+            <span>{t("auth.forgotPassword.backToLogin")}</span>
           </button>
 
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-            Resetowanie hasła
+            {t("auth.forgotPassword.title")}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Wprowadź swój adres email, a wyślemy Ci instrukcje resetowania hasła
+            {t("auth.forgotPassword.subtitle")}
           </p>
         </div>
 
@@ -66,15 +68,14 @@ function ForgotPasswordPage() {
           {success && (
             <div className="p-4 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-400 rounded-lg">
               <p className="text-green-700 dark:text-green-400 text-sm">
-                Instrukcje resetowania hasła zostały wysłane na Twój adres email.
-                Sprawdź swoją skrzynkę pocztową.
+                {t("auth.forgotPassword.emailSent")}
               </p>
             </div>
           )}
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Adres email
+              {t("auth.forgotPassword.email")}
             </label>
             <div className="mt-1 relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -100,7 +101,7 @@ function ForgotPasswordPage() {
               disabled={loading || success}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:bg-blue-600"
             >
-              {loading ? "Wysyłanie..." : "Wyślij instrukcje resetowania"}
+              {loading ? t("common.loading") : t("auth.forgotPassword.submit")}
             </button>
           </div>
         </form>

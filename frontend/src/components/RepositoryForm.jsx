@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../axios";
 import { ArrowLeft, Save, GripVertical, X } from "lucide-react";
 
 function RepositoryForm() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(id);
@@ -35,7 +37,7 @@ function RepositoryForm() {
       setAvailableProjects(response.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
-      setError("Nie udało się załadować projektów");
+      setError(t("projects.list.errorLoading"));
     }
   };
 
@@ -45,7 +47,7 @@ function RepositoryForm() {
       setAvailableTitlePages(response.data);
     } catch (err) {
       console.error("Error fetching title pages:", err);
-      setError("Nie udało się załadować stron tytułowych");
+      setError(t("titlePages.list.errorLoading"));
     }
   };
 
@@ -67,7 +69,7 @@ function RepositoryForm() {
       setSelectedProjects(projectsInOrder);
     } catch (err) {
       console.error("Error fetching repository:", err);
-      setError("Nie udało się załadować repozytorium");
+      setError(t("errors.loadingFailed"));
     } finally {
       setLoadingData(false);
     }
@@ -97,7 +99,7 @@ function RepositoryForm() {
 
     try {
       if (!selectedTitlePageId) {
-        setError("Musisz wybrać stronę tytułową");
+        setError(t("repositories.form.mustSelectTitlePage"));
         setLoading(false);
         return;
       }
@@ -124,7 +126,7 @@ function RepositoryForm() {
       setError(
         err.response?.data?.error ||
         err.response?.data?.errors?.join(", ") ||
-        "Wystąpił błąd podczas zapisywania portfolio"
+        t("errors.saveFailed")
       );
     } finally {
       setLoading(false);
@@ -134,7 +136,7 @@ function RepositoryForm() {
   const getProjectTitle = (project) => {
     const sections = project.data?.sections || [];
     const titleSection = sections.find((section) => section.type === "title");
-    return titleSection?.value || "Bez tytułu";
+    return titleSection?.value || t("projects.list.noTitle");
   };
 
   const unselectedProjects = availableProjects.filter(
@@ -144,7 +146,7 @@ function RepositoryForm() {
   if (loadingData) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-600 dark:text-gray-300">Ładowanie...</p>
+        <p className="text-gray-600 dark:text-gray-300">{t("common.loading")}</p>
       </div>
     );
   }
@@ -156,12 +158,12 @@ function RepositoryForm() {
           className="mb-6 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
         >
           <ArrowLeft size={20} />
-          <span>Wróć do listy portfolio</span>
+          <span>{t("common.back")}</span>
         </button>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">
-            {isEditing ? "Edytuj portfolio" : "Nowe portfolio"}
+            {isEditing ? t("repositories.form.edit") : t("repositories.form.create")}
           </h1>
 
           {error && (
@@ -204,19 +206,19 @@ function RepositoryForm() {
             {/* Wybór strony tytułowej */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Strona tytułowa * <span className="text-red-500">(wymagane)</span>
+                {t("repositories.form.selectTitlePage")} * <span className="text-red-500">({t("common.required")})</span>
               </label>
               {availableTitlePages.length === 0 ? (
                 <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-lg">
                   <p className="text-yellow-800 dark:text-yellow-200 mb-2">
-                    Nie masz jeszcze żadnych stron tytułowych.
+                    {t("titlePages.list.noTitlePagesYet")}
                   </p>
                   <button
                     type="button"
                     onClick={() => navigate("/title_pages/new")}
                     className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                   >
-                    Stwórz stronę tytułową →
+                    {t("titlePages.list.createNew")} →
                   </button>
                 </div>
               ) : (
@@ -235,12 +237,12 @@ function RepositoryForm() {
                       {titlePage.photo_url && (
                         <img
                           src={titlePage.photo_url}
-                          alt="Zdjęcie profilowe"
+                          alt={t("titlePages.list.profilePhoto")}
                           className="w-16 h-16 rounded-full object-cover mb-2 mx-auto"
                         />
                       )}
                       <p className="font-medium text-gray-800 dark:text-gray-200 text-sm">
-                        {titlePage.email || "Strona tytułowa"}
+                        {titlePage.email || t("titlePages.list.defaultTitle")}
                       </p>
                       {titlePage.phone && (
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -248,7 +250,7 @@ function RepositoryForm() {
                         </p>
                       )}
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Template: {titlePage.template_key}
+                        {t("titlePages.view.template")}: {titlePage.template_key}
                       </p>
                     </button>
                   ))}
@@ -256,7 +258,7 @@ function RepositoryForm() {
               )}
               {availableTitlePages.length > 0 && !selectedTitlePageId && (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                  Musisz wybrać stronę tytułową
+                  {t("repositories.form.mustSelectTitlePage")}
                 </p>
               )}
             </div>
@@ -264,12 +266,12 @@ function RepositoryForm() {
             {/* Wybrane projekty */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Wybrane projekty ({selectedProjects.length})
+                {t("repositories.form.selectedProjects")} ({selectedProjects.length})
               </label>
               {selectedProjects.length === 0 ? (
                 <div className="p-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center">
                   <p className="text-gray-500 dark:text-gray-400">
-                    Nie wybrano żadnych projektów. Dodaj projekty z listy poniżej.
+                    {t("repositories.form.noProjectsAdded")}
                   </p>
                 </div>
               ) : (
@@ -291,7 +293,7 @@ function RepositoryForm() {
                           {getProjectTitle(project)}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          Template: {project.template_key}
+                          {t("projects.view.template")}: {project.template_key}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -330,11 +332,11 @@ function RepositoryForm() {
             {/* Dostępne projekty */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Dostępne projekty
+                {t("repositories.form.selectProjects")}
               </label>
               {unselectedProjects.length === 0 ? (
                 <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center text-sm text-gray-500 dark:text-gray-400">
-                  Wszystkie projekty zostały dodane
+                  {t("repositories.form.allProjectsAdded")}
                 </div>
               ) : (
                 <div className="grid gap-3 md:grid-cols-2">
@@ -349,7 +351,7 @@ function RepositoryForm() {
                         {getProjectTitle(project)}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Template: {project.template_key}
+                        {t("projects.view.template")}: {project.template_key}
                       </p>
                     </button>
                   ))}
@@ -365,14 +367,14 @@ function RepositoryForm() {
                 className="flex-1 flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Save size={20} />
-                <span>{loading ? "Zapisywanie..." : "Zapisz portfolio"}</span>
+                <span>{loading ? t("common.loading") : t("common.save")}</span>
               </button>
               <button
                 type="button"
                 onClick={() => navigate("/repositories")}
                 className="px-6 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
               >
-                Anuluj
+                {t("common.cancel")}
               </button>
             </div>
           </form>

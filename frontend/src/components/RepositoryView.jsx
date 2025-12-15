@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../axios";
 import ProjectTemplateRenderer from "./ProjectTemplateRenderer";
@@ -7,6 +8,7 @@ import TitlePageTemplateRenderer from "./TitlePageTemplateRenderer";
 import { ArrowLeft, Edit, Trash2, X, ChevronLeft, ChevronRight, Share2, Copy, Check } from "lucide-react";
 
 function RepositoryView() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [repository, setRepository] = useState(null);
@@ -71,7 +73,7 @@ function RepositoryView() {
       setProjects(projectResponses.map((res) => res.data));
     } catch (err) {
       console.error("Error fetching repository:", err);
-      setError("Nie udało się załadować portfolio");
+      setError(t("repositories.view.loading"));
     } finally {
       setLoading(false);
     }
@@ -117,7 +119,7 @@ function RepositoryView() {
   }, [totalItems, handlePrev, handleNext]);
 
   const handleDelete = async () => {
-    if (!window.confirm("Czy na pewno chcesz usunąć to portfolio?")) {
+    if (!window.confirm(t("repositories.list.deleteConfirm"))) {
       return;
     }
 
@@ -126,7 +128,7 @@ function RepositoryView() {
       navigate("/repositories");
     } catch (err) {
       console.error("Error deleting repository:", err);
-      alert("Nie udało się usunąć portfolio");
+      alert(t("errors.deleteFailed"));
     }
   };
 
@@ -142,7 +144,7 @@ function RepositoryView() {
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Error generating share token:", err);
-      alert("Nie udało się wygenerować linku udostępniania");
+      alert(t("errors.generic"));
     }
   };
 
@@ -157,7 +159,7 @@ function RepositoryView() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-600 dark:text-gray-300">Ładowanie portfolio...</p>
+        <p className="text-gray-600 dark:text-gray-300">{t("repositories.view.loading")}</p>
       </div>
     );
   }
@@ -167,13 +169,13 @@ function RepositoryView() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400 mb-4">
-            {error || "Portfolio nie zostało znalezione"}
+            {error || t("repositories.view.notFound")}
           </p>
           <button
             onClick={() => navigate("/repositories")}
             className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
           >
-            Wróć do listy portfolio
+            {t("common.back")}
           </button>
         </div>
       </div>
@@ -226,7 +228,7 @@ function RepositoryView() {
                   className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                 >
                   <ArrowLeft size={20} />
-                  <span>Wróć do listy portfolio</span>
+                  <span>{t("common.back")}</span>
                 </button>
               </div>
               <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
@@ -238,8 +240,8 @@ function RepositoryView() {
                 </p>
               )}
               <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400">
-                <p>Utworzono: {new Date(repository.created_at).toLocaleDateString("pl-PL")}</p>
-                <p>Projekty: {repository.project_count}</p>
+                <p>{t("projects.view.createdAt")}: {new Date(repository.created_at).toLocaleDateString()}</p>
+                <p>{t("repositories.view.projects")}: {repository.project_count}</p>
               </div>
             </div>
             <div className="flex space-x-2">
@@ -254,7 +256,7 @@ function RepositoryView() {
                   <button
                     onClick={handleCopyShareUrl}
                     className="p-1 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800 rounded"
-                    title={copied ? "Skopiowano!" : "Kopiuj link"}
+                    title={copied ? t("repositories.view.urlCopied") : t("repositories.view.copyUrl")}
                   >
                     {copied ? <Check size={16} /> : <Copy size={16} />}
                   </button>
@@ -263,7 +265,7 @@ function RepositoryView() {
                 <button
                   onClick={handleGenerateShareToken}
                   className="p-2 bg-green-600 dark:bg-green-500 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600"
-                  title="Udostępnij portfolio"
+                  title={t("repositories.list.share")}
                 >
                   <Share2 size={20} />
                 </button>
@@ -271,14 +273,14 @@ function RepositoryView() {
               <button
                 onClick={() => navigate(`/repositories/${id}/edit`)}
                 className="p-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
-                title="Edytuj"
+                title={t("common.edit")}
               >
                 <Edit size={20} />
               </button>
               <button
                 onClick={handleDelete}
                 className="p-2 bg-red-600 dark:bg-red-500 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600"
-                title="Usuń"
+                title={t("common.delete")}
               >
                 <Trash2 size={20} />
               </button>
@@ -290,7 +292,7 @@ function RepositoryView() {
         {totalItems === 0 ? (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-gray-500 dark:text-gray-400">
-              To portfolio nie zawiera żadnych projektów.
+              {t("repositories.view.emptyPortfolio")}
             </p>
           </div>
         ) : (
@@ -306,7 +308,7 @@ function RepositoryView() {
                 {currentItem?.type === "title_page" ? (
                   <div className="h-full p-6">
                     <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-                      Strona tytułowa
+                      {t("repositories.view.titlePage")}
                     </h2>
                     <TitlePageTemplateRenderer titlePage={currentItem.data} />
                   </div>
@@ -329,8 +331,8 @@ function RepositoryView() {
               <div>
                 <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   {currentItem?.type === "title_page" 
-                    ? "Strona tytułowa" 
-                    : `Projekt ${hasTitlePage ? currentIndex : currentIndex + 1}`} / {totalItems}
+                    ? t("repositories.view.titlePage")
+                    : `${t("repositories.view.project")} ${hasTitlePage ? currentIndex : currentIndex + 1}`} {t("repositories.view.of")} {totalItems}
                 </p>
                 {currentItem?.type === "project" && currentItem.data && (
                   <>
@@ -342,7 +344,7 @@ function RepositoryView() {
                       })()}
                     </h2>
                     <p className="text-gray-500 dark:text-gray-400">
-                      Template: {currentItem.data?.template_key || "Nieznany"}
+                      {t("projects.view.template")}: {currentItem.data?.template_key || t("common.unknown")}
                     </p>
                   </>
                 )}
@@ -353,7 +355,7 @@ function RepositoryView() {
                     onClick={() => navigate(`/projects/${currentItem.data.id}`)}
                     className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
-                    Szczegóły
+                    {t("common.details")}
                   </button>
                 </div>
               )}
@@ -389,7 +391,7 @@ function RepositoryView() {
           </button>
           <img
             src={enlargedImage}
-            alt="Powiększone zdjęcie"
+            alt={t("common.enlargedImage")}
             className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />

@@ -83,9 +83,13 @@
     },
     "resetPassword": {
       "title": "Resetuj hasło",
+      "subtitle": "Wprowadź nowe hasło dla konta:",
       "password": "Nowe hasło",
       "passwordConfirmation": "Potwierdź nowe hasło",
-      "submit": "Resetuj hasło"
+      "submit": "Resetuj hasło",
+      "passwordMismatch": "Hasła nie są identyczne",
+      "passwordTooShort": "Hasło musi mieć co najmniej 6 znaków",
+      "success": "Hasło zostało zresetowane pomyślnie. Przekierowywanie do strony logowania..."
     }
   },
   "projects": {
@@ -213,17 +217,39 @@
         "popular": "Popularne języki",
         "native": "Ojczysty"
       },
-      "technologies": {
-        "title": "Technologie",
-        "add": "Dodaj technologie",
-        "edit": "Edytuj technologie",
-        "empty": "Brak wybranych technologii",
-        "instruction": "Zaznacz technologie używane w projekcie. Możesz wybrać wiele opcji.",
-        "save": "Zapisz technologie",
-        "other": "Inne (wpisz ręcznie)",
-        "otherPlaceholder": "np. Elixir, Haskell, Clojure (oddziel przecinkami)"
-      }
-    },
+          "technologies": {
+            "title": "Technologie",
+            "add": "Dodaj technologie",
+            "edit": "Edytuj technologie",
+            "empty": "Brak wybranych technologii",
+            "instruction": "Zaznacz technologie używane w projekcie. Możesz wybrać wiele opcji.",
+            "save": "Zapisz technologie",
+            "other": "Inne (wpisz ręcznie)",
+            "otherPlaceholder": "np. Elixir, Haskell, Clojure (oddziel przecinkami)"
+          }
+        },
+        "languageNames": {
+          "polish": "Polski",
+          "english": "Angielski",
+          "german": "Niemiecki",
+          "french": "Francuski",
+          "spanish": "Hiszpański",
+          "italian": "Włoski",
+          "russian": "Rosyjski",
+          "chinese": "Chiński",
+          "japanese": "Japoński",
+          "korean": "Koreański",
+          "portuguese": "Portugalski",
+          "dutch": "Holenderski",
+          "swedish": "Szwedzki",
+          "norwegian": "Norweski",
+          "danish": "Duński",
+          "czech": "Czeski",
+          "slovak": "Słowacki",
+          "ukrainian": "Ukraiński",
+          "hungarian": "Węgierski",
+          "romanian": "Rumuński"
+        },
     "experience": {
       "title": "Doświadczenie zawodowe",
       "position": "Stanowisko",
@@ -258,6 +284,7 @@
     "view": {
       "titlePage": "CV",
       "project": "Projekt",
+      "projects": "Projekty",
       "shareUrl": "URL do udostępnienia",
       "copyUrl": "Kopiuj URL",
       "urlCopied": "URL skopiowany!",

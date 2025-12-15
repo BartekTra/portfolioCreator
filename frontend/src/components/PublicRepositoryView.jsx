@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import ProjectView from "./ProjectView";
@@ -12,6 +13,7 @@ const publicApi = axios.create({
 });
 
 function PublicRepositoryView() {
+  const { t } = useTranslation();
   const { token } = useParams();
   const [repository, setRepository] = useState(null);
   const [projects, setProjects] = useState([]);
@@ -65,7 +67,7 @@ function PublicRepositoryView() {
       setProjects(projectResponses.map((res) => res.data));
     } catch (err) {
       console.error("Error fetching repository:", err);
-      setError("Nie udało się załadować portfolio");
+      setError(t("repositories.view.loading"));
     } finally {
       setLoading(false);
     }
@@ -114,7 +116,7 @@ function PublicRepositoryView() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <p className="text-gray-600 dark:text-gray-300">
-          Ładowanie portfolio...
+{t("repositories.view.loading")}
         </p>
       </div>
     );
@@ -125,7 +127,7 @@ function PublicRepositoryView() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400 mb-4">
-            {error || "Portfolio nie zostało znalezione"}
+            {error || t("repositories.view.notFound")}
           </p>
         </div>
       </div>
@@ -159,7 +161,7 @@ function PublicRepositoryView() {
           type="button"
           onClick={handlePrev}
           className="w-[5%] h-screen flex items-center justify-start pl-2 z-10 cursor-pointer transition-all duration-200 bg-gradient-to-r from-transparent via-white/30 to-white/70 dark:from-transparent dark:via-gray-800/30 dark:to-gray-800/70 hover:via-white/60 hover:to-white/90 dark:hover:via-gray-800/60 dark:hover:to-gray-800/90"
-          aria-label="Poprzedni element"
+          aria-label={t("common.previous")}
         >
           <ChevronLeft size={32} className="text-gray-800 dark:text-gray-200 opacity-70 hover:opacity-100 transition-opacity" />
         </button>
@@ -171,7 +173,7 @@ function PublicRepositoryView() {
         {totalItems === 0 ? (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-gray-500 dark:text-gray-400">
-              To portfolio nie zawiera żadnych projektów.
+              {t("repositories.view.emptyPortfolio")}
             </p>
           </div>
         ) : (
@@ -191,7 +193,7 @@ function PublicRepositoryView() {
                 {currentItem?.type === "title_page" ? (
                   <div className="h-full p-6 ">
                     <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-                      Strona tytułowa
+                      {t("repositories.view.titlePage")}
                     </h2>
                     <TitlePageTemplateRenderer
                       titlePage={currentItem.data}
@@ -213,11 +215,10 @@ function PublicRepositoryView() {
                 <div>
                   <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     {currentItem?.type === "title_page"
-                      ? "Strona tytułowa"
-                      : `Projekt ${
+                      ? t("repositories.view.titlePage")
+                      : `${t("repositories.view.project")} ${
                           hasTitlePage ? currentIndex : currentIndex + 1
-                        }`}{" "}
-                    / {totalItems}
+                        }`} {t("repositories.view.of")} {totalItems}
                   </p>
                   {currentItem?.type === "project" && currentItem.data && (
                     <>
@@ -228,11 +229,11 @@ function PublicRepositoryView() {
                           const titleSection = sections.find(
                             (section) => section.type === "title"
                           );
-                          return titleSection?.value || "Bez tytułu";
+                          return titleSection?.value || t("projects.list.noTitle");
                         })()}
                       </h2>
                       <p className="text-gray-500 dark:text-gray-400">
-                        Template: {currentItem.data?.template_key || "Nieznany"}
+                        {t("projects.view.template")}: {currentItem.data?.template_key || t("common.unknown")}
                       </p>
                     </>
                   )}
@@ -249,7 +250,7 @@ function PublicRepositoryView() {
           type="button"
           onClick={handleNext}
           className="w-[5%] h-screen flex items-center justify-end pr-2 z-10 cursor-pointer transition-all duration-200 bg-gradient-to-l from-transparent via-white/30 to-white/70 dark:from-transparent dark:via-gray-800/30 dark:to-gray-800/70 hover:via-white/60 hover:to-white/90 dark:hover:via-gray-800/60 dark:hover:to-gray-800/90"
-          aria-label="Następny element"
+          aria-label={t("common.next")}
         >
           <ChevronRight size={32} className="text-gray-800 dark:text-gray-200 opacity-70 hover:opacity-100 transition-opacity" />
         </button>
@@ -264,13 +265,13 @@ function PublicRepositoryView() {
           <button
             onClick={() => setEnlargedImage(null)}
             className="fixed top-4 right-4 z-10 rounded-full bg-white/90 p-2 text-gray-800 shadow-lg transition hover:bg-white dark:bg-gray-900/90 dark:text-gray-100"
-            aria-label="Zamknij"
+            aria-label={t("common.close")}
           >
             <X size={24} />
           </button>
           <img
             src={enlargedImage}
-            alt="Powiększone zdjęcie"
+            alt={t("common.enlargedImage")}
             className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />

@@ -1,16 +1,17 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const TITLE_TEMPLATES = {
   titleTemplate1: {
     name: "Template 1",
     description: "Klasyczny układ z dużą fotografią",
-    render: (titlePage) => (
+    render: (titlePage, t) => (
       <div className="space-y-6">
         {titlePage.photo_url && (
           <div className="flex justify-center">
             <img
               src={titlePage.photo_url}
-              alt="Zdjęcie profilowe"
+              alt={t("titlePages.list.profilePhoto")}
               className="w-48 h-48 rounded-full object-cover border-4 border-gray-200 dark:border-gray-600"
             />
           </div>
@@ -22,7 +23,9 @@ const TITLE_TEMPLATES = {
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
                 {t("common.phone")}
               </h3>
-              <p className="text-gray-800 dark:text-gray-200">{titlePage.phone}</p>
+              <p className="text-gray-800 dark:text-gray-200">
+                {titlePage.phone}
+              </p>
             </div>
           )}
           {titlePage.email && (
@@ -30,7 +33,9 @@ const TITLE_TEMPLATES = {
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
                 {t("common.email")}
               </h3>
-              <p className="text-gray-800 dark:text-gray-200">{titlePage.email}</p>
+              <p className="text-gray-800 dark:text-gray-200">
+                {titlePage.email}
+              </p>
             </div>
           )}
         </div>
@@ -40,7 +45,9 @@ const TITLE_TEMPLATES = {
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
               {t("common.address")}
             </h3>
-            <p className="text-gray-800 dark:text-gray-200">{titlePage.address}</p>
+            <p className="text-gray-800 dark:text-gray-200">
+              {titlePage.address}
+            </p>
           </div>
         )}
 
@@ -67,21 +74,21 @@ const TITLE_TEMPLATES = {
                   className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-blue-500"
                 >
                   <h4 className="font-semibold text-gray-800 dark:text-gray-200">
-                      {exp.position || t("titlePages.experience.position")}
-                    </h4>
-                    <p className="text-gray-600 dark:text-gray-300 mb-1">
-                      {exp.company || t("titlePages.experience.company")}
+                    {exp.position || t("titlePages.experience.position")}
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-300 mb-1">
+                    {exp.company || t("titlePages.experience.company")}
+                  </p>
+                  {exp.period && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      {exp.period}
                     </p>
-                    {exp.period && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                        {exp.period}
-                      </p>
-                    )}
-                    {exp.description && (
-                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                        {exp.description}
-                      </p>
-                    )}
+                  )}
+                  {exp.description && (
+                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                      {exp.description}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
@@ -96,7 +103,7 @@ const TITLE_TEMPLATES = {
                 {section.type === "technologies" && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                      Technologie
+                      {t("titlePages.sections.technologies.title")}
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {section.value
@@ -118,7 +125,7 @@ const TITLE_TEMPLATES = {
                 {section.type === "languages" && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                      Języki
+                      {t("titlePages.sections.languages.title")}
                     </h3>
                     <div className="space-y-2">
                       {Array.isArray(section.value) &&
@@ -128,10 +135,13 @@ const TITLE_TEMPLATES = {
                             className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                           >
                             <span className="font-medium text-gray-800 dark:text-gray-200">
-                              {lang.name}
+                              {t(`titlePages.languageNames.${lang.name}`, { defaultValue: lang.name })}
                             </span>
                             <span className="px-3 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
-                              {lang.level === "ojczysty" ? "Ojczysty" : lang.level}
+                              {lang.level === "ojczysty" ||
+                              lang.level === "native"
+                                ? t("titlePages.sections.languages.native")
+                                : lang.level}
                             </span>
                           </div>
                         ))}
@@ -148,14 +158,14 @@ const TITLE_TEMPLATES = {
   titleTemplate2: {
     name: "Template 2",
     description: "Nowoczesny układ z akcentem na tekst",
-    render: (titlePage) => (
+    render: (titlePage, t) => (
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row gap-6 items-start">
           {titlePage.photo_url && (
             <div className="flex-shrink-0">
               <img
                 src={titlePage.photo_url}
-                alt="Zdjęcie profilowe"
+                alt={t("titlePages.list.profilePhoto")}
                 className="w-32 h-32 rounded-lg object-cover shadow-lg"
               />
             </div>
@@ -175,25 +185,31 @@ const TITLE_TEMPLATES = {
           {titlePage.phone && (
             <div>
               <h3 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
-                Telefon
+                {t("common.phone")}
               </h3>
-              <p className="text-gray-800 dark:text-gray-200 font-medium">{titlePage.phone}</p>
+              <p className="text-gray-800 dark:text-gray-200 font-medium">
+                {titlePage.phone}
+              </p>
             </div>
           )}
           {titlePage.email && (
             <div>
               <h3 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
-                Email
+                {t("common.email")}
               </h3>
-              <p className="text-gray-800 dark:text-gray-200 font-medium">{titlePage.email}</p>
+              <p className="text-gray-800 dark:text-gray-200 font-medium">
+                {titlePage.email}
+              </p>
             </div>
           )}
           {titlePage.address && (
             <div>
               <h3 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
-                Adres
+                {t("common.address")}
               </h3>
-              <p className="text-gray-800 dark:text-gray-200 font-medium">{titlePage.address}</p>
+              <p className="text-gray-800 dark:text-gray-200 font-medium">
+                {titlePage.address}
+              </p>
             </div>
           )}
         </div>
@@ -201,7 +217,7 @@ const TITLE_TEMPLATES = {
         {titlePage.experience && titlePage.experience.length > 0 && (
           <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">
-              Doświadczenie zawodowe
+              {t("titlePages.experience.title")}
             </h3>
             <div className="space-y-6">
               {titlePage.experience.map((exp, index) => (
@@ -211,7 +227,7 @@ const TITLE_TEMPLATES = {
                 >
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-                      {exp.position || "Stanowisko"}
+                      {exp.position || t("titlePages.experience.position")}
                     </h4>
                     {exp.period && (
                       <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
@@ -220,7 +236,7 @@ const TITLE_TEMPLATES = {
                     )}
                   </div>
                   <p className="text-gray-700 dark:text-gray-300 font-semibold mb-3">
-                    {exp.company || "Firma"}
+                    {exp.company || t("titlePages.experience.company")}
                   </p>
                   {exp.description && (
                     <p className="text-gray-600 dark:text-gray-400 whitespace-pre-line">
@@ -241,7 +257,7 @@ const TITLE_TEMPLATES = {
                 {section.type === "technologies" && (
                   <div>
                     <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-                      Technologie
+                      {t("titlePages.sections.technologies.title")}
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {section.value
@@ -263,7 +279,7 @@ const TITLE_TEMPLATES = {
                 {section.type === "languages" && (
                   <div>
                     <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-                      Języki
+                      {t("titlePages.sections.languages.title")}
                     </h3>
                     <div className="space-y-3">
                       {Array.isArray(section.value) &&
@@ -273,10 +289,13 @@ const TITLE_TEMPLATES = {
                             className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-700 dark:to-gray-800 rounded-lg"
                           >
                             <span className="font-semibold text-gray-800 dark:text-gray-200">
-                              {lang.name}
+                              {t(`titlePages.languageNames.${lang.name}`, { defaultValue: lang.name })}
                             </span>
                             <span className="px-4 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
-                              {lang.level === "ojczysty" ? "Ojczysty" : lang.level}
+                              {lang.level === "ojczysty" ||
+                              lang.level === "native"
+                                ? t("titlePages.sections.languages.native")
+                                : lang.level}
                             </span>
                           </div>
                         ))}
@@ -293,14 +312,14 @@ const TITLE_TEMPLATES = {
   titleTemplate3: {
     name: "Template 3",
     description: "Minimalistyczny układ z wyróżnionymi danymi kontaktowymi",
-    render: (titlePage) => (
+    render: (titlePage, t) => (
       <div className="space-y-8">
         <div className="text-center space-y-4">
           {titlePage.photo_url && (
             <div className="flex justify-center">
               <img
                 src={titlePage.photo_url}
-                alt="Zdjęcie profilowe"
+                alt={t("titlePages.list.profilePhoto")}
                 className="w-40 h-40 rounded-full object-cover border-4 border-blue-500 dark:border-blue-400 shadow-xl"
               />
             </div>
@@ -318,7 +337,7 @@ const TITLE_TEMPLATES = {
           {titlePage.phone && (
             <div className="text-center">
               <h3 className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
-                Telefon
+                {t("common.phone")}
               </h3>
               <p className="text-gray-900 dark:text-gray-100 font-semibold text-lg">
                 {titlePage.phone}
@@ -328,7 +347,7 @@ const TITLE_TEMPLATES = {
           {titlePage.email && (
             <div className="text-center">
               <h3 className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
-                Email
+                {t("common.email")}
               </h3>
               <p className="text-gray-900 dark:text-gray-100 font-semibold text-lg">
                 {titlePage.email}
@@ -338,7 +357,7 @@ const TITLE_TEMPLATES = {
           {titlePage.address && (
             <div className="text-center">
               <h3 className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
-                Adres
+                {t("common.address")}
               </h3>
               <p className="text-gray-900 dark:text-gray-100 font-semibold text-lg">
                 {titlePage.address}
@@ -350,7 +369,7 @@ const TITLE_TEMPLATES = {
         {titlePage.experience && titlePage.experience.length > 0 && (
           <div>
             <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 text-center">
-              Doświadczenie zawodowe
+              {t("titlePages.experience.title")}
             </h3>
             <div className="max-w-3xl mx-auto space-y-4">
               {titlePage.experience.map((exp, index) => (
@@ -361,10 +380,10 @@ const TITLE_TEMPLATES = {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-                        {exp.position || "Stanowisko"}
+                        {exp.position || t("titlePages.experience.position")}
                       </h4>
                       <p className="text-gray-600 dark:text-gray-400 font-medium">
-                        {exp.company || "Firma"}
+                        {exp.company || t("titlePages.experience.company")}
                       </p>
                     </div>
                     {exp.period && (
@@ -392,7 +411,7 @@ const TITLE_TEMPLATES = {
                 {section.type === "technologies" && (
                   <div>
                     <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 text-center">
-                      Technologie
+                      {t("titlePages.sections.technologies.title")}
                     </h3>
                     <div className="flex flex-wrap justify-center gap-3">
                       {section.value
@@ -414,7 +433,7 @@ const TITLE_TEMPLATES = {
                 {section.type === "languages" && (
                   <div>
                     <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 text-center">
-                      Języki
+                      {t("titlePages.sections.languages.title")}
                     </h3>
                     <div className="space-y-3">
                       {Array.isArray(section.value) &&
@@ -424,10 +443,13 @@ const TITLE_TEMPLATES = {
                             className="flex items-center justify-between p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-green-500 dark:hover:border-green-400 transition-colors"
                           >
                             <span className="font-semibold text-gray-800 dark:text-gray-200">
-                              {lang.name}
+                              {t(`titlePages.languageNames.${lang.name}`, { defaultValue: lang.name })}
                             </span>
                             <span className="px-4 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
-                              {lang.level === "ojczysty" ? "Ojczysty" : lang.level}
+                              {lang.level === "ojczysty" ||
+                              lang.level === "native"
+                                ? t("titlePages.sections.languages.native")
+                                : lang.level}
                             </span>
                           </div>
                         ))}
@@ -444,13 +466,14 @@ const TITLE_TEMPLATES = {
 };
 
 function TitlePageTemplateRenderer({ titlePage }) {
+  const { t } = useTranslation();
   if (!titlePage) return null;
 
   const templateKey = titlePage.template_key || "titleTemplate1";
-  const template = TITLE_TEMPLATES[templateKey] || TITLE_TEMPLATES.titleTemplate1;
+  const template =
+    TITLE_TEMPLATES[templateKey] || TITLE_TEMPLATES.titleTemplate1;
 
-  return template.render(titlePage);
+  return template.render(titlePage, t);
 }
 
 export default TitlePageTemplateRenderer;
-
