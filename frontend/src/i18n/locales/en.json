@@ -62,7 +62,8 @@
       "forgotPassword": "Forgot password?",
       "noAccount": "Don't have an account?",
       "register": "Register",
-      "error": "Something went wrong"
+      "error": "Something went wrong",
+      "emailNotConfirmed": "You must confirm your email address before logging in. Please check your inbox."
     },
     "register": {
       "title": "Register",
@@ -72,7 +73,10 @@
       "passwordConfirmation": "Confirm password",
       "submit": "Register",
       "haveAccount": "Already have an account?",
-      "login": "Log in"
+      "login": "Log in",
+      "success": "Registration successful!",
+      "confirmationRequired": "Please check your email and click the confirmation link to activate your account.",
+      "error": "An error occurred during registration"
     },
     "forgotPassword": {
       "title": "Forgot password?",

@@ -62,7 +62,8 @@
       "forgotPassword": "Zapomniałeś hasła?",
       "noAccount": "Nie masz konta?",
       "register": "Zarejestruj się",
-      "error": "Coś poszło nie tak"
+      "error": "Coś poszło nie tak",
+      "emailNotConfirmed": "Musisz potwierdzić swój adres email przed zalogowaniem. Sprawdź swoją skrzynkę pocztową."
     },
     "register": {
       "title": "Zarejestruj się",
@@ -72,7 +73,10 @@
       "passwordConfirmation": "Potwierdź hasło",
       "submit": "Zarejestruj się",
       "haveAccount": "Masz już konto?",
-      "login": "Zaloguj się"
+      "login": "Zaloguj się",
+      "success": "Rejestracja przebiegła pomyślnie!",
+      "confirmationRequired": "Sprawdź swoją skrzynkę email i kliknij w link potwierdzający, aby aktywować swoje konto.",
+      "error": "Wystąpił błąd podczas rejestracji"
     },
     "forgotPassword": {
       "title": "Zapomniałeś hasła?",

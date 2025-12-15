@@ -53,7 +53,8 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
       await refetchUser();
     } catch (err) {
       console.error(err);
-      setError(t("auth.login.error"));
+      const errorMessage = err.response?.data?.message || err.response?.data?.error || t("auth.login.error");
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -104,9 +105,9 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <ul className="text-sm text-red-700 dark:text-red-400 space-y-1">
-                    {error.stringify}
-                  </ul>
+                  <p className="text-sm text-red-700 dark:text-red-400">
+                    {error}
+                  </p>
                 </div>
               </div>
             </div>
