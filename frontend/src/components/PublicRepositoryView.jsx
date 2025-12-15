@@ -178,20 +178,16 @@ function PublicRepositoryView() {
           </div>
         ) : (
           <>
-            {/* Projekt - zajmuje dokładnie wysokość ekranu */}
-            <div className="h-screen flex-shrink-0">
-              <div
-                key={
-                  currentItem?.type === "title_page"
-                    ? "title_page"
-                    : currentItem?.data?.id
-                }
-                className={`h-full transition-opacity duration-300 ${
-                  isTransitioning ? "opacity-0" : "opacity-100"
-                }`}
-              >
-                {currentItem?.type === "title_page" ? (
-                  <div className="h-full p-6 ">
+            {/* Projekt/CV - różne zachowanie: CV scrollowalne, projekt pełnoekranowy */}
+            {currentItem?.type === "title_page" ? (
+              <div className="flex-1 flex flex-col min-h-0">
+                <div
+                  key="title_page"
+                  className={`flex-1 overflow-y-auto transition-opacity duration-300 ${
+                    isTransitioning ? "opacity-0" : "opacity-100"
+                  }`}
+                >
+                  <div className="p-6">
                     <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
                       {t("repositories.view.titlePage")}
                     </h2>
@@ -199,15 +195,26 @@ function PublicRepositoryView() {
                       titlePage={currentItem.data}
                     />
                   </div>
-                ) : currentItem?.type === "project" && currentItem.data ? (
-                  <ProjectView
-                    project={currentItem.data}
-                    onImageClick={(imageUrl) => setEnlargedImage(imageUrl)}
-                    hideNavbar={true}
-                  />
-                ) : null}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="h-screen flex-shrink-0">
+                <div
+                  key={currentItem?.data?.id}
+                  className={`h-full transition-opacity duration-300 ${
+                    isTransitioning ? "opacity-0" : "opacity-100"
+                  }`}
+                >
+                  {currentItem?.type === "project" && currentItem.data && (
+                    <ProjectView
+                      project={currentItem.data}
+                      onImageClick={(imageUrl) => setEnlargedImage(imageUrl)}
+                      hideNavbar={true}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Footer z informacjami o aktualnym elemencie - pod projektem */}
             <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
