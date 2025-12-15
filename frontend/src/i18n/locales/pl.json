@@ -36,7 +36,8 @@
     "photo": "Zdjęcie",
     "or": "lub",
     "enlargedImage": "Powiększone zdjęcie",
-    "details": "Szczegóły"
+    "details": "Szczegóły",
+    "existing": "Istniejące"
   },
   "navigation": {
     "projects": "Projekty",
@@ -133,7 +134,8 @@
       "openConsole": "Otwórz konsolę",
       "projectTitle": "Tytuł projektu",
       "projectTitlePlaceholder": "Wprowadź tytuł projektu...",
-      "titleRequired": "Tytuł projektu jest wymagany"
+      "titleRequired": "Tytuł projektu jest wymagany",
+      "changeTemplate": "Zmień template"
     },
     "view": {
       "createdAt": "Utworzono",

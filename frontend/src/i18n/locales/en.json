@@ -36,7 +36,8 @@
     "photo": "Photo",
     "or": "or",
     "enlargedImage": "Enlarged image",
-    "details": "Details"
+    "details": "Details",
+    "existing": "Existing"
   },
   "navigation": {
     "projects": "Projects",
@@ -134,7 +135,8 @@
       "openConsole": "Open console",
       "projectTitle": "Project title",
       "projectTitlePlaceholder": "Enter project title...",
-      "titleRequired": "Project title is required"
+      "titleRequired": "Project title is required",
+      "changeTemplate": "Change template"
     },
     "view": {
       "createdAt": "Created",
