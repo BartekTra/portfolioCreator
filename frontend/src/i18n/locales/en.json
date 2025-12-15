@@ -227,6 +227,43 @@
             "save": "Save technologies",
             "other": "Other (type manually)",
             "otherPlaceholder": "e.g. Elixir, Haskell, Clojure (separate with commas)"
+          },
+          "socialMedia": {
+            "title": "Social media",
+            "add": "Add social media",
+            "edit": "Edit social media",
+            "empty": "No social media added"
+          }
+        },
+        "socialMedia": {
+          "title": "Social media",
+          "selectPlatform": "Select platform",
+          "choosePlatform": "Choose platform...",
+          "url": "URL",
+          "urlPlaceholder": "https://...",
+          "add": "Add",
+          "addedLinks": "Added links",
+          "noLinks": "No links added",
+          "platforms": {
+            "facebook": "Facebook",
+            "instagram": "Instagram",
+            "twitter": "Twitter/X",
+            "github": "GitHub",
+            "linkedin": "LinkedIn",
+            "youtube": "YouTube",
+            "tiktok": "TikTok",
+            "snapchat": "Snapchat",
+            "pinterest": "Pinterest",
+            "discord": "Discord",
+            "twitch": "Twitch",
+            "other": "Other"
+          },
+          "errors": {
+            "emptyUrl": "URL cannot be empty",
+            "invalidUrl": "Invalid URL format",
+            "wrongPlatform": "URL must contain {{platform}} domain",
+            "fillAllFields": "Fill all fields",
+            "platformExists": "This platform has already been added"
           }
         },
         "languageNames": {

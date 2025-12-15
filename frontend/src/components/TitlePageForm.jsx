@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import api from "../axios";
-import { ArrowLeft, Save, Plus, Trash2, X, Languages, Code, Edit2 } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, X, Languages, Code, Edit2, Share2 } from "lucide-react";
 import TechnologyPicker from "./TechnologyPicker";
 import LanguagePicker from "./LanguagePicker";
+import SocialMediaPicker from "./SocialMediaPicker";
 
 const SECTION_TYPES = {
   languages: { labelKey: "titlePages.sections.languages.title", icon: <Languages size={18} /> },
   technologies: { labelKey: "titlePages.sections.technologies.title", icon: <Code size={18} /> },
+  social_media: { labelKey: "titlePages.sections.socialMedia.title", icon: <Share2 size={18} /> },
 };
 
 function TitlePageForm() {
@@ -34,6 +36,7 @@ function TitlePageForm() {
   const [showAddSectionModal, setShowAddSectionModal] = useState(false);
   const [showTechnologyPicker, setShowTechnologyPicker] = useState(false);
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const [showSocialMediaPicker, setShowSocialMediaPicker] = useState(false);
   const [editingSectionId, setEditingSectionId] = useState(null);
 
   useEffect(() => {
@@ -108,6 +111,9 @@ function TitlePageForm() {
     } else if (type === "languages") {
       setShowLanguagePicker(true);
       setEditingSectionId(null);
+    } else if (type === "social_media") {
+      setShowSocialMediaPicker(true);
+      setEditingSectionId(null);
     }
     setShowAddSectionModal(false);
   };
@@ -156,6 +162,28 @@ function TitlePageForm() {
     setEditingSectionId(null);
   };
 
+  const handleSocialMediaSave = (socialMediaValue) => {
+    if (editingSectionId) {
+      // Edytuj istniejącą sekcję
+      setSections(sections.map(section => 
+        section.id === editingSectionId 
+          ? { ...section, value: socialMediaValue }
+          : section
+      ));
+    } else {
+      // Dodaj nową sekcję
+      const newSection = {
+        id: Date.now(),
+        type: "social_media",
+        value: socialMediaValue,
+        order: sections.length
+      };
+      setSections([...sections, newSection]);
+    }
+    setShowSocialMediaPicker(false);
+    setEditingSectionId(null);
+  };
+
   const removeSection = (sectionId) => {
     setSections(sections.filter(section => section.id !== sectionId));
   };
@@ -166,6 +194,8 @@ function TitlePageForm() {
       setShowTechnologyPicker(true);
     } else if (section.type === "languages") {
       setShowLanguagePicker(true);
+    } else if (section.type === "social_media") {
+      setShowSocialMediaPicker(true);
     }
   };
 
@@ -571,6 +601,32 @@ function TitlePageForm() {
                           )}
                         </div>
                       )}
+
+                      {section.type === "social_media" && (
+                        <div>
+                          {Array.isArray(section.value) && section.value.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {section.value.map((link, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-600 rounded border border-gray-200 dark:border-gray-500"
+                                >
+                                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                    {t(`titlePages.socialMedia.platforms.${link.platform}`)}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[150px]">
+                                    {link.url}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {t("titlePages.sections.socialMedia.empty")}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -739,6 +795,22 @@ function TitlePageForm() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Modal SocialMediaPicker */}
+        {showSocialMediaPicker && (
+          <SocialMediaPicker
+            initialValue={
+              editingSectionId
+                ? sections.find((s) => s.id === editingSectionId)?.value || []
+                : []
+            }
+            onSave={handleSocialMediaSave}
+            onCancel={() => {
+              setShowSocialMediaPicker(false);
+              setEditingSectionId(null);
+            }}
+          />
         )}
       </div>
   );

@@ -164,7 +164,7 @@ const handleSubmit = async (e) => {
 
               {selectedImage ? (
                 <div>
-                  <label className="text-xs block mb-2">Podgląd:</label>{" "}
+                  <label className="text-xs block mb-2 text-gray-500 dark:text-gray-400">Podgląd:</label>{" "}
                   {/* Etykieta w normalnym przepływie */}
                   <div className="relative w-[150px] h-[150px] rounded-2xl group">
                     <img

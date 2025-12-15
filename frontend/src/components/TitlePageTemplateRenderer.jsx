@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Facebook, Instagram, Twitter, Github, Linkedin, Youtube, Twitch, Globe } from "lucide-react";
 
 // Mapowanie starych nazw polskich na klucze (dla kompatybilności z istniejącymi danymi)
 const LANGUAGE_NAME_TO_KEY = {
@@ -36,6 +37,24 @@ const getLanguageKey = (languageName) => {
   
   // W przeciwnym razie użyj wartości jako klucza (konwertuj na lowercase)
   return languageName.toLowerCase();
+};
+
+// Mapowanie platform mediów społecznościowych na ikonki
+const SOCIAL_MEDIA_ICONS = {
+  facebook: Facebook,
+  instagram: Instagram,
+  twitter: Twitter,
+  github: Github,
+  linkedin: Linkedin,
+  youtube: Youtube,
+  twitch: Twitch,
+  other: Globe,
+};
+
+// Funkcja pomocnicza do pobierania ikonki dla platformy
+const getSocialMediaIcon = (platformKey) => {
+  const IconComponent = SOCIAL_MEDIA_ICONS[platformKey] || Globe;
+  return IconComponent;
 };
 
 const TITLE_TEMPLATES = {
@@ -182,6 +201,32 @@ const TITLE_TEMPLATES = {
                             </span>
                           </div>
                         ))}
+                    </div>
+                  </div>
+                )}
+
+                {section.type === "social_media" && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                      {t("titlePages.sections.socialMedia.title")}
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                      {Array.isArray(section.value) &&
+                        section.value.map((link, idx) => {
+                          const IconComponent = getSocialMediaIcon(link.platform);
+                          return (
+                            <a
+                              key={idx}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                              title={t(`titlePages.socialMedia.platforms.${link.platform}`)}
+                            >
+                              <IconComponent size={24} />
+                            </a>
+                          );
+                        })}
                     </div>
                   </div>
                 )}
@@ -339,6 +384,32 @@ const TITLE_TEMPLATES = {
                     </div>
                   </div>
                 )}
+
+                {section.type === "social_media" && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+                      {t("titlePages.sections.socialMedia.title")}
+                    </h3>
+                    <div className="flex flex-wrap gap-4">
+                      {Array.isArray(section.value) &&
+                        section.value.map((link, idx) => {
+                          const IconComponent = getSocialMediaIcon(link.platform);
+                          return (
+                            <a
+                              key={idx}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-center w-14 h-14 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                              title={t(`titlePages.socialMedia.platforms.${link.platform}`)}
+                            >
+                              <IconComponent size={28} />
+                            </a>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -490,6 +561,32 @@ const TITLE_TEMPLATES = {
                             </span>
                           </div>
                         ))}
+                    </div>
+                  </div>
+                )}
+
+                {section.type === "social_media" && (
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 text-center">
+                      {t("titlePages.sections.socialMedia.title")}
+                    </h3>
+                    <div className="flex flex-wrap justify-center gap-4">
+                      {Array.isArray(section.value) &&
+                        section.value.map((link, idx) => {
+                          const IconComponent = getSocialMediaIcon(link.platform);
+                          return (
+                            <a
+                              key={idx}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                              title={t(`titlePages.socialMedia.platforms.${link.platform}`)}
+                            >
+                              <IconComponent size={32} />
+                            </a>
+                          );
+                        })}
                     </div>
                   </div>
                 )}
