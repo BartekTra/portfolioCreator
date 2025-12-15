@@ -1,11 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useUser } from "../context/UserContext";
-import { Edit, ArrowLeft } from "lucide-react";
+import { Edit, ArrowLeft, LogOut } from "lucide-react";
 
 function UserProfile() {
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { t } = useTranslation();
+  const { user, logout } = useUser();
 
   if (!user) {
     return (
@@ -30,16 +32,25 @@ function UserProfile() {
           <div className="flex justify-between items-start mb-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-                Mój profil
+                {t("navigation.profile")}
               </h1>
             </div>
-            <button
-              onClick={() => navigate("/profile/edit")}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
-            >
-              <Edit size={20} />
-              <span>Edytuj profil</span>
-            </button>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => navigate("/profile/edit")}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+              >
+                <Edit size={20} />
+                <span>{t("common.edit")}</span>
+              </button>
+              <button
+                onClick={logout}
+                className="flex items-center space-x-2 px-4 py-2 bg-red-600 dark:bg-red-500 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors"
+              >
+                <LogOut size={20} />
+                <span>{t("navigation.logout")}</span>
+              </button>
+            </div>
           </div>
 
           <div className="space-y-6">

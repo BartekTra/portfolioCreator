@@ -55,6 +55,32 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const logout = async () => {
+    try {
+      // Wywołaj endpoint wylogowania
+      await api.delete("/auth/sign_out", {
+        headers: {
+          "client": localStorage.getItem("client"),
+          "access-token": localStorage.getItem("access-token"),
+        }
+      });
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Kontynuuj wylogowanie nawet jeśli API zwróci błąd
+    } finally {
+      // Usuń tokeny z localStorage
+      localStorage.removeItem("access-token");
+      localStorage.removeItem("client");
+      localStorage.removeItem("authorization");
+      
+      // Wyczyść stan użytkownika
+      setUser(null);
+      
+      // Przekieruj do strony logowania
+      navigate("/login");
+    }
+  };
+
   useEffect(() => {
     // Sprawdź ścieżkę przed wywołaniem fetchCurrentUser
     const currentPath = window.location.pathname;
@@ -66,7 +92,7 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, loading, refetchUser: fetchCurrentUser, setUser }}>
+    <UserContext.Provider value={{ user, loading, refetchUser: fetchCurrentUser, setUser, logout }}>
       {children}
     </UserContext.Provider>
   );
