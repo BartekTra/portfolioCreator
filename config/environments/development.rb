@@ -40,6 +40,11 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
+  # Ustaw domyślny adres nadawcy
+  config.action_mailer.default_options = {
+    from: ENV.fetch("MAILER_FROM", "noreply@portfolio-creator.com")
+  }
+
   # Dla development - użyj SMTP (Gmail, SendGrid, etc.)
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
