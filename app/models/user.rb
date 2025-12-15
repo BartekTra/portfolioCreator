@@ -4,7 +4,7 @@ class User < ApplicationRecord
   include DeviseTokenAuth::Concerns::User
   # Devise modules (jeśli używasz Devise)
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable, :confirmable
 
   # Relacja z projektami
   has_many :projects, dependent: :destroy

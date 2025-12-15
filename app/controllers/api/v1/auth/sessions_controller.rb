@@ -8,6 +8,15 @@ module Api
           user = ::User.find_by(email: params[:email])
 
           if user && user.valid_password?(params[:password])
+            # Sprawdź, czy użytkownik potwierdził email
+            unless user.confirmed?
+              render json: { 
+                status: "error", 
+                message: "Musisz potwierdzić swój adres email przed zalogowaniem. Sprawdź swoją skrzynkę pocztową." 
+              }, status: :unauthorized
+              return
+            end
+
             token = user.create_new_auth_token
             render json: {
               status: "success",

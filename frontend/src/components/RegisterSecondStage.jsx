@@ -64,13 +64,7 @@ const handleSubmit = async (e) => {
     const data = response.data;
 
     if (data.status === "success") {
-      localStorage.setItem("access-token", data.tokens["access-token"]);
-      localStorage.setItem("client", data.tokens.client);
-      localStorage.setItem(
-        "authorization",
-        data.tokens.authorization.replace("Bearer ", "")
-      );
-      window.location.reload();
+      console.log(data);
     }
   } catch (err) {
     console.error("Błąd przy wysyłaniu danych:", err.response?.data || err);

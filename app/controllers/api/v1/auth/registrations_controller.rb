@@ -14,17 +14,31 @@ module Api
               user.avatar.attach(params[:avatar])
             end
 
-            token = user.create_new_auth_token
-
-            render json: {
-              tokens: token,
-              status: "success",
-              data: user.as_json(
-                only: [:id, :email, :first_name, :surname, :nickname, :created_at]
-              ).merge(
-                avatar_url: user.avatar.attached? ? url_for(user.avatar) : nil
-              )
-            }, status: :created
+            # Jeśli użytkownik wymaga potwierdzenia emaila i nie jest jeszcze potwierdzony,
+            # nie zwracaj tokenu - użytkownik musi najpierw potwierdzić email
+            if user.confirmed?
+              token = user.create_new_auth_token
+              render json: {
+                tokens: token,
+                status: "success",
+                data: user.as_json(
+                  only: [:id, :email, :first_name, :surname, :nickname, :created_at]
+                ).merge(
+                  avatar_url: user.avatar.attached? ? url_for(user.avatar) : nil
+                )
+              }, status: :created
+            else
+              # Użytkownik został utworzony, ale wymaga potwierdzenia emaila
+              render json: {
+                status: "success",
+                message: "Konto zostało utworzone. Sprawdź swoją skrzynkę email, aby potwierdzić adres.",
+                data: {
+                  id: user.id,
+                  email: user.email,
+                  confirmed: false
+                }
+              }, status: :created
+            end
           else
             render json: { status: "error", errors: user.errors.full_messages },
                    status: :unprocessable_entity
