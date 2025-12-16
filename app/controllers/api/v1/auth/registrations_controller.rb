@@ -2,6 +2,7 @@ module Api
   module V1
     module Auth
       class RegistrationsController < DeviseTokenAuth::RegistrationsController
+        before_action :authenticate_api_v1_user!, only: [:update]
         # POST /api/v1/auth
         def create
           user = ::User.new(sign_up_params)
@@ -48,6 +49,10 @@ module Api
         # PUT /api/v1/auth
         def update
           user = current_api_v1_user
+          unless user
+            render json: { status: "error", message: "User not signed in" }, status: :unauthorized
+            return
+          end
 
           # Aktualizuj podstawowe pola
           user_params = account_update_params.except(:avatar)

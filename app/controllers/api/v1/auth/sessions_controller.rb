@@ -33,10 +33,16 @@ module Api
           client_id = request.headers["client"]
           token = request.headers["access-token"]
 
-          if current_user && current_user.tokens[client_id] && DeviseTokenAuth::TokenFactory.valid?(token)
-            current_user.tokens.delete(client_id)
-            current_user.save
-            render json: { status: "success", message: "Signed out successfully" }, status: :ok
+          if current_api_v1_user && client_id && current_api_v1_user.tokens[client_id]
+            # Verify token matches
+            stored_token = current_api_v1_user.tokens[client_id]
+            if stored_token && BCrypt::Password.new(stored_token["token"]) == token
+              current_api_v1_user.tokens.delete(client_id)
+              current_api_v1_user.save
+              render json: { status: "success", message: "Signed out successfully" }, status: :ok
+            else
+              render json: { status: "error", message: "User not signed in" }, status: :unauthorized
+            end
           else
             render json: { status: "error", message: "User not signed in" }, status: :unauthorized
           end

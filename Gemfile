@@ -42,6 +42,13 @@ group :development, :test do
   
   # Letter opener - otwiera emaile w przeglądarce zamiast wysyłać je
   gem "letter_opener"
+  
+  # RSpec for testing
+  gem "rspec-rails", "~> 6.0"
+  gem "factory_bot_rails"
+  gem "shoulda-matchers", "~> 6.0"
+  gem "database_cleaner-active_record"
+  gem "faker"
 end
 
 gem "image_processing", ">= 1.2"
