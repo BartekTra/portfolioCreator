@@ -203,7 +203,7 @@ function RepositoryView() {
   const hasTitlePage = repository?.title_page;
 
   return (
-    <div className="w-full h-full flex flex-row overflow-hidden">
+    <div className="w-full h-full flex flex-row">
       {/* Lewa strzałka - 5% szerokości z gradientem */}
       {totalItems > 1 && (
         <button
@@ -217,7 +217,7 @@ function RepositoryView() {
       )}
 
       {/* Główna zawartość - 90% szerokości (lub 100% jeśli brak strzałek) */}
-      <div className={`h-full flex flex-col overflow-hidden ${totalItems > 1 ? 'w-[90%]' : 'w-full'}`}>
+      <div className={`h-full flex flex-col min-h-0 ${totalItems > 1 ? 'w-[90%]' : 'w-full'}`}>
         {/* Header z informacjami o repozytorium */}
         <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-start">
@@ -288,7 +288,7 @@ function RepositoryView() {
           </div>
         </div>
 
-        {/* Wyświetlanie elementów portfolio */}
+        {/* Wyświetlanie elementów portfolio - scrollowalny kontener z projektem i footerem */}
         {totalItems === 0 ? (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-gray-500 dark:text-gray-400">
@@ -296,74 +296,70 @@ function RepositoryView() {
             </p>
           </div>
         ) : (
-          <>
-            {/* Projekt/Strona tytułowa - zajmuje dokładnie (screen - navbar - header - footer) wysokości */}
-            <div className="flex-1 flex flex-col min-h-0">
-              <div
-                key={currentItem?.type === "title_page" ? "title_page" : currentItem?.data?.id}
-                className={`flex-1 overflow-y-auto transition-opacity duration-300 ${
-                  isTransitioning ? "opacity-0" : "opacity-100"
-                }`}
-              >
-                {currentItem?.type === "title_page" ? (
-                  <div className="p-6">
-                    <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-                      {t("repositories.view.titlePage")}
-                    </h2>
-                    <TitlePageTemplateRenderer titlePage={currentItem.data} />
-                  </div>
-                ) : currentItem?.type === "project" && currentItem.data ? (
-                  <ProjectView 
-                    project={currentItem.data} 
-                    onImageClick={(imageUrl) => setEnlargedImage(imageUrl)}
-                    hideNavbar={true}
-                  />
-                ) : null}
-              </div>
+          <div className="flex-1 overflow-y-auto">
+            {/* Projekt/Strona tytułowa - zajmuje maksymalnie dużo miejsca (prawie cały ekran) */}
+            <div
+              key={currentItem?.type === "title_page" ? "title_page" : currentItem?.data?.id}
+              className={`min-h-[calc(100vh-180px)] transition-opacity duration-300 ${
+                isTransitioning ? "opacity-0" : "opacity-100"
+              }`}
+            >
+              {currentItem?.type === "title_page" ? (
+                <div className="p-6">
+                  <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                    {t("repositories.view.titlePage")}
+                  </h2>
+                  <TitlePageTemplateRenderer titlePage={currentItem.data} />
+                </div>
+              ) : currentItem?.type === "project" && currentItem.data ? (
+                <ProjectView 
+                  project={currentItem.data} 
+                  onImageClick={(imageUrl) => setEnlargedImage(imageUrl)}
+                  hideNavbar={true}
+                />
+              ) : null}
             </div>
-          </>
-        )}
 
-        {/* Footer z informacjami o aktualnym elemencie */}
-        {totalItems > 0 && (
-          <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  {currentItem?.type === "title_page" 
-                    ? t("repositories.view.titlePage")
-                    : `${t("repositories.view.project")} ${hasTitlePage ? currentIndex : currentIndex + 1}`} {t("repositories.view.of")} {totalItems}
-                </p>
+            {/* Footer z informacjami o aktualnym elemencie - pod projektem, poza ekranem */}
+            <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    {currentItem?.type === "title_page" 
+                      ? t("repositories.view.titlePage")
+                      : `${t("repositories.view.project")} ${hasTitlePage ? currentIndex : currentIndex + 1}`} {t("repositories.view.of")} {totalItems}
+                  </p>
+                  {currentItem?.type === "project" && currentItem.data && (
+                    <>
+                      <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                        {(() => {
+                          // Najpierw sprawdź czy jest tytuł w data.title (nowy sposób)
+                          if (currentItem.data?.data?.title) {
+                            return currentItem.data.data.title;
+                          }
+                          // Fallback do starego sposobu (sekcja title) dla kompatybilności
+                          const sections = currentItem.data.data?.sections || [];
+                          const titleSection = sections.find((section) => section.type === "title");
+                          return titleSection?.value || "Bez tytułu";
+                        })()}
+                      </h2>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        {t("projects.view.template")}: {currentItem.data?.template_key || t("common.unknown")}
+                      </p>
+                    </>
+                  )}
+                </div>
                 {currentItem?.type === "project" && currentItem.data && (
-                  <>
-                    <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-                      {(() => {
-                        // Najpierw sprawdź czy jest tytuł w data.title (nowy sposób)
-                        if (currentItem.data?.data?.title) {
-                          return currentItem.data.data.title;
-                        }
-                        // Fallback do starego sposobu (sekcja title) dla kompatybilności
-                        const sections = currentItem.data.data?.sections || [];
-                        const titleSection = sections.find((section) => section.type === "title");
-                        return titleSection?.value || "Bez tytułu";
-                      })()}
-                    </h2>
-                    <p className="text-gray-500 dark:text-gray-400">
-                      {t("projects.view.template")}: {currentItem.data?.template_key || t("common.unknown")}
-                    </p>
-                  </>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => navigate(`/projects/${currentItem.data.id}`)}
+                      className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                    >
+                      {t("common.details")}
+                    </button>
+                  </div>
                 )}
               </div>
-              {currentItem?.type === "project" && currentItem.data && (
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => navigate(`/projects/${currentItem.data.id}`)}
-                    className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
-                  >
-                    {t("common.details")}
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         )}
