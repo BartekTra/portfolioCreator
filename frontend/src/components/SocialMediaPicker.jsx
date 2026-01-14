@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Plus, Trash2, Facebook, Instagram, Twitter, Github, Linkedin, Youtube, Twitch, Globe } from "lucide-react";
 
-// Definicja mediów społecznościowych z ikonkami i walidacją
 const SOCIAL_MEDIA_PLATFORMS = [
   { 
     key: "facebook", 
@@ -67,7 +66,7 @@ const SOCIAL_MEDIA_PLATFORMS = [
   { 
     key: "other", 
     icon: Globe, 
-    validate: () => true, // Dla innych mediów akceptujemy każdy link
+    validate: () => true,
     domains: []
   },
 ];
@@ -90,14 +89,12 @@ function SocialMediaPicker({ initialValue = [], onSave, onCancel }) {
       return t("titlePages.socialMedia.errors.emptyUrl");
     }
 
-    // Podstawowa walidacja URL
     try {
       new URL(urlValue);
     } catch (e) {
       return t("titlePages.socialMedia.errors.invalidUrl");
     }
 
-    // Walidacja specyficzna dla platformy
     const platform = SOCIAL_MEDIA_PLATFORMS.find(p => p.key === platformKey);
     if (platform && !platform.validate(urlValue)) {
       return t("titlePages.socialMedia.errors.wrongPlatform", { 
@@ -120,13 +117,11 @@ function SocialMediaPicker({ initialValue = [], onSave, onCancel }) {
       return;
     }
 
-    // Sprawdź czy platforma już istnieje
     if (socialLinks.some(link => link.platform === selectedPlatform)) {
       setErrors({ url: t("titlePages.socialMedia.errors.platformExists") });
       return;
     }
 
-    // Normalizuj URL (dodaj https:// jeśli brakuje)
     let normalizedUrl = url.trim();
     if (!normalizedUrl.startsWith("http://") && !normalizedUrl.startsWith("https://")) {
       normalizedUrl = "https://" + normalizedUrl;

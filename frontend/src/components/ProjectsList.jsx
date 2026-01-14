@@ -83,7 +83,6 @@ function ProjectsList() {
     }, 250);
   }, [projects.length, isTransitioning]);
 
-  // Obsługa klawiatury - strzałki lewo/prawo
   useEffect(() => {
     if (projects.length <= 1) return;
 
@@ -103,7 +102,6 @@ function ProjectsList() {
     };
   }, [projects.length, handlePrev, handleNext]);
 
-  // Obsługa Escape do zamykania powiększonego zdjęcia
   useEffect(() => {
     if (!enlargedImage) return;
 
@@ -121,11 +119,9 @@ function ProjectsList() {
 
   const getProjectTitle = (project) => {
     const sections = project.data?.sections || [];
-    // Najpierw sprawdź czy jest tytuł w data.title (nowy sposób)
     if (project?.data?.title) {
       return project.data.title;
     }
-    // Fallback do starego sposobu (sekcja title) dla kompatybilności
     const titleSection = sections.find((section) => section.type === "title");
     return titleSection?.value || t("projects.list.noTitle");
   };
@@ -158,7 +154,7 @@ function ProjectsList() {
 
   return (
     <div className="w-full h-full flex flex-row overflow-hidden">
-      {/* Lewa strzałka - 5% szerokości z gradientem */}
+      {/* Lewa strzałka */}
       {projects.length > 1 && (
         <button
           type="button"
@@ -170,7 +166,7 @@ function ProjectsList() {
         </button>
       )}
 
-      {/* Główna zawartość - 90% szerokości (lub 100% jeśli brak strzałek) */}
+      {/* Główna zawartość */}
       <div className={`h-full overflow-y-auto ${projects.length > 1 ? 'w-[90%]' : 'w-full'} no-scrollbar`}>
         {projects.length === 0 ? (
           <div className="h-full flex items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
@@ -188,7 +184,7 @@ function ProjectsList() {
           </div>
         ) : (
           <>
-            {/* Projekt - zajmuje dokładnie (screen - navbar) wysokości */}
+            {/* Projekt */}
             <div className="h-[calc(100vh-4.5rem)] flex-shrink-0 ">
               <div
                 key={projects[currentIndex]?.id}
@@ -206,7 +202,7 @@ function ProjectsList() {
               </div>
             </div>
 
-            {/* Informacje o projekcie na dole - pod projektem (poza ekranem) */}
+            {/* Informacje o projekcie na dole */}
             <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 ">
               <div className="flex flex-wrap items-center justify-between gap-4 ">
                 <div>
@@ -257,7 +253,7 @@ function ProjectsList() {
         )}
       </div>
 
-      {/* Prawa strzałka - 5% szerokości z gradientem */}
+      {/* Prawa strzałka */}
       {projects.length > 1 && (
         <button
           type="button"

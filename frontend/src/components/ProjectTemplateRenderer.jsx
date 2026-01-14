@@ -6,7 +6,6 @@ import { TEMPLATES } from "../templates/templates";
 const getTemplateByKey = (key) =>
   TEMPLATES.find((template) => template.id === key);
 
-// Mapowanie typów sekcji na ich nazwy (zgodne z SECTION_TYPES z DynamicProjectForm)
 const SECTION_TYPE_LABELS = {
   title: "Tytuł",
   description: "Opis",
@@ -27,18 +26,14 @@ const getSectionImages = (project, sectionId) => {
     .sort((a, b) => (a.file_index || 0) - (b.file_index || 0));
 };
 
-// Oblicz sztywną wysokość sekcji na podstawie układu grid
 const getHeightForGrid = (containerClass, slotsCount) => {
   if (!containerClass.includes("grid")) return null;
 
-  // Wyciągnij liczbę kolumn z klasy (np. "grid-cols-3" -> 3)
   const colsMatch = containerClass.match(/grid-cols-(\d+)/);
   if (!colsMatch) return null;
 
   const cols = parseInt(colsMatch[1], 10);
-  // Oblicz liczbę wierszy na podstawie liczby slotów i kolumn
   const rows = Math.ceil(slotsCount / cols);
-  // Każda sekcja powinna mieć wysokość równą 100% / liczba_wierszy
   const heightPercent = 100 / rows;
   return `${heightPercent}%`;
 };
@@ -89,10 +84,6 @@ const renderSectionContent = (
 
     case "image": {
       const images = getSectionImages(project, section.id);
-
-      // ZMIANA 1: Usuwamy zmienną maxHeightClass, która ograniczała mozaiki do 400px
-      // Dzięki temu zdjęcie wypełni dostępną przestrzeń siatki (Grid).
-
       return images.length > 0 ? (
         <div
           className={`flex flex-col gap-3 w-full h-full ${
@@ -105,13 +96,9 @@ const renderSectionContent = (
             return (
               <div
                 key={image.url}
-                // ZMIANA 2: Wymuszamy h-full (zamiast isMosaic ? 'h-auto' : 'h-full')
-                // i usuwamy 'max-h-[400px]'
                 className={`w-full h-full flex flex-col min-h-0`}
               >
                 <div
-                  // ZMIANA 3: Uproszczona logika klas kontenera zdjęcia.
-                  // Usuwamy sztywne 'max-h-[350px]' dla mozaik.
                   className={`overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity w-full flex items-center justify-center bg-gray-50 dark:bg-gray-800 ${
                     hasDescription ? "flex-1 min-h-0" : "h-full"
                   }`}
@@ -120,9 +107,6 @@ const renderSectionContent = (
                   <img
                     src={image.url}
                     alt={`${section.type || "section"} image`}
-                    // ZMIANA 4: Usunięto styl inline 'maxHeight', który nadpisywał CSS.
-                    // Opcjonalnie: Zmień 'object-contain' na 'object-cover',
-                    // jeśli chcesz, aby zdjęcie wypełniło cały obszar bez białych pasków (przycinając krawędzie).
                     className="max-w-full max-h-full w-auto h-auto object-cover"
                   />
                 </div>
@@ -187,7 +171,6 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
     (a, b) => (a.order ?? 0) - (b.order ?? 0)
   );
 
-  // Sprawdź czy template używa grid (mozaika) czy flex (pionowe/poziome)
   const isGridLayout = template.layout.container.includes("grid");
   const isMosaic = template.category === "mozaika";
   const gridHeight = getHeightForGrid(
@@ -204,18 +187,13 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
 
   const orphanSections = sections.filter((section) => !section.slot_id);
 
-  // Dla grid layouts obliczamy wysokość wiersza
-  // Musimy uwzględnić gap w obliczeniach - wyciągnij gap z klasy
   const gapMatch = template.layout.container.match(/gap-(\d+)/);
-  const gapValue = gapMatch ? parseInt(gapMatch[1], 10) * 0.25 : 0; // gap-4 = 1rem = 16px, gap-1 = 0.25rem = 4px
-  const gapPx = gapValue * 16; // konwersja rem na px
+  const gapValue = gapMatch ? parseInt(gapMatch[1], 10) * 0.25 : 0; 
+  const gapPx = gapValue * 16; 
 
-  // Padding sekcji (p-2 = 0.5rem = 8px) i border (1px każdy = 2px total)
-  const sectionPadding = 8 * 2; // padding top + bottom
-  const sectionBorder = 2; // border top + bottom
+  const sectionPadding = 8 * 2; 
+  const sectionBorder = 2; 
 
-  // Oblicz wysokość wiersza uwzględniając gap, padding i border (tylko dla nie-mozaik)
-  // Mozaiki mogą być scrollowalne, więc nie ustawiamy sztywnych wysokości
   let gridContainerStyle = {};
   if (gridHeight && isGridLayout && !isMosaic) {
     const cols = parseInt(
@@ -223,7 +201,6 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
       10
     );
     const rows = Math.ceil(template.slots.length / cols);
-    // Odejmij gap, padding i border od całkowitej wysokości przed podziałem
     const totalGap = (rows - 1) * gapPx;
     const totalPadding = rows * sectionPadding;
     const totalBorder = rows * sectionBorder;
@@ -233,13 +210,8 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
 
   return (
     <div className={`h-full w-full flex flex-col overflow-hidden `}>
-      {/* ZMIANA: Usunięto warunek isMosaic ? 'overflow-y-auto' : 'overflow-hidden'. 
-        Teraz zawsze jest 'overflow-hidden', żeby zmieścić się na ekranie. */}
       <div
         className={`${template.layout.container} flex-1 h-full no-scrollbar`}
-        // ZMIANA: Usunięto warunek isMosaic ? 'h-auto'. Teraz zawsze 'flex-1 h-full'.
-        // style={gridContainerStyle} <- To można zostawić lub usunąć,
-        // bo teraz sterujemy wysokością przez grid-rows-2 w klasie CSS template'u.
         style={isMosaic ? {} : gridContainerStyle}
       >
         {template.slots.map((slot) => {
@@ -247,20 +219,14 @@ function ProjectTemplateRenderer({ project, onImageClick }) {
           return (
             <div
               key={slot.id}
-              // ZMIANA: Zawsze 'h-full', usunięto warunek isMosaic
               className={`rounded-2xl border border-gray-200 bg-white p-2 dark:border-gray-700 dark:bg-gray-900 flex flex-col h-full box-border min-w-0 ${slot.className} `}
             >
               <div
-                // ZMIANA: Zawsze 'h-full overflow-hidden'
-                // Dzięki temu jeśli tekst jest długi, scroll pojawi się WEWNĄTRZ kafelka, a nie rozepcha ekranu.
                 className={`h-full w-full overflow-hidden ${
                   section ? "" : "mt-4"
                 } `}
               >
                 {section ? (
-                  // ZMIANA TUTAJ:
-                  // Było: renderSectionContent(project, section, onImageClick, isMosaic)
-                  // Jest: renderSectionContent(project, section, onImageClick, false)
 
                   renderSectionContent(project, section, onImageClick, false, t)
                 ) : (

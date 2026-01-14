@@ -1,12 +1,10 @@
 import axios from "axios";
 
-// Tworzymy instancję axios
 const api = axios.create({
   baseURL: "http://localhost:3000/api/v1",
-  withCredentials: true // jeśli używasz cookies
+  withCredentials: true 
 });
 
-// Interceptor dodający tokeny z localStorage
 api.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem("access-token");
   const client = localStorage.getItem("client");

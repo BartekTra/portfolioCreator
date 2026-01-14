@@ -60,7 +60,6 @@ function RepositoryForm() {
       setDescription(repo.description || "");
       setSelectedTitlePageId(repo.title_page_id?.toString() || "");
       
-      // Pobierz pełne dane projektów w odpowiedniej kolejności
       const projectPromises = repo.project_ids.map((projectId) =>
         api.get(`/projects/${projectId}`)
       );
@@ -134,11 +133,9 @@ function RepositoryForm() {
   };
 
   const getProjectTitle = (project) => {
-    // Najpierw sprawdź czy jest tytuł w data.title (nowy sposób)
     if (project?.data?.title) {
       return project.data.title;
     }
-    // Fallback do starego sposobu (sekcja title) dla kompatybilności
     const sections = project.data?.sections || [];
     const titleSection = sections.find((section) => section.type === "title");
     return titleSection?.value || t("projects.list.noTitle");

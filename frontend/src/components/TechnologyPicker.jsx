@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Check } from "lucide-react";
 
-// Mapa technologii z możliwością łatwego dodania ikon
-// Struktura pozwala na łatwe dodanie ikon w przyszłości (np. z react-icons)
 export const TECHNOLOGIES = {
   frontend: {
     label: "Frontend",
@@ -64,7 +62,6 @@ export const TECHNOLOGIES = {
   },
 };
 
-// Funkcja pomocnicza do parsowania wartości technologii (string oddzielony przecinkami)
 const parseTechnologies = (value) => {
   if (!value || typeof value !== "string") return [];
   return value
@@ -73,14 +70,12 @@ const parseTechnologies = (value) => {
     .filter((tech) => tech.length > 0);
 };
 
-// Funkcja pomocnicza do formatowania technologii (tablica -> string)
 const formatTechnologies = (technologies) => {
   return technologies.filter(Boolean).join(", ");
 };
 
 function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
   const { t } = useTranslation();
-  // Pobierz wszystkie dostępne nazwy technologii (memoized, bo TECHNOLOGIES jest stałą)
   const allAvailableTechNames = useMemo(
     () =>
       Object.values(TECHNOLOGIES)
@@ -89,7 +84,6 @@ function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
     []
   );
   
-  // Funkcja do inicjalizacji stanu z wartości
   const initializeState = useCallback(
     (value) => {
       const initialTechs = parseTechnologies(value);
@@ -118,7 +112,6 @@ function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
     initializeState(initialValue).otherValue
   );
 
-  // Synchronizuj stan gdy initialValue się zmienia
   useEffect(() => {
     const newState = initializeState(initialValue);
     setSelectedTechs(newState.selectedTechs);
@@ -157,12 +150,10 @@ function TechnologyPicker({ initialValue = "", onSave, onCancel }) {
     }
   };
 
-  // Render ikony (placeholder - łatwe do rozszerzenia)
   const renderIcon = (tech) => {
     if (tech.icon) {
       return tech.icon;
     }
-    // Placeholder dla przyszłych ikon
     return null;
   };
 

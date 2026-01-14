@@ -75,11 +75,9 @@ const handleSubmit = async (e) => {
     const data = response.data;
 
     if (data.status === "success") {
-      // Sprawdź, czy użytkownik wymaga potwierdzenia
       if (data.data?.confirmed === false || data.message) {
         setSuccess(true);
       } else {
-        // Jeśli użytkownik jest już potwierdzony, przekieruj do logowania
         navigate("/login");
       }
     }

@@ -58,7 +58,7 @@ function DynamicProjectForm() {
   const activeSlot = selectedTemplate?.slots.find((slot) => slot.id === activeSlotId);
 
   const getDefaultValueForType = (type) => {
-    if (type === "image") return []; // Array of {file, description} objects
+    if (type === "image") return [];
     return "";
   };
 
@@ -70,7 +70,6 @@ function DynamicProjectForm() {
     setIsModalOpen(false);
     setSuccess(false);
     setSelectedCategory(Object.keys(SECTION_CATEGORIES)[0]);
-    // Nie resetuj tytułu - użytkownik może go już wpisać
   };
 
   const handleSlotClick = (slotId) => {
@@ -96,7 +95,6 @@ function DynamicProjectForm() {
       return;
     }
 
-    // Dla technologii pokazujemy TechnologyPicker zamiast od razu dodawać sekcję
     if (type === "technologies") {
       setShowTechnologyPicker(true);
       return;
@@ -184,7 +182,6 @@ function DynamicProjectForm() {
     setEditingTechnologySectionId(null);
   };
 
-  // Zamykanie modala po kliknięciu w tło
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === "Escape") {
@@ -225,10 +222,9 @@ function DynamicProjectForm() {
     const currentSection = sections.find(s => s.id === id);
     const currentImages = currentSection?.value || [];
     
-    // Mapuj nowe pliki do obiektów z file i description
     const newImages = fileArray.map(file => ({
       file: file,
-      description: "" // Domyślnie pusty opis
+      description: ""
     }));
     
     updateSection(id, newImages);
@@ -348,19 +344,14 @@ function DynamicProjectForm() {
       const projectData = prepareSubmitData();
       const formData = new FormData();
       
-      // Dodaj dane JSON i template
       formData.append("data", JSON.stringify(projectData));
       formData.append("template_key", selectedTemplateId);
-      
-      // POPRAWKA: Dodaj zdjęcia w formacie zagnieżdżonym
-      // Rails oczekuje: images[KEY] = file
+
       sections.forEach((section) => {
         if (section.type === "image" && section.value.length > 0) {
           section.value.forEach((imgObj, idx) => {
             const key = `${section.id}_${idx}`;
-            // Użyj formatu images[key] zamiast images[][key]
             formData.append(`images[${key}]`, imgObj.file);
-            // Dodaj opis jako osobny parametr
             if (imgObj.description) {
               formData.append(`image_descriptions[${key}]`, imgObj.description);
             }
@@ -368,7 +359,6 @@ function DynamicProjectForm() {
         }
       });
 
-      // Debug: Zobacz co wysyłamy
       console.log("Wysyłane dane:");
       console.log("JSON data:", projectData);
       console.log("FormData entries:");
@@ -378,14 +368,12 @@ function DynamicProjectForm() {
 
       const response = await api.post("/projects", formData, {
         headers: {
-          // NIE ustawiaj Content-Type - przeglądarka zrobi to automatycznie z boundary
         },
       });
       
       console.log("Odpowiedź z serwera:", response.data);
       setSuccess(true);
       
-      // Opcjonalnie: przekieruj po sukcesie
       console.log("XD");
       setTimeout(() => navigate(`/projects/${response.data.id}`), 500);
     } catch (err) {
@@ -660,7 +648,7 @@ function DynamicProjectForm() {
               </div>
             )}
 
-            {/* Modal dla edycji technologii (poza kontekstem wyboru sekcji) */}
+            {/* Modal dla edycji technologii */}
             {showTechnologyPicker && editingTechnologySectionId && !isModalOpen && (
               <div
                 className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/30 backdrop-blur-sm"

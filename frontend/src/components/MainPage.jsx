@@ -44,7 +44,7 @@ function MainPage() {
       <nav className="bg-white dark:bg-gray-800 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-18">
-            {/* Lewa strona - przyciski */}
+            {/* Lewa strona */}
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => navigate("/")}
@@ -71,7 +71,7 @@ function MainPage() {
               </button>
             </div>
 
-            {/* Prawa strona - dane użytkownika i przycisk trybu ciemnego */}
+            {/* Prawa strona*/}
             <div className="flex items-center space-x-3">
               {/* Przełącznik języka */}
               <div className="relative group">

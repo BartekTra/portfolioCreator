@@ -1,4 +1,4 @@
-// src/components/Login.tsx
+
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../context/UserContext.jsx";
@@ -33,11 +33,7 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
       });
 
       const data = await response.data;
-      console.log(data);
-
-      // zapis tokenów w localStorage
       const tokens = await data.tokens;
-      console.log(tokens);
       if (tokens) {
         localStorage.setItem("access-token", data.tokens["access-token"]);
         localStorage.setItem("client", data.tokens.client);
@@ -45,11 +41,9 @@ const LoginPage = ({ onSwitchToRegister, onSwitchToMainPage }) => {
           "authorization",
           data.tokens.authorization.replace("Bearer ", "")
         );
-        console.log("DONE");
         navigate("/");
       }
 
-      // odświeżenie usera w kontekście
       await refetchUser();
     } catch (err) {
       console.error(err);

@@ -367,9 +367,6 @@ export const TEMPLATES = [
     category: "mozaika",
     description: "Asymetryczna mozaika 1 + 2 (Pełny ekran)",
     layout: {
-      // ZMIANA: Dodajemy 'h-full' i 'grid-rows-2'.
-      // 'grid-rows-2' dzieli wysokość na dwie równe części.
-      // Usunęliśmy 'items-start', aby sloty się rozciągały.
       container: "grid grid-cols-3 grid-rows-2 gap-4 h-full",
     },
     slots: [
@@ -377,21 +374,18 @@ export const TEMPLATES = [
         id: "templateD-slot-1",
         label: "Duży blok lewy",
         helper: "Najważniejszy element",
-        // ZMIANA: Usuwamy sztywne min-h (np. 260px) i dajemy h-full
         className: "col-span-2 row-span-2 h-full min-h-0",
       },
       {
         id: "templateD-slot-2",
         label: "Prawy górny",
         helper: "Sekcja wspierająca",
-        // ZMIANA: Usuwamy sztywne min-h
         className: "col-span-1 h-full min-h-0",
       },
       {
         id: "templateD-slot-3",
         label: "Prawy dolny",
         helper: "Dodatkowe informacje",
-        // ZMIANA: Usuwamy sztywne min-h
         className: "col-span-1 h-full min-h-0",
       },
     ],

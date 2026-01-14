@@ -59,7 +59,6 @@ function TitlePageForm() {
         template_key: page.template_key || "titleTemplate1"
       });
       setExistingPhotoUrl(page.photo_url);
-      // Załaduj sekcje jeśli istnieją
       if (page.sections && Array.isArray(page.sections)) {
         setSections(page.sections);
       }
@@ -103,7 +102,6 @@ function TitlePageForm() {
     setFormData({ ...formData, experience: newExperience });
   };
 
-  // Funkcje do zarządzania sekcjami
   const addSection = (type) => {
     if (type === "technologies") {
       setShowTechnologyPicker(true);
@@ -120,14 +118,12 @@ function TitlePageForm() {
 
   const handleTechnologySave = (technologiesValue) => {
     if (editingSectionId) {
-      // Edytuj istniejącą sekcję
       setSections(sections.map(section => 
         section.id === editingSectionId 
           ? { ...section, value: technologiesValue }
           : section
       ));
     } else {
-      // Dodaj nową sekcję
       const newSection = {
         id: Date.now(),
         type: "technologies",
@@ -142,14 +138,12 @@ function TitlePageForm() {
 
   const handleLanguageSave = (languagesValue) => {
     if (editingSectionId) {
-      // Edytuj istniejącą sekcję
       setSections(sections.map(section => 
         section.id === editingSectionId 
           ? { ...section, value: languagesValue }
           : section
       ));
     } else {
-      // Dodaj nową sekcję
       const newSection = {
         id: Date.now(),
         type: "languages",
@@ -164,14 +158,12 @@ function TitlePageForm() {
 
   const handleSocialMediaSave = (socialMediaValue) => {
     if (editingSectionId) {
-      // Edytuj istniejącą sekcję
       setSections(sections.map(section => 
         section.id === editingSectionId 
           ? { ...section, value: socialMediaValue }
           : section
       ));
     } else {
-      // Dodaj nową sekcję
       const newSection = {
         id: Date.now(),
         type: "social_media",
@@ -574,7 +566,6 @@ function TitlePageForm() {
                                 >
                                   <span className="font-medium text-gray-800 dark:text-gray-200">
                                     {(() => {
-                                      // Konwersja starej nazwy polskiej na klucz
                                       const LANGUAGE_NAME_TO_KEY = {
                                         "Polski": "polish", "Angielski": "english", "Niemiecki": "german",
                                         "Francuski": "french", "Hiszpański": "spanish", "Włoski": "italian",

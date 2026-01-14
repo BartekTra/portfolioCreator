@@ -6,7 +6,6 @@ import ProjectView from "./ProjectView";
 import TitlePageTemplateRenderer from "./TitlePageTemplateRenderer";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Osobna instancja axios dla publicznych endpointów (bez tokenów)
 const publicApi = axios.create({
   baseURL: "http://localhost:3000/api/v1",
   withCredentials: true,
@@ -37,7 +36,6 @@ function PublicRepositoryView() {
     setCurrentIndex((prev) => Math.min(prev, totalItems - 1));
   }, [totalItems]);
 
-  // Obsługa Escape do zamykania powiększonego zdjęcia
   useEffect(() => {
     if (!enlargedImage) return;
 
@@ -59,7 +57,6 @@ function PublicRepositoryView() {
       const response = await publicApi.get(`/public/repositories/${token}`);
       setRepository(response.data);
 
-      // Pobierz pełne dane projektów używając publicznego API
       const projectPromises = response.data.project_ids.map((projectId) =>
         publicApi.get(`/public/projects/${projectId}`)
       );
@@ -73,7 +70,6 @@ function PublicRepositoryView() {
     }
   };
 
-  // Funkcje nawigacji
   const handleNext = useCallback(() => {
     if (totalItems === 0 || isTransitioning) return;
     setIsTransitioning(true);
@@ -92,7 +88,6 @@ function PublicRepositoryView() {
     }, 250);
   }, [totalItems, isTransitioning]);
 
-  // Obsługa klawiatury - strzałki lewo/prawo
   useEffect(() => {
     if (totalItems <= 1) return;
 
@@ -134,18 +129,15 @@ function PublicRepositoryView() {
     );
   }
 
-  // Funkcja zwracająca aktualnie wyświetlany element
   const getCurrentItem = () => {
     const hasTitlePage = repository?.title_page;
 
     if (totalItems === 0) return null;
 
-    // Jeśli jest strona tytułowa i currentIndex = 0, zwróć stronę tytułową
     if (hasTitlePage && currentIndex === 0) {
       return { type: "title_page", data: repository.title_page };
     }
 
-    // W przeciwnym razie zwróć projekt
     const projectIndex = hasTitlePage ? currentIndex - 1 : currentIndex;
     return { type: "project", data: projects[projectIndex] };
   };
@@ -155,7 +147,7 @@ function PublicRepositoryView() {
 
   return (
     <div className="w-full h-screen flex flex-row overflow-hidden bg-gray-50 dark:bg-gray-900">
-      {/* Lewa strzałka - 5% szerokości z gradientem */}
+      {/* Lewa strzałka */}
       {totalItems > 1 && (
         <button
           type="button"
@@ -167,7 +159,7 @@ function PublicRepositoryView() {
         </button>
       )}
 
-      {/* Główna zawartość - 90% szerokości (lub 100% jeśli brak strzałek) */}
+      {/* Główna zawartość */}
       <div className={`h-screen flex flex-col ${totalItems > 1 ? 'w-[90%]' : 'w-full'} overflow-hidden`}>
         {/* Wyświetlanie elementów portfolio */}
         {totalItems === 0 ? (
@@ -178,7 +170,7 @@ function PublicRepositoryView() {
           </div>
         ) : (
           <>
-            {/* Projekt/CV - różne zachowanie: CV scrollowalne, projekt pełnoekranowy */}
+            {/* Projekt/CV */}
             {currentItem?.type === "title_page" ? (
               <div className="flex-1 flex flex-col min-h-0">
                 <div
@@ -231,11 +223,9 @@ function PublicRepositoryView() {
                     <>
                       <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
                         {(() => {
-                          // Najpierw sprawdź czy jest tytuł w data.title (nowy sposób)
                           if (currentItem.data?.data?.title) {
                             return currentItem.data.data.title;
                           }
-                          // Fallback do starego sposobu (sekcja title) dla kompatybilności
                           const sections = currentItem.data.data?.sections || [];
                           const titleSection = sections.find(
                             (section) => section.type === "title"
@@ -255,7 +245,7 @@ function PublicRepositoryView() {
         )}
       </div>
 
-      {/* Prawa strzałka - 5% szerokości z gradientem */}
+      {/* Prawa strzałka */}
       {totalItems > 1 && (
         <button
           type="button"

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Plus, Trash2 } from "lucide-react";
 
-// Popularne języki - klucze dla tłumaczeń
 const POPULAR_LANGUAGE_KEYS = [
   "polish",
   "english",
@@ -26,7 +25,6 @@ const POPULAR_LANGUAGE_KEYS = [
   "romanian",
 ];
 
-// Mapowanie starych nazw na klucze (dla kompatybilności z istniejącymi danymi)
 const LANGUAGE_NAME_TO_KEY = {
   "Polski": "polish",
   "Angielski": "english",
@@ -50,7 +48,6 @@ const LANGUAGE_NAME_TO_KEY = {
   "Rumuński": "romanian",
 };
 
-// Poziomy znajomości języka
 const LANGUAGE_LEVELS = [
   { value: "ojczysty", label: "Ojczysty" },
   { value: "C2", label: "C2 - Biegły" },
@@ -65,7 +62,6 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
   const { t } = useTranslation();
   const [languages, setLanguages] = useState(() => {
     if (Array.isArray(initialValue) && initialValue.length > 0) {
-      // Konwersja starych nazw na klucze dla kompatybilności
       return initialValue.map(lang => {
         if (lang.name && LANGUAGE_NAME_TO_KEY[lang.name]) {
           return { ...lang, name: LANGUAGE_NAME_TO_KEY[lang.name] };
@@ -83,10 +79,8 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
   const addLanguage = () => {
     if (!newLanguage.trim()) return;
 
-    // Konwertuj wpisaną nazwę na klucz
     let languageKey;
     
-    // 1. Sprawdź czy to tłumaczona nazwa z popularnych języków
     const foundKey = POPULAR_LANGUAGE_KEYS.find(key => 
       t(`titlePages.languageNames.${key}`).toLowerCase() === newLanguage.trim().toLowerCase()
     );
@@ -94,11 +88,9 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
     if (foundKey) {
       languageKey = foundKey;
     } 
-    // 2. Sprawdź czy to stara polska nazwa
     else if (LANGUAGE_NAME_TO_KEY[newLanguage.trim()]) {
       languageKey = LANGUAGE_NAME_TO_KEY[newLanguage.trim()];
     }
-    // 3. W przeciwnym razie użyj wpisanej wartości jako klucz (lowercase)
     else {
       languageKey = newLanguage.trim().toLowerCase();
     }
@@ -250,7 +242,6 @@ function LanguagePicker({ initialValue = [], onSave, onCancel }) {
                   key={langKey}
                   type="button"
                   onClick={() => {
-                    // Ustawiamy przetłumaczoną nazwę w input (użytkownik widzi nazwę w swoim języku)
                     setNewLanguage(translatedName);
                     setShowAddForm(true);
                   }}

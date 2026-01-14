@@ -2,7 +2,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Facebook, Instagram, Twitter, Github, Linkedin, Youtube, Twitch, Globe } from "lucide-react";
 
-// Mapowanie starych nazw polskich na klucze (dla kompatybilności z istniejącymi danymi)
 const LANGUAGE_NAME_TO_KEY = {
   "Polski": "polish",
   "Angielski": "english",
@@ -26,20 +25,16 @@ const LANGUAGE_NAME_TO_KEY = {
   "Rumuński": "romanian",
 };
 
-// Funkcja pomocnicza do konwersji nazwy języka na klucz
 const getLanguageKey = (languageName) => {
   if (!languageName) return languageName;
   
-  // Jeśli to już jest klucz (lowercase, bez polskich znaków), użyj go
   if (LANGUAGE_NAME_TO_KEY[languageName]) {
     return LANGUAGE_NAME_TO_KEY[languageName];
   }
   
-  // W przeciwnym razie użyj wartości jako klucza (konwertuj na lowercase)
   return languageName.toLowerCase();
 };
 
-// Mapowanie platform mediów społecznościowych na ikonki
 const SOCIAL_MEDIA_ICONS = {
   facebook: Facebook,
   instagram: Instagram,
@@ -51,7 +46,6 @@ const SOCIAL_MEDIA_ICONS = {
   other: Globe,
 };
 
-// Funkcja pomocnicza do pobierania ikonki dla platformy
 const getSocialMediaIcon = (platformKey) => {
   const IconComponent = SOCIAL_MEDIA_ICONS[platformKey] || Globe;
   return IconComponent;

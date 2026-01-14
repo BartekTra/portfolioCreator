@@ -25,7 +25,6 @@ function RepositoryView() {
     fetchRepository();
   }, [id]);
 
-  // Sprawdź czy portfolio ma już token udostępniania
   useEffect(() => {
     if (repository?.public_share_token) {
       const url = `${window.location.origin}/share/${repository.public_share_token}`;
@@ -43,7 +42,6 @@ function RepositoryView() {
     setCurrentIndex((prev) => Math.min(prev, totalItems - 1));
   }, [totalItems]);
 
-  // Obsługa Escape do zamykania powiększonego zdjęcia
   useEffect(() => {
     if (!enlargedImage) return;
 
@@ -65,7 +63,6 @@ function RepositoryView() {
       const response = await api.get(`/repositories/${id}`);
       setRepository(response.data);
       
-      // Pobierz pełne dane projektów
       const projectPromises = response.data.project_ids.map((projectId) =>
         api.get(`/projects/${projectId}`)
       );
@@ -79,7 +76,6 @@ function RepositoryView() {
     }
   };
 
-  // Funkcje nawigacji
   const handleNext = useCallback(() => {
     if (totalItems === 0 || isTransitioning) return;
     setIsTransitioning(true);
@@ -98,7 +94,6 @@ function RepositoryView() {
     }, 250);
   }, [totalItems, isTransitioning]);
 
-  // Obsługa klawiatury - strzałki lewo/prawo
   useEffect(() => {
     if (totalItems <= 1) return;
 
@@ -138,7 +133,6 @@ function RepositoryView() {
       const url = response.data.share_url;
       setShareUrl(url);
       
-      // Skopiuj do schowka
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -183,18 +177,15 @@ function RepositoryView() {
   }
 
 
-  // Funkcja zwracająca aktualnie wyświetlany element
   const getCurrentItem = () => {
     const hasTitlePage = repository?.title_page;
 
     if (totalItems === 0) return null;
 
-    // Jeśli jest strona tytułowa i currentIndex = 0, zwróć stronę tytułową
     if (hasTitlePage && currentIndex === 0) {
       return { type: "title_page", data: repository.title_page };
     }
 
-    // W przeciwnym razie zwróć projekt
     const projectIndex = hasTitlePage ? currentIndex - 1 : currentIndex;
     return { type: "project", data: projects[projectIndex] };
   };
@@ -204,7 +195,7 @@ function RepositoryView() {
 
   return (
     <div className="w-full h-full flex flex-row">
-      {/* Lewa strzałka - 5% szerokości z gradientem */}
+      {/* Lewa strzałka */}
       {totalItems > 1 && (
         <button
           type="button"
@@ -216,7 +207,7 @@ function RepositoryView() {
         </button>
       )}
 
-      {/* Główna zawartość - 90% szerokości (lub 100% jeśli brak strzałek) */}
+      {/* Główna zawartość  */}
       <div className={`h-full flex flex-col min-h-0 ${totalItems > 1 ? 'w-[90%]' : 'w-full'}`}>
         {/* Header z informacjami o repozytorium */}
         <div className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -288,7 +279,7 @@ function RepositoryView() {
           </div>
         </div>
 
-        {/* Wyświetlanie elementów portfolio - scrollowalny kontener z projektem i footerem */}
+        {/* Wyświetlanie elementów portfolio */}
         {totalItems === 0 ? (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-gray-500 dark:text-gray-400">
@@ -297,7 +288,7 @@ function RepositoryView() {
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto">
-            {/* Projekt/Strona tytułowa - zajmuje maksymalnie dużo miejsca (prawie cały ekran) */}
+            {/* Projekt/Strona tytułowa */}
             <div
               key={currentItem?.type === "title_page" ? "title_page" : currentItem?.data?.id}
               className={`min-h-[calc(100vh-180px)] transition-opacity duration-300 ${
@@ -320,7 +311,7 @@ function RepositoryView() {
               ) : null}
             </div>
 
-            {/* Footer z informacjami o aktualnym elemencie - pod projektem, poza ekranem */}
+            {/* Footer */}
             <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
@@ -333,11 +324,9 @@ function RepositoryView() {
                     <>
                       <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
                         {(() => {
-                          // Najpierw sprawdź czy jest tytuł w data.title (nowy sposób)
                           if (currentItem.data?.data?.title) {
                             return currentItem.data.data.title;
                           }
-                          // Fallback do starego sposobu (sekcja title) dla kompatybilności
                           const sections = currentItem.data.data?.sections || [];
                           const titleSection = sections.find((section) => section.type === "title");
                           return titleSection?.value || "Bez tytułu";
@@ -365,7 +354,7 @@ function RepositoryView() {
         )}
       </div>
 
-      {/* Prawa strzałka - 5% szerokości z gradientem */}
+      {/* Prawa strzałka */}
       {totalItems > 1 && (
         <button
           type="button"

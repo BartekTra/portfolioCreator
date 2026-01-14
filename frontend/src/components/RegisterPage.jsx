@@ -1,4 +1,4 @@
-// src/components/Register.jsx
+
 import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import RegisterSecondStage from "./RegisterSecondStage";
@@ -39,7 +39,6 @@ const Register = () => {
       }
     );
     const data = await result.json();
-    console.log(data);
 
     if (data.available == false) {
       setErrors((prevErrors) => {

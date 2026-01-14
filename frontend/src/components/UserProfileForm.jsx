@@ -63,14 +63,12 @@ function UserProfileForm() {
         submitData.append("avatar", avatar);
       }
 
-      // DeviseTokenAuth używa PUT do aktualizacji
       await api.put("/auth", submitData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      // Odśwież dane użytkownika
       await refetchUser();
       navigate("/profile");
     } catch (err) {

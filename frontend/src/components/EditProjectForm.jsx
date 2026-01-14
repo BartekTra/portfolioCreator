@@ -54,7 +54,7 @@ function EditProjectForm() {
   const [activeSlotId, setActiveSlotId] = useState(null);
   const [showTechnologyPicker, setShowTechnologyPicker] = useState(false);
   const [editingTechnologySectionId, setEditingTechnologySectionId] = useState(null);
-  const [existingImages, setExistingImages] = useState([]); // Przechowuje istniejące zdjęcia z API
+  const [existingImages, setExistingImages] = useState([]); 
   
   const selectedTemplate = selectedTemplateId
     ? TEMPLATES.find((template) => template.id === selectedTemplateId)
@@ -71,17 +71,13 @@ function EditProjectForm() {
       const response = await api.get(`/projects/${id}`);
       const project = response.data;
       
-      // Załaduj tytuł projektu
       setProjectTitle(project.data?.title || "");
       
-      // Załaduj template
       setSelectedTemplateId(project.template_key || project.data?.template_key);
       
-      // Załaduj sekcje
       const projectSections = project.data?.sections || [];
       const loadedSections = projectSections.map((section) => {
         if (section.type === "image") {
-          // Dla sekcji image, znajdź istniejące zdjęcia
           const sectionImages = (project.images || []).filter(
             (img) => img.section_id === section.id
           );
@@ -91,10 +87,10 @@ function EditProjectForm() {
             slotId: section.slot_id,
             type: section.type,
             value: sectionImages.map((img) => ({
-              url: img.url, // URL istniejącego zdjęcia
+              url: img.url, 
               description: img.description || "",
-              isExisting: true, // Oznacz jako istniejące
-              imageId: img.id || img.url, // ID do identyfikacji
+              isExisting: true, 
+              imageId: img.id || img.url,
             })),
             order: section.order,
           };
@@ -119,7 +115,6 @@ function EditProjectForm() {
         }
       });
       
-      // Sortuj sekcje według order
       const sortedSections = loadedSections.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
       setSections(sortedSections);
       setExistingImages(project.images || []);
@@ -139,7 +134,6 @@ function EditProjectForm() {
   const handleTemplateSelect = (templateId) => {
     if (templateId && templateId === selectedTemplateId) return;
     setSelectedTemplateId(templateId);
-    // Nie resetuj sekcji podczas edycji - użytkownik może zmienić template
     setActiveSlotId(null);
     setIsModalOpen(false);
     setSelectedCategory(Object.keys(SECTION_CATEGORIES)[0]);
@@ -295,10 +289,8 @@ function EditProjectForm() {
     const currentSection = sections.find(s => s.id === id);
     const currentImages = currentSection?.value || [];
     
-    // Zachowaj istniejące zdjęcia (te z isExisting: true)
     const existingImages = currentImages.filter(img => img.isExisting);
     
-    // Dodaj nowe pliki
     const newImages = fileArray.map(file => ({
       file: file,
       description: "",
@@ -360,7 +352,6 @@ function EditProjectForm() {
       title: projectTitle.trim(),
       sections: orderedSections.map((section, index) => {
         if (section.type === "image") {
-          // Dla sekcji image, wyślij tylko nowe zdjęcia (te z file)
           const newImages = section.value.filter(img => !img.isExisting && img.file);
           return {
             id: section.id,
@@ -416,7 +407,6 @@ function EditProjectForm() {
       formData.append("data", JSON.stringify(projectData));
       formData.append("template_key", selectedTemplateId);
       
-      // Dodaj tylko nowe zdjęcia (te z file, nie istniejące)
       sections.forEach((section) => {
         if (section.type === "image" && section.value.length > 0) {
           const newImages = section.value.filter(img => !img.isExisting && img.file);
@@ -432,7 +422,6 @@ function EditProjectForm() {
 
       await api.patch(`/projects/${id}`, formData, {
         headers: {
-          // NIE ustawiaj Content-Type - przeglądarka zrobi to automatycznie z boundary
         },
       });
       
@@ -739,7 +728,7 @@ function EditProjectForm() {
               />
             )}
 
-            {/* Modal dla edycji technologii (poza kontekstem wyboru sekcji) */}
+            {/* Modal dla edycji technologii */}
             {showTechnologyPicker && editingTechnologySectionId && !isModalOpen && (
               <div
                 className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 dark:bg-black/30 backdrop-blur-sm"
