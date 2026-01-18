@@ -21,7 +21,7 @@ import PublicRepositoryView from "./PublicRepositoryView";
 function AppRoutes() {
   return (
     <Routes>
-      {/* Trasy bez navbara */}
+      {/* Trasy bez navbarawererwfa */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
