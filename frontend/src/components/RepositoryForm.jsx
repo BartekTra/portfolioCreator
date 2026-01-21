@@ -95,14 +95,12 @@ function RepositoryForm() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
     try {
       if (!selectedTitlePageId) {
         setError(t("repositories.form.mustSelectTitlePage"));
         setLoading(false);
         return;
       }
-
       const projectIds = selectedProjects.map((p) => p.id);
       const data = {
         repository: {
@@ -112,13 +110,11 @@ function RepositoryForm() {
         },
         project_ids: projectIds,
       };
-
       if (isEditing) {
         await api.put(`/repositories/${id}`, data);
       } else {
         await api.post("/repositories", data);
       }
-
       navigate("/repositories");
     } catch (err) {
       console.error("Error saving repository:", err);

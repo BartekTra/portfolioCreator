@@ -333,20 +333,15 @@ function DynamicProjectForm() {
   const handleSubmit = async () => {
     setError(null);
     setSuccess(false);
-
     if (!validate()) {
       return;
     }
-
     setLoading(true);
-
     try {
       const projectData = prepareSubmitData();
       const formData = new FormData();
-      
       formData.append("data", JSON.stringify(projectData));
       formData.append("template_key", selectedTemplateId);
-
       sections.forEach((section) => {
         if (section.type === "image" && section.value.length > 0) {
           section.value.forEach((imgObj, idx) => {
@@ -358,23 +353,11 @@ function DynamicProjectForm() {
           });
         }
       });
-
-      console.log("Wysyłane dane:");
-      console.log("JSON data:", projectData);
-      console.log("FormData entries:");
-      for (let [key, value] of formData.entries()) {
-        console.log(`  ${key}:`, value instanceof File ? `File(${value.name})` : value);
-      }
-
       const response = await api.post("/projects", formData, {
         headers: {
         },
       });
-      
-      console.log("Odpowiedź z serwera:", response.data);
       setSuccess(true);
-      
-      console.log("XD");
       setTimeout(() => navigate(`/projects/${response.data.id}`), 500);
     } catch (err) {
       console.error("Błąd podczas tworzenia projektu:", err);

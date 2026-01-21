@@ -205,11 +205,9 @@ function TitlePageForm() {
       submitData.append("template_key", formData.template_key);
       submitData.append("experience", JSON.stringify(formData.experience));
       submitData.append("sections", JSON.stringify(sections));
-
       if (photo) {
         submitData.append("photo", photo);
       }
-
       if (isEditing) {
         await api.patch(`/title_pages/${id}`, submitData, {
           headers: {
@@ -223,7 +221,6 @@ function TitlePageForm() {
           },
         });
       }
-
       navigate("/title_pages");
     } catch (err) {
       console.error("Error saving title page:", err);
