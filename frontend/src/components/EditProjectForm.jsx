@@ -403,10 +403,8 @@ function EditProjectForm() {
     try {
       const projectData = prepareSubmitData();
       const formData = new FormData();
-      
       formData.append("data", JSON.stringify(projectData));
       formData.append("template_key", selectedTemplateId);
-      
       sections.forEach((section) => {
         if (section.type === "image" && section.value.length > 0) {
           const newImages = section.value.filter(img => !img.isExisting && img.file);
@@ -419,12 +417,10 @@ function EditProjectForm() {
           });
         }
       });
-
       await api.patch(`/projects/${id}`, formData, {
         headers: {
         },
       });
-      
       setSuccess(true);
       setTimeout(() => navigate(`/projects/${id}`), 500);
     } catch (err) {
